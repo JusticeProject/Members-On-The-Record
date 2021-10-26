@@ -1,0 +1,236 @@
+Symbols:
+^ If the capitalization must match exactly. Ex: ^Assad  (because without it, Assad would match ambassador)
++ If a tweet needs to contain more than one word. Example: Golan+Heights
+~ If a word should not be present. Ex: Turkey~Thanksgiving (We want Turkey the country, not the food)
+_ If a word should be matched as a separate word. Ex: _Jew will match Jew but not Jewel
+
+Tip:
+All keywords will be automatically converted to lower case when searching, thus if someone tweets
+IsRaEli! then simply using a keyword of Israel will still find this tweet.
+
+Tip:
+You can shorten the keywords. Ex: Palestin will find tweets with Palestine and Palestinian.
+
+Tip:
+If a tweet matches the first category and second category, it will be placed under the first category in 
+the results, i.e. a tweet will not be placed more than once in the results file.
+
+Category=Israel - Palestine
+Keywords=Israel
+Netanyahu
+Naftali
+Benny+Gantz
+Yair+Lapid
+iron dome
+irondome
+iron-dome
+Abraham+accord
+Palestin
+Hamas
+Abbas
+Fatah
+settler
+Tel Aviv
+Jerusalem
+Ramallah
+Hebron
+illegal settlement
+Apartheid
+Aparhteid
+Aparthied
+Home Demoli
+House Demoli
+West Bank
+Judea
+Samaria
+Zionism
+Zionist
+Golan+Heights
+HR+2590
+H.R.+2590
+two+state+solution
+aipac
+UNRWA
+boycott+divest+sanction
+Gaza
+_BDS
+BDS's
+BDSer
+btselem
+b'tselem
+
+Category=Jewish, Anti-semitism
+Keywords=Semitism
+Semitic
+Judaism
+Holocaust
+pogrom
+Yeshiva
+_Jew
+_Jews
+Jew's
+Jews'
+Jewish
+Jewry
+
+Category=Syria
+Keywords=Syria
+^Assad
+Damascus
+
+Category=Lebanon
+Keywords=Lebanon
+Lebanese
+Beirut
+Hezbollah
+Hizbullah
+Hizballah
+
+Category=Iran
+Keywords=Tehran
+Persia
+Farsi
+Ayatollah
+Khomeini
+Khamenei
+^Iran
+_Iran
+Iranian
+JCPOA
+joint comprehensive plan of action
+Revolutionary Guard
+Hormuz
+
+Category=Egypt
+Keywords=Egypt
+Cairo
+el-Sisi
+al-Sisi
+_Sisi
+President Sisi
+Muslim+Brotherhood
+Tahrir
+
+Category=Saudi Arabia
+Keywords=Saudi
+^Arabia
+^ARABIA
+_Arabia
+Riyadh
+Khashog
+_MBS
+bin Salman
+
+Category=Jordan
+Keywords=Jordanian
+King+Abdullah
+^Amman
+Jordan River
+
+Category=Iraq
+Keywords=Baghdad
+Iraq
+Fallujah
+
+Category=Turkey
+Keywords=Turkish
+^Turkey~Thanksgiving~Turkey Day
+Erdogan
+Erdoğan
+Ankara
+Istanbul
+
+Category=Libya
+Keywords=Libya
+Tripoli
+Benghazi
+
+Category=Morocco
+Keywords=Morocco
+Moroccan
+Rabat
+Casablanca
+Western+Sahara
+
+Category=Algeria
+Keywords=Algeria
+Algiers
+
+Category=Tunisia
+Keywords=Tunisia
+^Tunis
+
+Category=United Arab Emirates
+Keywords=Dubai
+United+Arab+Emirate
+Emirati
+Abu+Dhabi
+^UAE
+
+Category=Kuwait
+Keywords=Kuwait
+
+Category=Bahrain
+Keywords=Bahrain
+
+Category=Qatar
+Keywords=Qatar
+Al+Jazeera
+
+Category=Oman
+Keywords=^Oman
+_Oman
+Muscat
+
+Category=Yemen
+Keywords=Yemen
+Houthi
+
+Category=Horn of Africa
+Keywords=Somalia
+Horn of Africa
+Somaliland
+Eritrea
+Djibouti
+Ethiopia
+Addis Ababa
+
+Category=Sudan
+Keywords=Sudan
+Khartoum
+
+Category=Pakistan
+Keywords=Pakistan
+Islamabad
+Karachi
+
+Category=Afghanistan
+Keywords=Afghan
+Taliban
+Kabul
+Bagram
+ISIS-K
+ISISK
+IS–KP
+Daesh–Khorasan
+
+Category=Other - Middle East
+Keywords=Middle East
+MiddleEast
+Mideast
+Drone+strike
+Reaper+drone
+drone+kill
+drone+destroy
+drone+hit
+drone+terror
+drone+bomb
+drone+military
+drone+attack
+Al+Qaeda
+Islamic+State
+Kurds
+Kurdish
+Kurdistan
+_Isis
+Isis's
