@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Members on the Record (Automated) Index of Results</title>
+        <style>
+            div.ex2 {max-width: 900px; margin: auto;}
+        </style>
+    </head>
+    <body>
+        <div class="ex2">
+            <header>
+                <h1 itemprop="name">Members on the Record (Automated) Index of Results</h1>
+            </header>
+            <br>
+            <div>                        
+                    {% for month, listOfPages in dictOfMonths.items() %}
+                        <p><span style="text-decoration: underline;"><em><strong>{{month}}</strong></em></span></p>
+                        
+                        {% for page in listOfPages %}
+                            <p>
+                                <a href="https://justiceproject.github.io/Members-On-The-Record/{{page.subfolder}}/{{page.filename}}">{{page.visibleText}}</a>
+                            </p>
+                        {% endfor %}
+                        <br>
+                    {% endfor %}
+            </div>               
+        </div>
+    </body>
+</html>
