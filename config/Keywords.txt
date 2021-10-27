@@ -234,3 +234,5 @@ Kurdish
 Kurdistan
 _Isis
 Isis's
+Yazidi
+Yezidi
