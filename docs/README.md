@@ -21,10 +21,11 @@ python Automate.py
 ```
 
 ## TODO list
-* There are a couple TODO items scattered throughout the code, but nothing critical.
 * Detect repeat Tweets when a member of Congress posts the same message from multiple accounts.
 * When a member of Congress posts an image, it could contain a letter with lots of text that could be searched. It seems [this Python project](https://pypi.org/project/pytesseract/) could be used to handle the image-to-text conversion.
 * Continuously improve the search algorithm and the list of keyword search terms to ensure only relevant Tweets are in the results and are categorized properly.
+* Automate the search of Congress Members' floor speeches and press releases by scraping the data from senate.gov, house.gov, and congress.gov while obeying the sites' robots.txt files.
+* Download the legislators-current.csv file only if it has changed.
 
 ## Why this project?
 Whether I agree or disagree with a member of Congress, I want to know what they are saying about the wars and human rights issues in the Middle East. A daily automated search through their Tweets is a good way to do that. This project was inspired by the great work being done over at the [Foundation for Middle East Peace.](https://fmep.org/resources/?rsearch=&rcat%5B%5D=345)
