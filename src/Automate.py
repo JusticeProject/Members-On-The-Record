@@ -69,7 +69,7 @@ while True:
             step5.run(resultsFilePath)
         
         stopSecs = time.time()
-        diffMins = (stopSecs - startSecs) / 60.0
+        diffMins = int((stopSecs - startSecs) / 60.0)
         logger.log("Scan took " + str(diffMins) + " minutes")
         
         logger.flushLogs()

@@ -424,15 +424,15 @@ def unshortenURL(url):
     
     # Try to connect to the redirect/real URL. This works for most sites but I have found one or two
     # that still stubbornly refuse to work, not sure why yet.
-    for retries in range(0,3):
-        try:
-            req = urllib.request.Request(realURL, headers=CUSTOM_HTTP_HEADER)
-            conn = urllib.request.urlopen(req, timeout=5)
-            realURL = conn.geturl()
-            conn.close()
-            return realURL, message                
-        except BaseException:
-            time.sleep(3)
+    # for retries in range(0,3):
+    #     try:
+    #         req = urllib.request.Request(realURL, headers=CUSTOM_HTTP_HEADER)
+    #         conn = urllib.request.urlopen(req, timeout=5)
+    #         realURL = conn.geturl()
+    #         conn.close()
+    #         return realURL, message                
+    #     except BaseException:
+    #         time.sleep(3)
     
     # Last try, do another method to connect to the redirect/real URL. I might be able to replace the 
     # above method with this one.

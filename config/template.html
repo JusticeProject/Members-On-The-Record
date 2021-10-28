@@ -6,8 +6,11 @@
         <style>
             div.ex2 {max-width: 900px; margin: auto;}
         </style>
+        <style>
+            span.MOTR_Keyword {background-color: #ffcc33}
+        </style>
     </head>
-    <body>
+    <body style="background-color:white;">
         <div class="ex2">
             <header>
                 <h1 itemprop="name">Members on the Record (Automated) for {{date}}</h1>
@@ -15,6 +18,24 @@
             {% for message in listOfMessages %}
                 <p>{{message}}</p>
             {% endfor %}
+            <button type="button" onclick="MOTR_Change_Highlight()">Toggle Keyword Highlights</button>
+            <script>
+                function MOTR_Change_Highlight()
+                {
+                    var All_MOTR_Keywords = document.getElementsByClassName("MOTR_Keyword")
+                    for (let i = 0; i < All_MOTR_Keywords.length; i++)
+                    {
+                        if (All_MOTR_Keywords[i].style.backgroundColor == "white")
+                        {
+                            All_MOTR_Keywords[i].style.backgroundColor = "#ffcc33";
+                        }
+                        else
+                        {
+                            All_MOTR_Keywords[i].style.backgroundColor = "white";
+                        }
+                    }
+                }
+            </script>
             <br>
             <div>
                     {% for category, listOfFormattedTweets in dictFormattedConvs.items() %}

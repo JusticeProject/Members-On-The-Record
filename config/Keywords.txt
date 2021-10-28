@@ -65,13 +65,14 @@ Semitic
 Judaism
 Holocaust
 pogrom
-Yeshiva
 _Jew
 _Jews
 Jew's
 Jews'
 Jewish
 Jewry
+Synagogue
+Yeshiva
 
 Category=Syria
 Keywords=Syria
@@ -88,7 +89,6 @@ Hizballah
 
 Category=Iran
 Keywords=Tehran
-Persia
 Farsi
 Ayatollah
 Khomeini
@@ -130,6 +130,7 @@ Jordan River
 Category=Iraq
 Keywords=Baghdad
 Iraq
+Persian+Gulf
 Fallujah
 
 Category=Turkey
@@ -205,7 +206,8 @@ Islamabad
 Karachi
 
 Category=Afghanistan
-Keywords=Afghan
+Keywords=Afghanistan
+Afghan
 Taliban
 Kabul
 Bagram
