@@ -229,11 +229,11 @@ class AnalyzeTweets:
     def getRepliedToLink(self, tweet, visibleText):
         if (tweet.list_of_referenced_tweets == None):
             return ""
-            
+        
         for j in range(0, len(tweet.list_of_referenced_tweets), 2):
             if (tweet.list_of_referenced_tweets[j] == "replied_to"):
                 link = "https://twitter.com/i/web/status/" + str(tweet.list_of_referenced_tweets[j+1].id)
-                result = '<a href="' + link + '">' + visibleText + '</a>'
+                result = self.createLinkWithTooltip(link, visibleText, tweet.list_of_referenced_tweets[j+1].text)
                 return result
 
         return ""
@@ -258,9 +258,20 @@ class AnalyzeTweets:
     
     ###########################################################################
     ###########################################################################
+    
+    def createLinkWithTooltip(self, newLink, visibleText, tooltipText):
+        html = '<a class="MOTR_Tooltip" href="' + newLink + '">' + visibleText + \
+            '<span class="MOTR_Tooltiptext">' + tooltipText + '</span></a>'
+        return html
 
-    def convertLink(self, text, linkToReplace, newLink, descr):
-        html = '<a href="' + newLink + '">' + descr + '</a>'
+    ###########################################################################
+    ###########################################################################
+
+    def convertLink(self, text, linkToReplace, newLink, visibleText, addTooltip=False, tooltipText = ""):
+        if (addTooltip):
+            html = self.createLinkWithTooltip(newLink, visibleText, tooltipText)
+        else:
+            html = '<a href="' + newLink + '">' + visibleText + '</a>'
         convertedText = text.replace(linkToReplace, html)
         return convertedText
     
@@ -269,6 +280,7 @@ class AnalyzeTweets:
 
     def formatLinksInText(self, tweet):
         foundQuoted = False
+        quotedTweet = Classes.Tweet() # use an empty tweet for now
         foundAttachments = False
         typeOfAttachment = "media"
         
@@ -276,6 +288,7 @@ class AnalyzeTweets:
             for i in range(0, len(tweet.list_of_referenced_tweets), 2):
                 if (tweet.list_of_referenced_tweets[i] == "quoted"):
                     foundQuoted = True
+                    quotedTweet = tweet.list_of_referenced_tweets[i+1]
         
         if (tweet.list_of_attachments != None):
             foundAttachments = True
@@ -287,7 +300,7 @@ class AnalyzeTweets:
     
         # link to the quoted tweet will be at the end of the tweet text
         if (foundQuoted == True):
-            text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet")
+            text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet", True, quotedTweet.text)
             links.pop(-1)
         
         if (foundAttachments == True):
