@@ -229,7 +229,9 @@ drone+terror
 drone+bomb
 drone+military
 drone+attack
-Al+Qaeda
+Al Qaeda
+AlQaeda
+Al-Qaeda
 Islamic+State
 Kurds
 Kurdish
