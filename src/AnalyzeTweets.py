@@ -127,10 +127,59 @@ class AnalyzeTweets:
                             matched = False
                             
                 if (matched == True):
+                    self.highlightKeywordsInConversation(conversation, phrase)
                     return category
         
         return None
         
+    ###########################################################################
+    ###########################################################################
+    
+    def highlightKeywordsInConversation(self, conversation, phrase):
+        wordsToHighlight = []
+        for word in phrase:
+            if (word[0] != '~'):
+                wordsToHighlight.append(word)
+        
+        for tweet in conversation:
+            tweet.text = self.highlightKeywords(tweet.text, wordsToHighlight)
+            
+            if (tweet.list_of_referenced_tweets == None):
+                continue
+            
+            for i in range(0, len(tweet.list_of_referenced_tweets), 2):
+                refTweet = tweet.list_of_referenced_tweets[i+1]
+                refTweet.text = self.highlightKeywords(refTweet.text, wordsToHighlight)
+        return
+
+    ###########################################################################
+    ###########################################################################
+    
+    def highlightKeywords(self, text, wordsToHighlight):
+        leftSpan = '<span class="MOTR_Keyword">'
+        rightSpan = '</span>'
+        
+        # if <span> tag is already in there then don't do it again, this might be a ref tweet that multiple
+        # tweets are referencing
+        if (leftSpan in text):
+            return text
+        
+        for word in wordsToHighlight:
+            if (word[0] == '^'):
+                instances = re.findall(word[1:], text)
+            elif (word[0] == '_'):
+                regex = re.compile(r"\b(" + word[1:] + r")\b", flags=re.IGNORECASE)
+                instances = regex.findall(text)
+            else:
+                instances = re.findall(word, text, flags=re.IGNORECASE)
+            
+            uniqueInstances = list(set(instances)) # converting to a set then to a list will remove duplicates
+            for instance in uniqueInstances:
+                replacement = leftSpan + instance + rightSpan
+                text = re.sub(instance, replacement, text)
+        
+        return text
+
     ###########################################################################
     ###########################################################################
     
