@@ -9,6 +9,8 @@ import Classes
 class AnalyzeTweets:
     def __init__(self, logger):
         self.logger = logger
+        self.leftHighlightSpan = '<span class="MOTR_Keyword">'
+        self.rightHighlightSpan = '</span>'
 
     ###########################################################################
     ###########################################################################
@@ -156,12 +158,9 @@ class AnalyzeTweets:
     ###########################################################################
     
     def highlightKeywords(self, text, wordsToHighlight):
-        leftSpan = '<span class="MOTR_Keyword">'
-        rightSpan = '</span>'
-        
         # if <span> tag is already in there then don't do it again, this might be a ref tweet that multiple
         # tweets are referencing
-        if (leftSpan in text):
+        if (self.leftHighlightSpan in text):
             return text
         
         for word in wordsToHighlight:
@@ -175,7 +174,7 @@ class AnalyzeTweets:
             
             uniqueInstances = list(set(instances)) # converting to a set then to a list will remove duplicates
             for instance in uniqueInstances:
-                replacement = leftSpan + instance + rightSpan
+                replacement = self.leftHighlightSpan + instance + self.rightHighlightSpan
                 text = re.sub(instance, replacement, text)
         
         return text
@@ -334,7 +333,9 @@ class AnalyzeTweets:
         formattedTweet.day = conversation[0].created_at
             
         if (self.isConvARetweet(conversation) == True):
-            retweetHandle = re.findall(r"(@\w+):", conversation[0].text)[0]
+            cleanText = conversation[0].text.replace(self.leftHighlightSpan, "").replace(self.rightHighlightSpan, "")
+            allHandles = re.findall(r"(@\w+):", cleanText)
+            retweetHandle = allHandles[0]
             formattedTweet.type = "Retweet of " + retweetHandle
             for i in range(0, len(conversation[0].list_of_referenced_tweets), 2):
                 if (conversation[0].list_of_referenced_tweets[i] == "retweeted"):
