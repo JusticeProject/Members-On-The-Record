@@ -1,4 +1,4 @@
-# Members-On-The-Record
+# Members On The Record (Automated)
 An automated search for U.S. Congress members' Tweets about the Middle East. Tweets are categorized by country and the results are neatly formatted in HTML.
 
 ## Directory structure
@@ -10,7 +10,7 @@ Includes this readme file and also the html results for all the scans done so fa
 All the Python source code. The entry point is Automate.py but many of the other scripts can be run stand-alone which is useful when debugging.
 
 ## Instructions for installing/running
-* Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be place in the file config/config.txt.
+* Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be placed in the file config/config.txt.
 * Install [Python](https://www.python.org/downloads/)
 * Run the following commands at a command prompt:
 ```bash
