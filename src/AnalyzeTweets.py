@@ -268,7 +268,7 @@ class AnalyzeTweets:
     ###########################################################################
 
     def convertLink(self, text, linkToReplace, newLink, visibleText, addTooltip=False, tooltipText = ""):
-        if (addTooltip):
+        if (addTooltip and len(tooltipText) > 0):
             html = self.createLinkWithTooltip(newLink, visibleText, tooltipText)
         else:
             html = '<a href="' + newLink + '">' + visibleText + '</a>'
@@ -300,6 +300,8 @@ class AnalyzeTweets:
     
         # link to the quoted tweet will be at the end of the tweet text
         if (foundQuoted == True):
+            if (type(quotedTweet) == type(1)):
+                quotedTweet = Classes.Tweet() # user may have deleted their quoted tweet, so set it to a blank
             text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet", True, quotedTweet.text)
             links.pop(-1)
         
