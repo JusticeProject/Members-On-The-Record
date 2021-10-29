@@ -3,20 +3,27 @@ An automated search for U.S. Congress members' Tweets about the Middle East. Twe
 
 ## Directory structure
 #### config folder
-Access tokens, manual additions and exclusions of Twitter handles, keywords that are used when searching tweets
+* Config.txt - Access tokens for Twitter and GitHub are placed here. These allow Python to connect to those websites' APIs.
+* CustomizedTwitterHandles.txt - The list of Twitter handles is automatically retrieved, but you can manually include/exclude certain Twitter handles using this file.
+* Keywords.txt - These are the words that are searched for in the Tweets.
+* HTML templates - Python will use these templates and fill in the data before publishing them to the web.
 #### docs folder
-Includes this readme file and also the html results for all the scans done so far.
+* Includes this readme file and also the HTML results for all the scans done so far.
 #### src folder
-All the Python source code. The entry point is Automate.py but many of the other scripts can be run stand-alone which is useful when debugging.
+* Automate.py - The main entry point of the program which will load all the other scripts and use them as necessary.
+* Most of the other scripts can be run stand-alone which is useful when debugging.
 
 ## Instructions for installing/running
 * Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be placed in the file config/config.txt.
 * Install [Python](https://www.python.org/downloads/)
-* Run the following commands at a command prompt:
+* Run the following commands at a command prompt to finish the installation:
 ```bash
 pip install tweepy
 pip install jinja2
 pip install PyGithub
+```
+* Run this command at a command prompt while in the src directory to start the daily automated scan:
+```bash
 python Automate.py
 ```
 
