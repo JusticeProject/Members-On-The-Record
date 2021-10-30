@@ -1,9 +1,10 @@
 Symbols:
 ^ If the capitalization must match exactly. Ex: ^Assad  (because without it, Assad would match ambassador)
-+ If a tweet needs to contain more than one word. Example: Golan+Heights
++ If a tweet needs to contain more than one keyword. Example: Golan+Heights
 ~ If a word should not be present. Ex: Turkey~Thanksgiving will find Tweets that contain Turkey but do not
         contain the word Thanksgiving
 _ If a word should be matched as a separate word. Ex: _Jew will match Jew but not Jewel
+  A space is just a space. Ex: Tel Aviv is treated as one word and will match Tel Aviv but will not match TelAviv
 Currently there is no support for two symbols side-by-side: ^_BDS will only recognize the first symbol.
 
 Tip:
@@ -37,9 +38,6 @@ Jerusalem
 Ramallah
 Hebron
 illegal settlement
-Apartheid
-Aparhteid
-Aparthied
 Home Demoli
 House Demoli
 West Bank
@@ -60,6 +58,11 @@ BDS's
 BDSer
 btselem
 b'tselem
+
+Category=Apartheid
+Keywords=Apartheid
+Aparhteid
+Aparthied
 
 Category=Jewish, Anti-semitism
 Keywords=Semitism
