@@ -9,6 +9,8 @@ import Classes
 class AnalyzeTweets:
     def __init__(self, logger):
         self.logger = logger
+        
+        # These HTML tags are used to highlight the keyword in the Tweet.
         self.leftHighlightSpan = '<span class="MOTR_Keyword">'
         self.rightHighlightSpan = '</span>'
 
@@ -16,7 +18,8 @@ class AnalyzeTweets:
     ###########################################################################
     
     def getTweetsForHandle(self, listOfAllTweets, handle):
-        # split tweets into two categories
+        # Split tweets into two categories, userTweets are the actual user's Tweets, the refTweets
+        # are the Tweets that the user is referencing (quoted Tweet, retweet, a Tweet they are replying to)
         dictUserTweets = {}
         dictRefTweets = {}
         
@@ -42,6 +45,8 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
+    # Group all Tweets with the same conversation id into one list of Tweets. This will
+    # be referred to as the "conversation"
     def getConversation(self, firstTweet, dictUserTweets, dictRefTweets):
         conversation = [firstTweet]
         
@@ -85,6 +90,8 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
+    # Look for the keywords in all Tweets of the conversation. This includes quoted
+    # Tweets
     def categorizeConversation(self, conversation, dictOfKeywords):
         combinedText = ""
         regexWordBoundary = re.compile(r"\b(\S+)\b")
@@ -103,6 +110,8 @@ class AnalyzeTweets:
             regexQuote = re.compile(r"[’ʻ]")
             combinedText = regexQuote.sub("'", combinedText)
         
+        # We won't be searching in the links for keywords. Twitter uses a URL shortener and sometimes
+        # keywords like BDS will appear in the link. Ex: https://t.co/Lo4kVBDsop
         links = self.findAllLinks(combinedText)
         for link in links:
             link = self.cleanLink(link)
@@ -110,6 +119,7 @@ class AnalyzeTweets:
         
         combinedTextLower = combinedText.lower()
         
+        # Search the combined text of the conversation, use the categories from Keywords.txt
         for category in dictOfKeywords.keys():
             for phrase in dictOfKeywords[category]:
                 matched = True
@@ -137,12 +147,15 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
     
+    # Add html tags to highlight the keyword that was found. Super handy when you're 
+    # staring at a huge Twitter thread and wondering "why did the search grab these Tweets?!"
     def highlightKeywordsInConversation(self, conversation, phrase):
         wordsToHighlight = []
         for word in phrase:
             if (word[0] != '~'):
                 wordsToHighlight.append(word)
         
+        # Do the highlighting for each Tweet and the referenced Tweets
         for tweet in conversation:
             tweet.text = self.highlightKeywords(tweet.text, wordsToHighlight)
             
@@ -259,6 +272,10 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
     
+    # Tooltips will be used to display the text of a quoted Tweet or a reply in the
+    # conversation. These are Tweets from other users, not the main user we are dealing
+    # with. The link will be available for clicking on as well so you can see the 
+    # actual Tweet on Twitter.com.
     def createLinkWithTooltip(self, newLink, visibleText, tooltipText):
         html = '<a class="MOTR_Tooltip" href="' + newLink + '">' + visibleText + \
             '<span class="MOTR_Tooltiptext">' + tooltipText + '</span></a>'
@@ -267,6 +284,9 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
+    # Convert something like https://t.co/Lo4kVBDsop to an HTML hyperlink with the appropriate
+    # tags around it. Sometimes we will be replacing the link with an unshortened URL so it's more
+    # user friendly.
     def convertLink(self, text, linkToReplace, newLink, visibleText, addTooltip=False, tooltipText = ""):
         if (addTooltip and len(tooltipText) > 0):
             html = self.createLinkWithTooltip(newLink, visibleText, tooltipText)
@@ -278,6 +298,7 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
+    # For each link in the Tweet's text we will make it an HTML hyperlink.
     def formatLinksInText(self, tweet):
         foundQuoted = False
         quotedTweet = Classes.Tweet() # use an empty tweet for now
@@ -400,8 +421,12 @@ class AnalyzeTweets:
                 if (handle == ""):
                     continue
         
+                # Get the Tweets for one Twitter handle at a time.
                 dictUserTweets,dictRefTweets = self.getTweetsForHandle(listOfAllTweets, handle)
                 
+                # Go through each Tweet and remove it from the dictionary so we don't process it again.
+                # Tweets from the same conversation will be removed from the dictionary in getConversation.
+                # Categorize the entire conversation. And keep doing this until no more Tweets left.
                 while (len(dictUserTweets) > 0):
                     listOfTweetIds = list(dictUserTweets.keys())
                     currentTweet = dictUserTweets.pop(listOfTweetIds[0])
@@ -416,6 +441,7 @@ class AnalyzeTweets:
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
         userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
         
+        # Now we will format each conversation so that it will appear neatly in the HTML results.
         dictFormattedConvs = {}
         for category in dictCategorizedConvs.keys():
             for conversation in dictCategorizedConvs[category]:
@@ -433,6 +459,7 @@ class AnalyzeTweets:
         if (len(dictFormattedConvs) == 0):
             listOfMessages.append("No relevant tweets found yet for today. Try looking at yesterday's results.")
         
+        # Use jinja2 to put our results into the HTML template
         htmlTemplate = Utilities.getHTMLTemplate()
         dateSortable = re.findall(r"/(20\S+)/", resultsFolder)[0]
         dateReadable = Utilities.convertDateToReadable(dateSortable)

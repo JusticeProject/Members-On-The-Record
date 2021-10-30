@@ -30,10 +30,10 @@ class UploadResults:
         data = file.read()
         file.close()
         todaysResultsFileName = todaysResultsPath.rsplit("/", 1)[1]
-        todaysMonth = todaysResultsFileName[:7]
+        todaysMonth = todaysResultsFileName[:7] # ex: convert 2021-10-29-Fri.html to 2021-10
         gitHubPath = "docs/" + todaysMonth + "/" + todaysResultsFileName
         repo.create_file(path=gitHubPath,
-                         message="Python upload today's results", content=data, branch="main")
+                         message="Auto-commit: upload today's results", content=data, branch="main")
 
         self.logger.log("Uploaded today's results to GitHub: " + gitHubPath)
 
@@ -41,35 +41,36 @@ class UploadResults:
     ###########################################################################
 
     def getAllResultsOnGitHub(self, repo):
-        # update the index of results, start by looking at all the folders
+        # Grab all the folders of results that are currently on GitHub.
         folderNames = []
-        contents = repo.get_contents("docs") # contents of a folder
+        contents = repo.get_contents("docs") # contents of the docs folder
         for item in contents:
             if (item.type == "dir"):
-                folderNames.append(item.path.strip("/"))
+                folderNames.append(item.path.strip("/")) # ex: docs/2021-10
 
         folderNames.sort(reverse=True)
 
-        # now get all the files from each folder
+        # Now get all the file names from each folder
         dictOfMonths = {}
         for folder in folderNames:
-            subfolder = folder.split("/")[1]
-            month = Utilities.convertYearMonthToReadable(subfolder)
+            subfolder = folder.split("/")[1] # ex: convert docs/2021-10 to 2021-10
+            month = Utilities.convertYearMonthToReadable(subfolder) # ex: convert 2021-10 to October 2021
             dictOfMonths[month] = []
 
             listOfFiles = []
-            contents = repo.get_contents(folder)
+            contents = repo.get_contents(folder) # get contents of this month's folder
             for file in contents:
-                listOfFiles.append(file.name)
+                listOfFiles.append(file.name) # ex: 2021-10-29-Fri.html
 
             listOfFiles.sort(reverse=True)
 
+            # Use a data structure to store all the relevant info for each webpage of results
             for fileName in listOfFiles:
                 page = Classes.Page()
-                page.subfolder = subfolder
-                page.filename = fileName
+                page.subfolder = subfolder # ex: 2021-10
+                page.filename = fileName # ex: 2021-10-29-Fri.html
                 dateSortable = fileName.split(".html")[0]
-                page.visibleText = Utilities.convertDateToReadable(dateSortable)
+                page.visibleText = Utilities.convertDateToReadable(dateSortable) # ex: convert to Fri October 29, 2021
                 dictOfMonths[month].append(page)
 
         return dictOfMonths
@@ -90,7 +91,7 @@ class UploadResults:
         data = file.read()
         file.close()
         contents = repo.get_contents("docs/index-of-results.html")
-        repo.update_file(path="docs/index-of-results.html", message="Python updating list of days with results",
+        repo.update_file(path="docs/index-of-results.html", message="Auto-commit: updating list of days with results",
                          content=data, sha=contents.sha, branch="main")
         self.logger.log("Uploaded index-of-results.html to GitHub")
 
@@ -105,7 +106,7 @@ class UploadResults:
         # make a backup of the raw tweet data in case we need to analyze it again
         recentResultsFolder = Utilities.getMostRecentResultsFolder().rstrip("/")
         justTheFolderName = recentResultsFolder.rsplit("/", 1)[1]
-        todaysMonth = justTheFolderName[:7]
+        todaysMonth = justTheFolderName[:7] # ex: convert 2021-10-29-Fri to 2021-10
         destinationPath = GOOGLE_DRIVE_RESULTS + todaysMonth + "/" + justTheFolderName
         distutils.dir_util.copy_tree(recentResultsFolder, destinationPath)
         self.logger.log("copied " + justTheFolderName + " to " + destinationPath)
@@ -135,7 +136,8 @@ class UploadResults:
                 else:
                     return
         
-        # get all the results that are currently stored on GitHub, if it fails then no point in continuing
+        # Get all the results that are currently stored on GitHub, if it fails then no point in continuing.
+        # This info will be used to create the index in the next step.
         for retries in range(0, 3):
             try:
                 dictOfMonths = self.getAllResultsOnGitHub(repo)

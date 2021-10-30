@@ -1,12 +1,14 @@
 Symbols:
 ^ If the capitalization must match exactly. Ex: ^Assad  (because without it, Assad would match ambassador)
 + If a tweet needs to contain more than one word. Example: Golan+Heights
-~ If a word should not be present. Ex: Turkey~Thanksgiving (We want Turkey the country, not the food)
+~ If a word should not be present. Ex: Turkey~Thanksgiving will find Tweets that contain Turkey but do not
+        contain the word Thanksgiving
 _ If a word should be matched as a separate word. Ex: _Jew will match Jew but not Jewel
+Currently there is no support for two symbols side-by-side: ^_BDS will only recognize the first symbol.
 
 Tip:
-All keywords will be automatically converted to lower case when searching, thus if someone tweets
-IsRaEli! then simply using a keyword of Israel will still find this tweet.
+Keywords without the ^ symbol will be automatically converted to lower case when searching, 
+thus if someone tweets IsRaEli! then simply using a keyword of Israel will still find this tweet.
 
 Tip:
 You can shorten the keywords. Ex: Palestin will find tweets with Palestine and Palestinian.
@@ -113,9 +115,10 @@ Tahrir
 
 Category=Saudi Arabia
 Keywords=Saudi
-^Arabia
+^Arabia~@Arabia_Alliance
 ^ARABIA
 _Arabia
+Arabian
 Riyadh
 Khashog
 _MBS
