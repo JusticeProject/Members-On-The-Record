@@ -281,7 +281,7 @@ class CreateListOfCongressMembers:
     def lookForMissingTwitterHandles(self, listOfMembers):
         # if any members don't have a Twitter handle, look for one
         for member in listOfMembers:
-            if (len(member.twitter) == 1) and (member.twitter[0] == ""):
+            if (len(member.twitter) == 0) or ((len(member.twitter) == 1) and (member.twitter[0] == "")):
                 self.logger.log("Warning: no Twitter handle for " + member.last_name + ", " + member.first_name)
     
         # TODO: scrape house.gov and senate.gov?

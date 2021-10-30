@@ -130,8 +130,9 @@ def saveTwitterUsers(dictOfTwitterUsers):
 ###############################################################################
 ###############################################################################
 
-# load info about each Twitter handle, user id number for that handle, 
-# and the most recent tweet we retrieved for that handle
+# The UserLookup.txt file is used to connect each Twitter @handle to its user id number. 
+# It also stores the most recent tweet we retrieved for that handle, thus when we retrieve
+# again we will start after that last tweet.
 
 def loadUserLookup(listOfMembers, dictOfTwitterUsers):
     userLookupDict = {}
@@ -483,6 +484,8 @@ def getDomainOfURL(url):
 def getWebsiteHTML(url):
     for retries in range(0, 3):
         try:
+            # some websites don't like Python scripts scraping their data, so use a custom 
+            # header which makes us look like an innocent web browser
             req = urllib.request.Request(url, headers=CUSTOM_HTTP_HEADER)
             conn = urllib.request.urlopen(req, timeout=5)
             data = conn.read()
