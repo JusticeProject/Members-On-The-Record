@@ -405,11 +405,8 @@ def unshortenURL(url):
         except BaseException as e:
             strError = str(e.args)
             if ("hostname" in strError) and ("doesn" in strError):
-                realURL = strError.split("hostname")[1]
-                realURL = realURL.split("doesn")[0]
-                realURL = realURL.replace("\\", "")
-                realURL = realURL.replace("'", "")
-                return realURL, message
+                # SSL cert problems. We'll try to unshorten the URL with a different method.
+                break
             else:
                 time.sleep(3)
     

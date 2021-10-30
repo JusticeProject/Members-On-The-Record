@@ -41,7 +41,8 @@ class CreateListOfCongressMembers:
     ###########################################################################
     ###########################################################################
 
-    # Retrieve each member's website, last name, first name, state, and party
+    # Retrieve each member's website, last name, first name, state, party, and 
+    # official Twitter account from the .csv file we downloaded.
     def getMembers(self, house):
         members = []
         
@@ -64,7 +65,9 @@ class CreateListOfCongressMembers:
         TWITTER_INDEX = header.index("twitter")
         
         for i in range(1, len(lines)):
-            # remove commas within double quotes, remove the quotes as well
+            # Remove commas within double quotes, remove the quotes as well. We won't lose
+            # any important information and this will allow us to split the line by commas
+            # and still maintain the correct number of columns.
             line_list = list(lines[i])
             foundLeftQuotes = False
             for j in range(0, len(line_list)):
@@ -210,6 +213,9 @@ class CreateListOfCongressMembers:
     ###########################################################################
     ###########################################################################
     
+    # The CustomizedTwitterHandles.txt file can be used to manually tell the 
+    # software which official Twitter account and which personal Twitter account
+    # actually represent the same person.
     def tryToManuallyAdd(self, unmatchedUser, listOfSamePersons, listOfMembers):
         unknownHandle = unmatchedUser.twitterHandle
 
@@ -232,7 +238,7 @@ class CreateListOfCongressMembers:
     ###########################################################################
     ###########################################################################
 
-    # merge the data in both of the files
+    # Personal Twitter accounts will be matched with the appropriate member of Congress.
     def addPersonalAccounts(self, listOfMembers, dictOfTwitterUsers):
         unmatchedTwitterUsers = []
             
@@ -292,17 +298,26 @@ class CreateListOfCongressMembers:
     ###########################################################################
 
     def run(self):
+        
+        # Download a .csv file that has a lot of info for each member of Congress.
         try:
             self.downloadCongressMemberData()
         except BaseException as e:
             self.logger.log("Warning: couldn't download congress member data: " + str(e.args))
-            
+        
+        # Go through the .csv file and get the Reps, then get the Senators
         houseMembers = self.getMembers("rep")
         senateMembers = self.getMembers("sen")
         listOfMembers = houseMembers + senateMembers
         
+        # Load the list of Twitter handles that we previously retrieved. These were from
+        # the public lists on Twitter.
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
         
+        # The .csv file already gave us the official Twitter accounts for each member
+        # of Congress. Now we have the fun job of trying to figure out which personal 
+        # Twitter account goes with which member of Congress. We'll do some various
+        # name matching to try and complete the job.
         listOfMembers = self.addPersonalAccounts(listOfMembers, dictOfTwitterUsers)
         self.lookForMissingTwitterHandles(listOfMembers)
         logMessage = Utilities.saveCongressMembers(listOfMembers)
