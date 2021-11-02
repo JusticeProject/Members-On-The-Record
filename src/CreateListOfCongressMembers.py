@@ -1,3 +1,4 @@
+import os
 import urllib.request
 
 import Classes
@@ -35,18 +36,60 @@ class CreateListOfCongressMembers:
     ###########################################################################
 
     def downloadCongressMemberData(self):
-        urllib.request.urlretrieve("https://theunitedstates.io/congress-legislators/legislators-current.csv", "../output/legislators-current.csv")
-        return
+        # First see what data we already have.
+        legislatorsFilePath = ""
+        dateOfOurData = ""
+        files = os.listdir("../output/")
+        for fileName in files:
+            if ("legislators-current" in fileName) and (".csv" in fileName):
+                legislatorsFilePath = "../output/" + fileName
+                dateOfOurData = fileName.rsplit("-", 1)[1] # ex: legislators-current-Aug 2, 2021.csv
+                dateOfOurData = dateOfOurData.split(".")[0]
+
+        if (legislatorsFilePath == ""):
+            self.logger.log("No .csv file of legislators found")
+        else:
+            self.logger.log("Detected .csv file of legislators: " + legislatorsFilePath)
+            self.logger.log("The date of our .csv file is: " + dateOfOurData)
+
+        # Now let's see when the legislator data on GitHub was last updated.
+        commitHistoryURL = "https://github.com/unitedstates/congress-legislators/commits/gh-pages/legislators-current.csv"
+        html = Utilities.getWebsiteHTML(commitHistoryURL)
+        lines = html.split("\n")
+        for line in lines:
+            if ("Commits on " in line):
+                dateOfLatestData = line.split("Commits on ")[1] # ex: "Commits on Aug 2, 2021"
+                dateOfLatestData = dateOfLatestData.split("<")[0].strip()
+                break # We only want the most recent commit
+
+        self.logger.log("The latest .csv data available from GitHub is dated: " + dateOfLatestData)
+
+        # Check to see if we should download the data or keep what we already have.
+        if (dateOfOurData == dateOfLatestData):
+            self.logger.log("Keeping our .csv file of lesislators")
+            return legislatorsFilePath
+        else:
+            if (legislatorsFilePath != ""):
+                self.logger.log("Removing " + legislatorsFilePath)
+                os.remove(legislatorsFilePath)
+            
+            newPath = "../output/legislators-current-" + dateOfLatestData + ".csv"
+            self.logger.log("Retrieving the latest .csv file of legislators")
+            urllib.request.urlretrieve("https://raw.githubusercontent.com/unitedstates/congress-legislators/gh-pages/legislators-current.csv", 
+                                       newPath)
+            self.logger.log("Latest file of legislators saved to " + newPath)
+            
+            return newPath
 
     ###########################################################################
     ###########################################################################
 
     # Retrieve each member's website, last name, first name, state, party, and 
     # official Twitter account from the .csv file we downloaded.
-    def getMembers(self, house):
+    def getMembers(self, filePath, house):
         members = []
         
-        file = open("../output/legislators-current.csv", "r", encoding="utf-8")
+        file = open(filePath, "r", encoding="utf-8")
         lines = file.readlines()
         file.close()
         
@@ -301,13 +344,13 @@ class CreateListOfCongressMembers:
         
         # Download a .csv file that has a lot of info for each member of Congress.
         try:
-            self.downloadCongressMemberData()
+            csvFilePath = self.downloadCongressMemberData()
         except BaseException as e:
             self.logger.log("Warning: couldn't download congress member data: " + str(e.args))
         
         # Go through the .csv file and get the Reps, then get the Senators
-        houseMembers = self.getMembers("rep")
-        senateMembers = self.getMembers("sen")
+        houseMembers = self.getMembers(csvFilePath, "rep")
+        senateMembers = self.getMembers(csvFilePath, "sen")
         listOfMembers = houseMembers + senateMembers
         
         # Load the list of Twitter handles that we previously retrieved. These were from
@@ -318,6 +361,7 @@ class CreateListOfCongressMembers:
         # of Congress. Now we have the fun job of trying to figure out which personal 
         # Twitter account goes with which member of Congress. We'll do some various
         # name matching to try and complete the job.
+        self.logger.log("Trying to match personal Twitter accounts with their owners in Congress")
         listOfMembers = self.addPersonalAccounts(listOfMembers, dictOfTwitterUsers)
         self.lookForMissingTwitterHandles(listOfMembers)
         logMessage = Utilities.saveCongressMembers(listOfMembers)
