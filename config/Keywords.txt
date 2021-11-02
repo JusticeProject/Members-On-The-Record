@@ -42,7 +42,7 @@ Home Demoli
 House Demoli
 West Bank
 Judea
-Samaria
+^Samaria
 Zionism
 Zionist
 Golan+Heights
