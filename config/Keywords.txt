@@ -21,7 +21,7 @@ the results, i.e. a tweet will not be placed more than once in the results file.
 Category=Israel - Palestine
 Keywords=Israel
 Netanyahu
-Naftali
+Naftali+Bennett
 Benny+Gantz
 Yair+Lapid
 iron dome
@@ -58,6 +58,8 @@ BDS's
 BDSer
 btselem
 b'tselem
+jstreet
+^J Street
 
 Category=Apartheid
 Keywords=Apartheid
@@ -182,7 +184,9 @@ Keywords=Bahrain
 
 Category=Qatar
 Keywords=Qatar
-Al+Jazeera
+Al Jazeera
+AlJazeera
+Al-Jazeera
 
 Category=Oman
 Keywords=^Oman
@@ -246,3 +250,4 @@ _Isis
 Isis's
 Yazidi
 Yezidi
+Jihad
