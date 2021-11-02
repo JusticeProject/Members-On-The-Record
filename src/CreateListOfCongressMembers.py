@@ -23,7 +23,7 @@ partyDict = {"Democrat":"D", "Republican":"R", "Independent":"I"}
 commonNicknameDict = {"Tom":"Thomas", "Chris":"Christopher", "Dick":"Richard", 
                       "Rob":"Robert", "Bob":"Robert", "Ben":"Benjamin", "Dan":"Daniel",
                       "Don":"Donald", "Greg":"Gregory", "Mike":"Michael", "Jerry":"Jerrold",
-                      "Jim":"James"}
+                      "Jim":"James", "Dave":"David", "Matt":"Matthew", "Lou":"Luis"}
 
 ###############################################################################
 ###############################################################################
@@ -194,8 +194,12 @@ class CreateListOfCongressMembers:
     def isMatch(self, user, member):
         
         # check if full name matches
-        if (member.full_name != "") and (member.full_name.lower() in user.name.lower()):
-            return True
+        if (member.full_name != ""):
+            if (member.full_name.lower() in user.name.lower()):
+                return True
+            # check if full name matches without the .
+            if (member.full_name.lower().replace(".", "") in user.name.lower().replace(".", "")):
+                return True
         
         # use first name + last name, use first name + middle name + last name
         if (member.first_name != "") and (member.last_name != ""):
@@ -213,6 +217,7 @@ class CreateListOfCongressMembers:
                 if (member.state in user.name) or (member.state in user.description) or (stateName in user.description):
                     return True
             
+        # Try nickname from the .csv file we downloaded.
         # use nickname + middle name + last name, use nickname + last name
         if (member.nickname != "") and (member.last_name != ""):
             combined_name = member.nickname + " " + member.middle_name + " " + member.last_name
@@ -224,7 +229,7 @@ class CreateListOfCongressMembers:
             if (combined_name.lower() in user.description.lower()):
                 return True
         
-        # try common nicknames
+        # try common nicknames from OUR dictionary
         for nickname in commonNicknameDict.keys():
             if (nickname in user.name):
                 if (commonNicknameDict[nickname] in member.first_name) or (commonNicknameDict[nickname] in member.full_name):
@@ -237,6 +242,9 @@ class CreateListOfCongressMembers:
             if (birthName in member.first_name):
                 combined_name = nickname + " " + member.last_name
                 if (combined_name.lower() in user.description.lower()) and (member.state.lower() in user.description.lower()):
+                    return True
+                combined_name = nickname + member.last_name + member.state
+                if (combined_name.lower() in user.twitterHandle.lower()):
                     return True
         
         # try middle name + last name
@@ -336,7 +344,10 @@ class CreateListOfCongressMembers:
                 newMember.twitter.append(unmatchedUser.twitterHandle)
                 listOfMembers.append(newMember)
                 totalUnmatched += 1
-        self.logger.log("could not match " + str(totalUnmatched))
+        if (totalUnmatched > 0):
+            self.logger.log("Warning: " + str(totalUnmatched) + " handles were not matched")
+        else:
+            self.logger.log("All handles were matched")
         
         return listOfMembers
 
