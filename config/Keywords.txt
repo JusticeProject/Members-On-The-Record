@@ -48,7 +48,8 @@ Zionist
 Golan+Heights
 HR+2590
 H.R.+2590
-two+state+solution
+two state solution
+two-state solution
 aipac
 UNRWA
 boycott+divest+sanction
@@ -143,7 +144,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax
 Erdogan
 Erdoğan
 Ankara
@@ -204,6 +205,7 @@ Somaliland
 Eritrea
 Djibouti
 Ethiopia
+Tigray
 Addis Ababa
 
 Category=Sudan
