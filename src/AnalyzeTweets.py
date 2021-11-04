@@ -13,6 +13,10 @@ class AnalyzeTweets:
         # These HTML tags are used to highlight the keyword in the Tweet.
         self.leftHighlightSpan = '<span class="MOTR_Keyword">'
         self.rightHighlightSpan = '</span>'
+        
+        # This dictionary will keep track of the phrases to highlight for each conversation id.
+        # Key = conversation id, value = phrase.
+        self.dictConvPhrases = {}
 
     ###########################################################################
     ###########################################################################
@@ -139,7 +143,7 @@ class AnalyzeTweets:
                             matched = False
                             
                 if (matched == True):
-                    self.highlightKeywordsInConversation(conversation, phrase)
+                    self.dictConvPhrases[conversation[0].conversation_id] = phrase
                     return category
         
         return None
@@ -149,22 +153,17 @@ class AnalyzeTweets:
     
     # Add html tags to highlight the keyword that was found. Super handy when you're 
     # staring at a huge Twitter thread and wondering "why did the search grab these Tweets?!"
-    def highlightKeywordsInConversation(self, conversation, phrase):
-        wordsToHighlight = []
-        for word in phrase:
-            if (word[0] != '~'):
-                wordsToHighlight.append(word)
-        
+    def highlightKeywordsInConversation(self, conversation, phrase):        
         # Do the highlighting for each Tweet and the referenced Tweets
         for tweet in conversation:
-            tweet.text = self.highlightKeywords(tweet.text, wordsToHighlight)
+            tweet.text = self.highlightKeywords(tweet.text, phrase)
             
             if (tweet.list_of_referenced_tweets == None):
                 continue
             
             for i in range(0, len(tweet.list_of_referenced_tweets), 2):
                 refTweet = tweet.list_of_referenced_tweets[i+1]
-                refTweet.text = self.highlightKeywords(refTweet.text, wordsToHighlight)
+                refTweet.text = self.highlightKeywords(refTweet.text, phrase)
         return
 
     ###########################################################################
@@ -179,6 +178,8 @@ class AnalyzeTweets:
         for word in wordsToHighlight:
             if (word[0] == '^'):
                 instances = re.findall(word[1:], text)
+            elif (word[0] == '~'):
+                continue
             elif (word[0] == '_'):
                 regex = re.compile(r"\b(" + word[1:] + r")\b", flags=re.IGNORECASE)
                 instances = regex.findall(text)
@@ -232,6 +233,15 @@ class AnalyzeTweets:
     
     def isTweetAReplyToSomeoneElse(self, tweet):        
         if (tweet.in_reply_to_user_id > 0) and (tweet.in_reply_to_user_id != tweet.author_id):
+            return True
+        else:
+            return False
+
+    ###########################################################################
+    ###########################################################################
+    
+    def isTweetAReplyToThemself(self, tweet):
+        if (tweet.in_reply_to_user_id > 0) and (tweet.in_reply_to_user_id == tweet.author_id):
             return True
         else:
             return False
@@ -367,11 +377,18 @@ class AnalyzeTweets:
         else:
             formattedTweet.partyAndState = " (" + party + "-" + state + ")"
         formattedTweet.day = conversation[0].created_at
-            
+        
+        # highlight the keywords in the conversation
+        convID = conversation[0].conversation_id
+        phrase = self.dictConvPhrases[convID]
+        self.highlightKeywordsInConversation(conversation, phrase)
+        
+        # Start grouping the text together and formatting the links.
         if (self.isConvARetweet(conversation) == True):
             cleanText = conversation[0].text.replace(self.leftHighlightSpan, "").replace(self.rightHighlightSpan, "")
             allHandles = re.findall(r"(@\w+):", cleanText)
             retweetHandle = allHandles[0]
+            retweetHandle = self.highlightKeywords(retweetHandle, phrase) # keyword may be part of the handle that was retweeted
             formattedTweet.type = "Retweet of " + retweetHandle
             for i in range(0, len(conversation[0].list_of_referenced_tweets), 2):
                 if (conversation[0].list_of_referenced_tweets[i] == "retweeted"):
@@ -381,7 +398,7 @@ class AnalyzeTweets:
                         formattedTweet.text = self.formatLinksInText(conversation[0])
                     else:
                         formattedTweet.text = self.formatLinksInText(refTweet)
-        elif (self.isTweetAReplyToSomeoneElse(conversation[0]) == True):
+        elif (self.isTweetAReplyToSomeoneElse(conversation[0]) == True) or (self.isTweetAReplyToThemself(conversation[0]) == True):
             link = self.getRepliedToLink(conversation[0], "Tweet")
             if (link == ""):
                 formattedTweet.type = "Tweet"
