@@ -66,6 +66,11 @@ NSO Group
 Pegasus+Spyware
 Sheikh+Jarrah
 Silwan
+@TomNides
+Tom Nides
+Thomas Nides
+Thomas R. Nides
+Ambassador Nides
 
 Category=Apartheid
 Keywords=Apartheid
