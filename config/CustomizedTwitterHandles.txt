@@ -28,6 +28,8 @@ include=@SFRCdems
 include=@SenateForeign
 include=@HouseForeignGOP
 include=@HouseForeign
+include=@MikeCareyOH15
+include=@ShontelMBrown
 
 same_person=@millermeeks,@repmmm
 same_person=@Call_Me_Dutch,@GoDutchForMD
