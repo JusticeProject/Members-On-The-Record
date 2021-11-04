@@ -320,13 +320,13 @@ class AnalyzeTweets:
         text = tweet.text
     
         # link to the quoted tweet will be at the end of the tweet text
-        if (foundQuoted == True):
+        if (foundQuoted == True) and (len(links) > 0):
             if (type(quotedTweet) == type(1)):
                 quotedTweet = Classes.Tweet() # user may have deleted their quoted tweet, so set it to a blank
             text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet", True, quotedTweet.text)
             links.pop(-1)
         
-        if (foundAttachments == True):
+        if (foundAttachments == True) and (len(links) > 0):
             text = self.convertLink(text, links[-1], links[-1], "Link to " + typeOfAttachment)
             links.pop(-1)
     
@@ -375,7 +375,12 @@ class AnalyzeTweets:
             formattedTweet.type = "Retweet of " + retweetHandle
             for i in range(0, len(conversation[0].list_of_referenced_tweets), 2):
                 if (conversation[0].list_of_referenced_tweets[i] == "retweeted"):
-                    formattedTweet.text = self.formatLinksInText(conversation[0].list_of_referenced_tweets[i+1])
+                    # Double check we have a valid ref tweet that was received from Twitter
+                    refTweet = conversation[0].list_of_referenced_tweets[i+1]
+                    if (refTweet.text == ""):
+                        formattedTweet.text = self.formatLinksInText(conversation[0])
+                    else:
+                        formattedTweet.text = self.formatLinksInText(refTweet)
         elif (self.isTweetAReplyToSomeoneElse(conversation[0]) == True):
             link = self.getRepliedToLink(conversation[0], "Tweet")
             if (link == ""):
@@ -407,13 +412,16 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def run(self):
+    def run(self, path = ""):
         dictOfKeywords = Utilities.getKeywords()
         dictCategorizedConvs = self.initializeResults(dictOfKeywords)
         listOfMembers = Utilities.loadCongressMembers()
-        resultsFolder = Utilities.getMostRecentResultsFolder()
+        if (path == ""):
+            resultsFolder = Utilities.getMostRecentResultsFolder()
+        else:
+            resultsFolder = path
         self.logger.log("Analyzing results for " + resultsFolder)
-        listOfAllTweets = Utilities.loadTweets(1)
+        listOfAllTweets = Utilities.loadTweets(resultsFolder)
         
         
         for member in listOfMembers:

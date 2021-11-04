@@ -23,6 +23,8 @@ TEMPLATE_INDEX_RESULTS_FILE_NAME = "template-index-of-results.html"
 
 CUSTOM_HTTP_HEADER = {"User-Agent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Mobile Safari/537.36"}
 
+BYPASS_URL_UNSHORTENER = False
+
 ###############################################################################
 ###############################################################################
 
@@ -281,7 +283,7 @@ def getMostRecentResultsFolder():
     filesAndFolders = os.listdir(OUTPUT_FOLDER)
     filesAndFolders.sort(reverse=True)
     for item in filesAndFolders:
-        if (item == "logs"):
+        if (item == "logs") or (item == "test"):
             continue
         
         p = pathlib.Path(OUTPUT_FOLDER + item)
@@ -292,28 +294,17 @@ def getMostRecentResultsFolder():
 ###############################################################################
 ###############################################################################
 
-def getTweetFileNames(numberOfDays):
-    # TODO: handle weekly, make sure oldest file is first in the list
-    
-    RESULTS_FOLDER = getMostRecentResultsFolder()
-    allFileNames = os.listdir(RESULTS_FOLDER)
+def loadTweets(path):
+    allFileNames = os.listdir(path)
     allFileNames.sort()
     
     tweetFileNames = []
     for fileName in allFileNames:
         if ("Tweets" in fileName) and (".txt" in fileName):
-            tweetFileNames.append(RESULTS_FOLDER + fileName)
+            tweetFileNames.append(path + fileName)
     
-    return tweetFileNames
-
-###############################################################################
-###############################################################################
-
-def loadTweets(numberOfDays):
     listOfAllTweets = []
-    fileNames = getTweetFileNames(numberOfDays)
-    
-    for fileName in fileNames:
+    for fileName in tweetFileNames:
         fileLines = open(fileName, "r", encoding="utf-8").readlines()
         for line in fileLines:
             listOfAllTweets.append(line.strip())
@@ -392,6 +383,10 @@ def saveHTMLResults(folder, filename, html):
 ###############################################################################
 
 def unshortenURL(url):
+    # This is when testing new keywords and we don't want to wait
+    if (BYPASS_URL_UNSHORTENER == True):
+        return url, ""
+    
     time.sleep(1) # be nice to Twitter
     realURL = ""
     message = ""

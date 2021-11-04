@@ -41,6 +41,7 @@ illegal settlement
 Home Demoli
 House Demoli
 West Bank
+WestBank
 Judea
 ^Samaria
 Zionism
@@ -61,6 +62,10 @@ btselem
 b'tselem
 jstreet
 ^J Street
+NSO Group
+Pegasus+Spyware
+Sheikh+Jarrah
+Silwan
 
 Category=Apartheid
 Keywords=Apartheid
