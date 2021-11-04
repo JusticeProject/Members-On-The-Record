@@ -16,6 +16,7 @@ An automated search for U.S. Congress members' Tweets about the Middle East. Twe
 ## Instructions for installing/running
 * Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be placed in the file config/config.txt.
 * Install [Python](https://www.python.org/downloads/)
+* If uploading results to GitHub or Google Drive then config/config.txt and src/UploadResults.py should be updated.
 * Run the following commands at a command prompt to finish the installation:
 ```bash
 pip install tweepy
@@ -24,13 +25,13 @@ pip install PyGithub
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
-python Automate.py
+python .\Automate.py
 ```
 
 ## TODO list
 * Detect repeat Tweets when a member of Congress posts the same message from multiple accounts.
 * When a member of Congress posts an image, it could contain a letter with lots of text that could be searched. It seems [this Python project](https://pypi.org/project/pytesseract/) could be used to handle the image-to-text conversion.
-* Continuously improve the search algorithm and the list of keyword search terms to ensure only relevant Tweets are in the results and are categorized properly.
+* Continuously improve the search algorithm and the list of keyword search terms to ensure only relevant Tweets are in the results and are categorized properly. Example: Tweets about the country Jordan may not be accurately found because Jordan is such a common name.
 * Automate the search of Congress Members' floor speeches and press releases by scraping the data from senate.gov, house.gov, and congress.gov while obeying the sites' robots.txt files.
 
 ## Thanks
