@@ -255,9 +255,13 @@ class AnalyzeTweets:
         
         for j in range(0, len(tweet.list_of_referenced_tweets), 2):
             if (tweet.list_of_referenced_tweets[j] == "replied_to"):
-                link = "https://twitter.com/i/web/status/" + str(tweet.list_of_referenced_tweets[j+1].id)
-                result = self.createLinkWithTooltip(link, visibleText, tweet.list_of_referenced_tweets[j+1].text)
-                return result
+                refTweet = tweet.list_of_referenced_tweets[j+1]
+                if (refTweet.text == ""):
+                    return "" # the tweet was probably deleted, so don't link to it
+                else:
+                    link = "https://twitter.com/i/web/status/" + str(refTweet.id)
+                    result = self.createLinkWithTooltip(link, visibleText, refTweet.text)
+                    return result
 
         return ""
 
