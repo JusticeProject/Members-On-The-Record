@@ -175,6 +175,11 @@ class AnalyzeTweets:
         if (self.leftHighlightSpan in text):
             return text
         
+        # first grab the links, if we screw up the links by adding the highlights then
+        # we need to restore them
+        preHighlightLinks = self.findAllLinks(text)
+        
+        highlightedText = text
         for word in wordsToHighlight:
             if (word[0] == '^'):
                 instances = re.findall(word[1:], text)
@@ -189,9 +194,27 @@ class AnalyzeTweets:
             uniqueInstances = list(set(instances)) # converting to a set then to a list will remove duplicates
             for instance in uniqueInstances:
                 replacement = self.leftHighlightSpan + instance + self.rightHighlightSpan
-                text = re.sub(instance, replacement, text)
+                highlightedText = re.sub(instance, replacement, highlightedText)
         
-        return text
+                # Grab the links again to see if they have been affected
+                postHighlightLinks = self.findAllLinks(highlightedText)
+                
+                # If the links are seriously affected then don't continue, just return the un-highlighted text
+                if (len(preHighlightLinks) != len(postHighlightLinks)):
+                    self.logger.log("Warning: highlighting screws up the links, removing the highlights")
+                    return text
+            
+                # Restore any links while keeping the other words highlighted. Example:
+                # https://t.co/FXQMlIranHDYw6  could get accidently changed to
+                # https://t.co/FXQMl<span class="MOTR_Keyword">Iran</span>HDYw6
+                for link in postHighlightLinks:
+                    if ("<span" in link):
+                        self.logger.log("Warning: highlighting modified a link, trying to fix the link: " + link)
+                        linkBeginning = link.split("<span")[0]
+                        highlightedText = highlightedText.replace(linkBeginning + replacement, 
+                                                                  linkBeginning + instance)
+        
+        return highlightedText
 
     ###########################################################################
     ###########################################################################
