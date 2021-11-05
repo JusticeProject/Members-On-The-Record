@@ -18,6 +18,10 @@ Tip:
 If a tweet matches the first category and second category, it will be placed under the first category in 
 the results, i.e. a tweet will not be placed more than once in the results file.
 
+Tip:
+Some keywords are reserved, so if you use them you might have problems. This includes the standard html tags and
+words specific to this project: MOTR
+
 Category=Israel - Palestine
 Keywords=Israel
 Netanyahu
@@ -32,7 +36,6 @@ Palestin
 Hamas
 Abbas
 Fatah
-settler
 Tel Aviv
 Jerusalem
 Ramallah
@@ -62,6 +65,7 @@ btselem
 b'tselem
 jstreet
 ^J Street
+ifnotnow
 NSO Group
 Pegasus+Spyware
 Sheikh+Jarrah
@@ -71,6 +75,25 @@ Tom Nides
 Thomas Nides
 Thomas R. Nides
 Ambassador Nides
+David Friedman
+David M Friedman
+@DavidM_Friedman
+@friedman_center
+The Friedman Center
+Dead Sea
+Nablus
+jpost
+ngo monitor
+ngomonitor
+ngo-monitor
+knesset
+al haq
+alhaq
+al-haq
+addameer
+972 Magazine
+@972mag
+haaretz
 
 Category=Apartheid
 Keywords=Apartheid
@@ -143,8 +166,15 @@ bin Salman
 Category=Jordan
 Keywords=Jordanian
 King+Abdullah
+Prince+Hussein
+Dina+Kawar
 ^Amman
 Jordan River
+JoEmbassyUS
+USEmbassyJordan
+Hashemite
+Jordan Embassy
+Jordan Ambassador
 
 Category=Iraq
 Keywords=Baghdad
@@ -263,3 +293,9 @@ Isis's
 Yazidi
 Yezidi
 Jihad
+Arab Spring
+ArabSpring
+Islamic+Republic
+DAWN MENA
+@DAWNmenaorg
+settler
