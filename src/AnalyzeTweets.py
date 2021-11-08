@@ -235,8 +235,9 @@ class AnalyzeTweets:
                     state = member.state
                     if (member.district.strip() != ""):
                         state += "-" + member.district
+                    url = member.url
         
-        return name,party,state
+        return name,party,state,url
 
     ###########################################################################
     ###########################################################################
@@ -397,7 +398,7 @@ class AnalyzeTweets:
         formattedTweet = Classes.FormattedTweet()
     
         formattedTweet.id = conversation[0].id
-        name,party,state = self.getInfoOfTweeter(conversation[0].author_id, userLookupDict, listOfMembers)
+        name,party,state,url = self.getInfoOfTweeter(conversation[0].author_id, userLookupDict, listOfMembers)
         formattedTweet.name = name
         if (party == "") or (state == ""):
             formattedTweet.partyAndState = ""
@@ -455,6 +456,65 @@ class AnalyzeTweets:
 
     ###########################################################################
     ###########################################################################
+    
+    def findOriginalConv(self, conversation, listOfConvs):
+        if (conversation[0].list_of_referenced_tweets == None):
+            return None
+        
+        for i in range(0, len(conversation[0].list_of_referenced_tweets), 2):
+            if (conversation[0].list_of_referenced_tweets[i] == "retweeted"):
+                refTweetId = conversation[0].list_of_referenced_tweets[i+1].id
+                
+                for potentialConv in listOfConvs:
+                    if (refTweetId == potentialConv[0].id):
+                        return potentialConv
+            
+        return None
+
+    ###########################################################################
+    ###########################################################################
+    
+    def convsBelongToSamePerson(self, conv1, conv2, userLookupDict, listOfMembers):
+        name1,party1,state1,url1 = self.getInfoOfTweeter(conv1[0].author_id, userLookupDict, listOfMembers)
+        name2,party2,state2,url2 = self.getInfoOfTweeter(conv2[0].author_id, userLookupDict, listOfMembers)
+        
+        if (name1 == name2) and (party1 == party2) and (state1 == state2) and (url1 == url2):
+            return True,name1
+        else:
+            return False,""
+    
+    ###########################################################################
+    ###########################################################################
+    
+    def removeRepeatConvs(self, dictCategorizedConvs, userLookupDict, listOfMembers):
+        convsToRemove = []
+        
+        for category in dictCategorizedConvs.keys():
+            for conversation in dictCategorizedConvs[category]:
+                if (self.isConvARetweet(conversation) == True):
+                    
+                    # check if this tweet and the original tweet are in this same category
+                    originalConv = self.findOriginalConv(conversation, dictCategorizedConvs[category])
+                    if (originalConv != None):
+                        
+                        # check if this tweet and the original tweet are from author id's that belong to the same person
+                        same,name = self.convsBelongToSamePerson(conversation, originalConv, userLookupDict, listOfMembers)
+                        if (same == True):
+                    
+                            # check if this conversation only has one tweet
+                            if (len(conversation) == 1):
+                                self.logger.log("Removing duplicate conv from " + name + ": "+ conversation[0].text)
+                                self.logger.log("Keeping original conv from " + name + ": " + originalConv[0].text)
+                                convsToRemove.append( (category, conversation) )
+                
+        # delete the conversations that are repeats
+        for category,conv in convsToRemove:
+            dictCategorizedConvs[category].remove(conv)
+        
+        return dictCategorizedConvs
+
+    ###########################################################################
+    ###########################################################################
 
     def run(self, path = ""):
         dictOfKeywords = Utilities.getKeywords()
@@ -492,6 +552,10 @@ class AnalyzeTweets:
         
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
         userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
+        
+        # Look for repeats, i.e. when someone retweets the same message from multiple accounts that they own
+        self.logger.log("Looking for repeats")
+        dictCategorizedConvs = self.removeRepeatConvs(dictCategorizedConvs, userLookupDict, listOfMembers)
         
         # Now we will format each conversation so that it will appear neatly in the HTML results.
         dictFormattedConvs = {}

@@ -68,6 +68,7 @@ jstreet
 ^J Street
 ifnotnow
 NSO Group
+NSOGroup
 Pegasus+Spyware
 Sheikh+Jarrah
 Silwan
@@ -91,6 +92,7 @@ knesset
 _IDF
 shin bet
 mossad
+Blue Wolf
 al haq
 alhaq
 al-haq
