@@ -22,6 +22,7 @@ exclude=@mlfudge
 exclude=@repfitzpatrick
 exclude=@MarthaRobyAL
 
+include=@VoteBetty
 include=@rep_stansbury
 include=@repellzey
 include=@SFRCdems

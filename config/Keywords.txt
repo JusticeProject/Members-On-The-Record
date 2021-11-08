@@ -52,8 +52,9 @@ Zionist
 Golan+Heights
 HR+2590
 H.R.+2590
-two state solution
-two-state solution
+two state+solution
+two-state+solution
+twostate+solution
 aipac
 UNRWA
 boycott+divest+sanction
@@ -87,6 +88,9 @@ ngo monitor
 ngomonitor
 ngo-monitor
 knesset
+_IDF
+shin bet
+mossad
 al haq
 alhaq
 al-haq
