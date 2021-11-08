@@ -38,6 +38,8 @@ Utilities.BYPASS_URL_UNSHORTENER = True
 if (os.path.exists("../output/test/") == False):
     os.mkdir("../output/test/")
 
+logger.prepareLogFile("../output/test/")
+
 for folder in folders:
     print("\ntesting folder " + folder)
     resultsPath = instance.run(folder)
