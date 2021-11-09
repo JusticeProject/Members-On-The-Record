@@ -203,6 +203,7 @@ class RetrieveTweets:
         logMessage = Utilities.saveUserLookup(userLookupDict)
         self.logger.log(logMessage)
     
+        numHandlesRetrieved = 0
         numTweetsSaved = 0
         tweetsToSave = []
         for member in listOfMembers:
@@ -234,6 +235,7 @@ class RetrieveTweets:
                     numTweetsSaved += len(tweetsToSave)
                     tweetsToSave = []
     
+                numHandlesRetrieved += 1
                 time.sleep(secsBetweenHandles) # slow down the requests so we don't exceed the rate limit, and to be nice to Twitter
     
         # save any remaining tweets
@@ -248,6 +250,7 @@ class RetrieveTweets:
         self.logger.log(logMessage)
         
         self.logger.log("Retrieved a total of " + str(numTweetsSaved) + " tweets")
+        self.logger.log("Finished retrieving tweets for " + str(numHandlesRetrieved) + " handles")
         return numTweetsSaved
 
 ###############################################################################
@@ -257,5 +260,5 @@ if __name__ == "__main__":
     logger = Utilities.Logger()
     logger.prepareLogFile()
     instance = RetrieveTweets(logger)
-    instance.run()
+    instance.run(2, 7)
     
