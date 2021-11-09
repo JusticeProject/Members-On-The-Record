@@ -24,6 +24,7 @@ words specific to this project: MOTR
 
 Category=Israel - Palestine
 Keywords=Israel
+^Isreal
 Netanyahu
 Naftali+Bennett
 Benny+Gantz
@@ -35,7 +36,9 @@ Abraham+accord
 Palestin
 Hamas
 Abbas
+Shtayyeh
 Fatah
+PFLP
 Tel Aviv
 Jerusalem
 Ramallah
@@ -191,7 +194,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax
 Erdogan
 Erdoğan
 Ankara

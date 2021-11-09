@@ -24,6 +24,7 @@ exclude=@MarthaRobyAL
 
 include=@VoteBetty
 include=@rep_stansbury
+include=@MelanieforNM
 include=@repellzey
 include=@SFRCdems
 include=@SenateForeign
