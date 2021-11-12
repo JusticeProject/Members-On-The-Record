@@ -171,6 +171,7 @@ Arabian
 Riyadh
 Khashog
 _MBS
+^MBS's
 bin Salman
 
 Category=Jordan
@@ -241,7 +242,6 @@ Al-Jazeera
 
 Category=Oman
 Keywords=^Oman
-_Oman
 Muscat
 
 Category=Yemen
