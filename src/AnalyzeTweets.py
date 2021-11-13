@@ -14,7 +14,7 @@ class AnalyzeTweets:
     def __init__(self, logger):
         self.logger = logger
         self.resultsFolder = ""
-        self.scanImages = True
+        self.scanImages = False
         
         # These HTML tags are used to highlight the keyword in the Tweet.
         self.leftHighlightSpan = '<span class="MOTR_Keyword">'
@@ -612,7 +612,7 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def run(self, path = "", scanImages = True):
+    def run(self, path = "", scanImages = False):
         dictOfKeywords = Utilities.getKeywords()
         dictCategorizedConvs = self.initializeResults(dictOfKeywords)
         listOfMembers = Utilities.loadCongressMembers()
@@ -689,5 +689,5 @@ class AnalyzeTweets:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = AnalyzeTweets(logger)
-    instance.run("", True)
+    instance.run("", False)
     
