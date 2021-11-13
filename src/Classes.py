@@ -54,14 +54,14 @@ class TwitterUser:
         self.idStr = idStr
         self.mostRecentTweetId = mostRecentTweetId
         
-        if (website == None):
+        if (website is None):
             self.website = ""
         else:
             self.website = website
         
         self.name = name.replace(",", "") # if there are commas in the name it could cause problems
         
-        if (description == None):
+        if (description is None):
             self.description = ""
         else:
             cleanDescription = description.replace("\r", "")
@@ -128,26 +128,30 @@ class Tweet:
             self.list_of_attachments = line_split[7].split(";")
         
         self.text = line_split[8].strip()
+        # make all single quotes standard, sometimes the funny single quotes appear
+        if ("’" in self.text) or ("ʻ" in self.text):
+            self.text = self.text.replace("’", "'")
+            self.text = self.text.replace("ʻ", "'")
         
     def __str__(self):
         totalString = str(self.id) + "," + str(self.author_id) + "," + \
-            self.created_at + "," + str(self.conversation_id)  + ","
+            self.created_at + "," + str(self.conversation_id) + ","
         
-        if (self.in_reply_to_user_id == None):
+        if (self.in_reply_to_user_id is None):
             totalString += "-1,"
         else:
             totalString = totalString + str(self.in_reply_to_user_id) + ","
         
         totalString = totalString + str(self.is_ref_tweet) + ","
         
-        if (self.list_of_referenced_tweets == None) or (len(self.list_of_referenced_tweets) == 0):
+        if (self.list_of_referenced_tweets is None) or (len(self.list_of_referenced_tweets) == 0):
             totalString += ","
         else:
             for item in self.list_of_referenced_tweets:
                 totalString = totalString + str(item) + ";"
             totalString = totalString[:-1] + "," # get rid of last ; and add a ,
         
-        if (self.list_of_attachments == None) or (len(self.list_of_attachments) == 0):
+        if (self.list_of_attachments is None) or (len(self.list_of_attachments) == 0):
             totalString += ","
         else:
             for item in self.list_of_attachments:

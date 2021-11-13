@@ -61,6 +61,10 @@ twostate+solution
 aipac
 UNRWA
 boycott+divest+sanction
+ben+jerry+divest
+ben+jerry+boycott
+unilever+boycott
+unilever+divest
 Gaza
 _BDS
 BDS's
@@ -247,6 +251,8 @@ Muscat
 Category=Yemen
 Keywords=Yemen
 Houthi
+Sanaa
+Sana'a
 
 Category=Horn of Africa
 Keywords=Somalia

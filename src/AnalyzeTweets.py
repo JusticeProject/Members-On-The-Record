@@ -177,11 +177,6 @@ class AnalyzeTweets:
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     combinedText = combinedText + " " + tweet.list_of_attachments[i+1]
 
-        # make all single quotes standard, sometimes the funny single quotes appear
-        if ("’" in combinedText) or ("ʻ" in combinedText):
-            regexQuote = re.compile(r"[’ʻ]")
-            combinedText = regexQuote.sub("'", combinedText)
-        
         # We won't be searching in the links for keywords. Twitter uses a URL shortener and sometimes
         # keywords like BDS will appear in the link. Ex: https://t.co/Lo4kVBDsop
         links = self.findAllLinks(combinedText)
