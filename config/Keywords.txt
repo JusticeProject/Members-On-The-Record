@@ -308,4 +308,6 @@ ArabSpring
 Islamic+Republic
 DAWN MENA
 @DAWNmenaorg
-settler
+settler+attack
+settler+violence
+settler+violent
