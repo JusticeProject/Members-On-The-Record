@@ -1,4 +1,8 @@
 import re
+import os.path
+import time
+import requests
+import pytesseract
 
 import Utilities
 import Classes
@@ -9,10 +13,16 @@ import Classes
 class AnalyzeTweets:
     def __init__(self, logger):
         self.logger = logger
+        self.resultsFolder = ""
+        self.scanImages = False
         
         # These HTML tags are used to highlight the keyword in the Tweet.
         self.leftHighlightSpan = '<span class="MOTR_Keyword">'
         self.rightHighlightSpan = '</span>'
+
+        # These HTML tags are used to show the text captured from images/photos
+        self.leftBlockQuote = ' [Text captured from image:<blockquote style="white-space: pre-line">'
+        self.rightBlockQuote = "</blockquote>]"
         
         # This dictionary will keep track of the phrases to highlight for each conversation id.
         # Key = conversation id, value = phrase.
@@ -20,13 +30,13 @@ class AnalyzeTweets:
 
     ###########################################################################
     ###########################################################################
-    
+
     def getTweetsForHandle(self, listOfAllTweets, handle):
         # Split tweets into two categories, userTweets are the actual user's Tweets, the refTweets
         # are the Tweets that the user is referencing (quoted Tweet, retweet, a Tweet they are replying to)
         dictUserTweets = {}
         dictRefTweets = {}
-        
+
         foundHandle = False
         for line in listOfAllTweets:
             if (line[0] == "#"):
@@ -38,17 +48,60 @@ class AnalyzeTweets:
             elif (foundHandle == True):
                 tweet = Classes.Tweet()
                 tweet.setData(line)
-    
+
                 if (tweet.is_ref_tweet == True):
                     dictRefTweets[tweet.id] = tweet
                 else:
                     dictUserTweets[tweet.id] = tweet
-        
+
         return dictUserTweets,dictRefTweets
 
     ###########################################################################
     ###########################################################################
+    
+    def downloadPhoto(self, url):
+        filename = url.rsplit("/", 1)[1]
+        localPath = self.resultsFolder + filename
+        
+        if (os.path.exists(localPath)):
+            self.logger.log(localPath + " already exists")
+            return localPath
+        else:
+            time.sleep(1) # be nice to Twitter, don't hit them too fast with lots of requests for downloads
 
+            for retries in range(0, 3):
+                try:
+                    seconds = retries + 2  # first 2 seconds, then 3, then 4
+                    req = requests.get(url, headers=Utilities.CUSTOM_HTTP_HEADER, timeout=seconds)
+                    file = open(localPath, "wb")
+                    file.write(req.content)
+                    file.close()
+                    self.logger.log("After " + str(retries) + " retries, image saved to " + localPath)
+                    return localPath
+                except BaseException as e:
+                    if (retries < 2):
+                        time.sleep(1)
+                    else:
+                        self.logger.log("Warning: could not download photo: " + str(e.args))
+            
+        return ""
+
+    ###########################################################################
+    ###########################################################################
+
+    def convertPhotoToText(self, localPath):
+        if (localPath == ""):
+            return ""
+        else:
+            pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+            text = pytesseract.image_to_string(localPath)
+            text = text.replace("<", "") # clean up the text, these symbols could cause problems with html formatting
+            text = text.replace(">", "")
+            return text
+
+    ###########################################################################
+    ###########################################################################
+    
     # Group all Tweets with the same conversation id into one list of Tweets. This will
     # be referred to as the "conversation"
     def getConversation(self, firstTweet, dictUserTweets, dictRefTweets):
@@ -63,21 +116,32 @@ class AnalyzeTweets:
         for tweet in conversation:
             if (tweet.id in dictUserTweets.keys()):
                 dictUserTweets.pop(tweet.id)
-        
-        # insert refTweets in the right place, don't pop from the dict because they may be needed more than once
+
         for tweet in conversation:
-            if (tweet.list_of_referenced_tweets == None):
-                continue
-            
-            for i in range(0, len(tweet.list_of_referenced_tweets), 2):
-                tweetId = tweet.list_of_referenced_tweets[i+1]
-                # we cannot rely on this tweetId being in the ref tweets because the user may have deleted their tweet
-                if (tweetId in dictRefTweets.keys()):
-                    refTweet = dictRefTweets[tweetId]
-                else:
-                    refTweet = Classes.Tweet() # just use an empty tweet
-                tweet.list_of_referenced_tweets[i+1] = refTweet
-        
+            # insert refTweets in the right place, don't pop from the dict because they may be needed more than once
+            if (tweet.list_of_referenced_tweets is not None):
+                for i in range(0, len(tweet.list_of_referenced_tweets), 2):
+                    tweetId = tweet.list_of_referenced_tweets[i+1]
+                    # we cannot rely on this tweetId being in the ref tweets because the user may have deleted their tweet
+                    if (tweetId in dictRefTweets.keys()):
+                        refTweet = dictRefTweets[tweetId]
+                    else:
+                        refTweet = Classes.Tweet() # just use an empty tweet
+                    tweet.list_of_referenced_tweets[i+1] = refTweet
+
+            # If any photos were attached to the tweets then grab them. We will not include photos attached to
+            # ref tweets. We are mainly trying to get released statements from the Congress members.
+            if (self.scanImages) and (tweet.list_of_attachments is not None):
+                for i in range(0, len(tweet.list_of_attachments), 2):
+                    if (tweet.list_of_attachments[i] == "photo"):
+                        url = tweet.list_of_attachments[i+1]
+                        localPath = self.downloadPhoto(url)
+                        capturedText = self.convertPhotoToText(localPath)
+                        tweet.list_of_attachments[i+1] = capturedText
+                    else:
+                        # for all other types of attachments we won't search the text
+                        tweet.list_of_attachments[i + 1] = ""
+
         return conversation
 
     ###########################################################################
@@ -102,13 +166,17 @@ class AnalyzeTweets:
         
         for tweet in conversation:
             combinedText = combinedText + " " + tweet.text
-            
-            if (tweet.list_of_referenced_tweets == None):
-                continue
-            
-            for i in range(0, len(tweet.list_of_referenced_tweets), 2):
-                combinedText = combinedText + " " + tweet.list_of_referenced_tweets[i+1].text
-        
+
+            # Add text from each ref tweet
+            if (tweet.list_of_referenced_tweets is not None):
+                for i in range(0, len(tweet.list_of_referenced_tweets), 2):
+                    combinedText = combinedText + " " + tweet.list_of_referenced_tweets[i+1].text
+                    
+            # Add text from each attachment (image)
+            if (self.scanImages) and (tweet.list_of_attachments is not None):
+                for i in range(0, len(tweet.list_of_attachments), 2):
+                    combinedText = combinedText + " " + tweet.list_of_attachments[i+1]
+
         # make all single quotes standard, sometimes the funny single quotes appear
         if ("’" in combinedText) or ("ʻ" in combinedText):
             regexQuote = re.compile(r"[’ʻ]")
@@ -157,13 +225,18 @@ class AnalyzeTweets:
         # Do the highlighting for each Tweet and the referenced Tweets
         for tweet in conversation:
             tweet.text = self.highlightKeywords(tweet.text, phrase)
-            
-            if (tweet.list_of_referenced_tweets == None):
-                continue
-            
-            for i in range(0, len(tweet.list_of_referenced_tweets), 2):
-                refTweet = tweet.list_of_referenced_tweets[i+1]
-                refTweet.text = self.highlightKeywords(refTweet.text, phrase)
+
+            # highlight text in any referenced tweets
+            if (tweet.list_of_referenced_tweets is not None):
+                for i in range(0, len(tweet.list_of_referenced_tweets), 2):
+                    refTweet = tweet.list_of_referenced_tweets[i+1]
+                    refTweet.text = self.highlightKeywords(refTweet.text, phrase)
+
+            # highlight text in any attachments
+            if (self.scanImages) and (tweet.list_of_attachments is not None):
+                for i in range(0, len(tweet.list_of_attachments), 2):
+                    highlightedText = self.highlightKeywords(tweet.list_of_attachments[i+1], phrase)
+                    tweet.list_of_attachments[i+1] = highlightedText
         return
 
     ###########################################################################
@@ -205,7 +278,7 @@ class AnalyzeTweets:
                     return text
             
                 # Restore any links while keeping the other words highlighted. Example:
-                # https://t.co/FXQMlIranHDYw6  could get accidently changed to
+                # https://t.co/FXQMlIranHDYw6  could get accidentally changed to
                 # https://t.co/FXQMl<span class="MOTR_Keyword">Iran</span>HDYw6
                 for link in postHighlightLinks:
                     if ("<span" in link):
@@ -243,7 +316,7 @@ class AnalyzeTweets:
     ###########################################################################
 
     def isConvARetweet(self, conv):
-        if (conv[0].list_of_referenced_tweets == None):
+        if (conv[0].list_of_referenced_tweets is None):
             return False
         
         for i in range(0, len(conv[0].list_of_referenced_tweets), 2):
@@ -274,7 +347,7 @@ class AnalyzeTweets:
     ###########################################################################
     
     def getRepliedToLink(self, tweet, visibleText):
-        if (tweet.list_of_referenced_tweets == None):
+        if (tweet.list_of_referenced_tweets is None):
             return ""
         
         for j in range(0, len(tweet.list_of_referenced_tweets), 2):
@@ -343,23 +416,24 @@ class AnalyzeTweets:
         foundAttachments = False
         typeOfAttachment = "media"
         
-        if (tweet.list_of_referenced_tweets != None):
+        if (tweet.list_of_referenced_tweets is not None):
             for i in range(0, len(tweet.list_of_referenced_tweets), 2):
                 if (tweet.list_of_referenced_tweets[i] == "quoted"):
                     foundQuoted = True
                     quotedTweet = tweet.list_of_referenced_tweets[i+1]
         
-        if (tweet.list_of_attachments != None):
+        if (tweet.list_of_attachments is not None):
             foundAttachments = True
             for i in range(0, len(tweet.list_of_attachments), 2):
                 typeOfAttachment = tweet.list_of_attachments[i].replace("_", " ") # e.g. animated_gif
+                typeOfAttachment = typeOfAttachment.replace("photo", "image")
         
         links = self.findAllLinks(tweet.text)
         text = tweet.text
     
         # link to the quoted tweet will be at the end of the tweet text
         if (foundQuoted == True) and (len(links) > 0):
-            if (type(quotedTweet) == type(1)):
+            if (isinstance(quotedTweet, int)):
                 quotedTweet = Classes.Tweet() # user may have deleted their quoted tweet, so set it to a blank
             text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet", True, quotedTweet.text)
             links.pop(-1)
@@ -382,7 +456,7 @@ class AnalyzeTweets:
                 self.logger.log("Warning: failed to parse url " + link)
                 continue # we couldn't parse the url properly, leave it as is and move on to the next link
             elif ("twitter.com" in realURL) and ("/photo/" in realURL):
-                descr = "Link to photo"
+                descr = "Link to image"
             elif ("twitter.com" in realURL) and ("/video/" in realURL):
                 descr = "Link to video"
             else:
@@ -451,14 +525,36 @@ class AnalyzeTweets:
         # if there are multiple hyperlinks in a row, put a little space in between for readability
         regexLinkSpace = re.compile(r"</a>\s*<a")
         formattedTweet.text = regexLinkSpace.sub(r"</a> &nbsp; <a", formattedTweet.text)
-    
+
+        # Gather all of the text from the attachments.
+        attachmentText = ""
+        for tweet in conversation:
+            if (self.scanImages) and (tweet.list_of_attachments is not None):
+                for i in range(0, len(tweet.list_of_attachments), 2):
+                    attachmentText = attachmentText + " " + tweet.list_of_attachments[i+1]
+        # Replace single newlines with a space, keep multi-newlines. We find a pattern with char-newline-char
+        # and replace it with char-space-char. Groups \1 and \3 are the chars that we need to keep in the string.
+        #attachmentText = re.sub(r"(\S)(\n)(\S)", r"\1 \3", attachmentText)
+
+        # We will include the attachment text if it meets certain conditions
+        if (len(attachmentText) < 200):
+            if (self.leftHighlightSpan not in formattedTweet.text) and (self.leftHighlightSpan in attachmentText):
+                formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
+        elif (len(attachmentText) < 5000):
+            if (self.leftHighlightSpan in attachmentText):
+                formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
+        else:
+            if (self.leftHighlightSpan not in formattedTweet.text) and (self.leftHighlightSpan in attachmentText):
+                # TODO: should I trim the text? ex: "... blah blah keyword blah blah ..."
+                formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
+
         return formattedTweet
 
     ###########################################################################
     ###########################################################################
     
     def findOriginalConv(self, conversation, listOfConvs):
-        if (conversation[0].list_of_referenced_tweets == None):
+        if (conversation[0].list_of_referenced_tweets is None):
             return None
         
         for i in range(0, len(conversation[0].list_of_referenced_tweets), 2):
@@ -495,7 +591,7 @@ class AnalyzeTweets:
                     
                     # check if this tweet and the original tweet are in this same category
                     originalConv = self.findOriginalConv(conversation, dictCategorizedConvs[category])
-                    if (originalConv != None):
+                    if (originalConv is not None):
                         
                         # check if this tweet and the original tweet are from author id's that belong to the same person
                         same,name = self.convsBelongToSamePerson(conversation, originalConv, userLookupDict, listOfMembers)
@@ -503,7 +599,7 @@ class AnalyzeTweets:
                     
                             # check if this conversation only has one tweet
                             if (len(conversation) == 1):
-                                self.logger.log("Removing duplicate conv from " + name + ": "+ conversation[0].text)
+                                self.logger.log("Removing duplicate conv from " + name + ": " + conversation[0].text)
                                 self.logger.log("Keeping original conv from " + name + ": " + originalConv[0].text)
                                 convsToRemove.append( (category, conversation) )
                 
@@ -516,16 +612,17 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def run(self, path = ""):
+    def run(self, path = "", scanImages = False):
         dictOfKeywords = Utilities.getKeywords()
         dictCategorizedConvs = self.initializeResults(dictOfKeywords)
         listOfMembers = Utilities.loadCongressMembers()
         if (path == ""):
-            resultsFolder = Utilities.getMostRecentResultsFolder()
+            self.resultsFolder = Utilities.getMostRecentResultsFolder()
         else:
-            resultsFolder = path
-        self.logger.log("Analyzing results for " + resultsFolder)
-        listOfAllTweets = Utilities.loadTweets(resultsFolder)
+            self.resultsFolder = path
+        self.logger.log("Analyzing results for " + self.resultsFolder)
+        self.scanImages = scanImages
+        listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
         
         
         for member in listOfMembers:
@@ -535,6 +632,7 @@ class AnalyzeTweets:
         
                 # Get the Tweets for one Twitter handle at a time.
                 dictUserTweets,dictRefTweets = self.getTweetsForHandle(listOfAllTweets, handle)
+                #self.logger.log("Analyzing " + str(len(dictUserTweets)) + " tweets for handle " + handle)
                 
                 # Go through each Tweet and remove it from the dictionary so we don't process it again.
                 # Tweets from the same conversation will be removed from the dictionary in getConversation.
@@ -545,7 +643,7 @@ class AnalyzeTweets:
                     conversation = self.getConversation(currentTweet, dictUserTweets, dictRefTweets)
                     
                     category = self.categorizeConversation(conversation, dictOfKeywords)
-                    if (category != None):
+                    if (category is not None):
                         dictCategorizedConvs[category].append(conversation)
         
         self.logger.log("Finished categorizing conversations")
@@ -577,10 +675,10 @@ class AnalyzeTweets:
         
         # Use jinja2 to put our results into the HTML template
         htmlTemplate = Utilities.getHTMLTemplate()
-        dateSortable = re.findall(r"/(20\S+)/", resultsFolder)[0]
+        dateSortable = re.findall(r"/(20\S+)/", self.resultsFolder)[0]
         dateReadable = Utilities.convertDateToReadable(dateSortable)
         htmlResults = htmlTemplate.render(date=dateReadable, dictFormattedConvs=dictFormattedConvs, listOfMessages=listOfMessages)
-        logMessage, resultsFileName = Utilities.saveHTMLResults(resultsFolder, dateSortable + ".html", htmlResults)
+        logMessage, resultsFileName = Utilities.saveHTMLResults(self.resultsFolder, dateSortable + ".html", htmlResults)
         self.logger.log(logMessage)
         
         return resultsFileName
@@ -591,5 +689,5 @@ class AnalyzeTweets:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = AnalyzeTweets(logger)
-    instance.run()
+    instance.run("", False)
     
