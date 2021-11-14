@@ -388,62 +388,14 @@ def unshortenURL(url):
         return url, ""
     
     time.sleep(1) # be nice to Twitter
-    realURL = ""
-    message = ""
     
-    # Try to get the URL through automatic redirects.
-    for retries in range(0,3):
-        try:
-            session = requests.Session()
-            resp = session.head(url, allow_redirects=True, timeout=5)
-            return resp.url, message
-        except BaseException as e:
-            strError = str(e.args)
-            if ("hostname" in strError) and ("doesn" in strError):
-                # SSL cert problems. We'll try to unshorten the URL with a different method.
-                break
-            else:
-                time.sleep(3)
-    
-    # The automatic redirect method didn't work. Let's try to manually get the redirect URL 
-    # and then try to connect to it.
+    # Visit Twitter's shortened url, grab the html data, and look for the redirect url.
     redirectURL = getRedirectURL(url)
     if (redirectURL == ""):
         message = "Warning: could not find a redirect URL for " + url
         return "", message
-    
-    # this is our latest guess for the real URL, although there might be another redirect involved
-    realURL = redirectURL
-    
-    # Try to connect to the redirect/real URL. This works for most sites but I have found one or two
-    # that still stubbornly refuse to work, not sure why yet.
-    for retries in range(0,3):
-        try:
-            req = urllib.request.Request(realURL, headers=CUSTOM_HTTP_HEADER)
-            conn = urllib.request.urlopen(req, timeout=5)
-            realURL = conn.geturl()
-            conn.close()
-            return realURL, message                
-        except BaseException:
-            time.sleep(3)
-    
-    # Last try, do another method to connect to the redirect/real URL. I might be able to replace the 
-    # above method with this one.
-    for retries in range(0,3):
-        try:
-            result = requests.get(realURL, headers=CUSTOM_HTTP_HEADER, timeout=5)
-            realURL = result.url
-            result.close()
-            return realURL, message
-        except BaseException as e:
-            strError = str(e.args)
-            message = "Warning: exception with retries=" + str(retries) \
-                + " for last url unshorten method: " + url + " -> " \
-                + realURL + " exception info: " + strError
-            if (retries <= 1):
-                time.sleep(3)
-    
-    return realURL, message
+    else:
+        return redirectURL, ""
 
 ###############################################################################
 ###############################################################################
