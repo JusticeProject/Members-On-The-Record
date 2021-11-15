@@ -5,7 +5,8 @@ Symbols:
         contain the word Thanksgiving
 _ If a word should be matched as a separate word. Ex: _Jew will match Jew but not Jewel
   A space is just a space. Ex: Tel Aviv is treated as one word and will match Tel Aviv but will not match TelAviv
-Currently there is no support for two symbols side-by-side: ^_BDS will only recognize the first symbol.
+Currently there is no full support for two symbols side-by-side such as ^_ (however +_ does work). If it is desired to
+use this then it is recommended that you manually test these before adding them.
 
 Tip:
 Keywords without the ^ symbol will be automatically converted to lower case when searching, 
@@ -292,7 +293,7 @@ Drone+strike
 Reaper+drone
 drone+kill
 drone+destroy
-drone+hit
+drone+_hit
 drone+terror
 drone+bomb
 drone+military
