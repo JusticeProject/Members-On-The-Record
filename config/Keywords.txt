@@ -43,7 +43,8 @@ PFLP
 Tel Aviv
 Jerusalem
 Ramallah
-Hebron
+^Hebron
+_Hebron
 illegal settlement
 Home Demoli
 House Demoli
