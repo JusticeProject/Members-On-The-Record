@@ -29,8 +29,6 @@ class RetrieveTweets:
             self.logger.log("received username=" + item.username + ", id=" + str(item.id))
             idStrDict[item.username.lower()] = str(item.id)
         
-        client = 0 # "disconnect"
-        
         return idStrDict
 
     ###########################################################################
@@ -43,11 +41,14 @@ class RetrieveTweets:
             if (userLookupDict[handle].idStr == ""):
                 self.logger.log("need idStr for handle " + handle)
                 handlesToLookup.append(handle)
-    
+
         if (len(handlesToLookup) > 0):
-            idStrDict = self.doMultipleUserLookup(handlesToLookup)
-            for handle in idStrDict.keys():
-                userLookupDict[handle].idStr = idStrDict[handle]
+            for i in range(0, len(handlesToLookup), 100):
+                # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
+                batch = handlesToLookup[i:i + 100]
+                idStrDict = self.doMultipleUserLookup(batch)
+                for handle in idStrDict.keys():
+                    userLookupDict[handle].idStr = idStrDict[handle]
             
     ###########################################################################
     ###########################################################################
@@ -66,7 +67,7 @@ class RetrieveTweets:
         tweet.is_ref_tweet = isRefTweet
     
         # convert list of dicts to just a list for referenced tweets
-        if (rawTweet.referenced_tweets != None):
+        if (rawTweet.referenced_tweets is not None):
             tweet.list_of_referenced_tweets = []
             for refTweet in rawTweet.referenced_tweets:
                 tweet.list_of_referenced_tweets.append(refTweet["type"])
@@ -75,7 +76,7 @@ class RetrieveTweets:
             tweet.list_of_referenced_tweets = None
     
         # grab the list of media keys, we will get the media later
-        if (rawTweet.attachments != None) and ("media_keys" in rawTweet.attachments.keys()):
+        if (rawTweet.attachments is not None) and ("media_keys" in rawTweet.attachments.keys()):
             tweet.list_of_attachments = rawTweet.attachments["media_keys"]
         else:
             tweet.list_of_attachments = None
@@ -89,7 +90,7 @@ class RetrieveTweets:
 
     def replaceMediaKeysWithData(self, listOfTweets, listOfMedia):
         for tweet in listOfTweets:
-            if (tweet.list_of_attachments == None):
+            if (tweet.list_of_attachments is None):
                 continue
             
             newAttachmentsList = []
@@ -112,15 +113,15 @@ class RetrieveTweets:
 
     def retrieveTweetsForUser(self, user, defaultStartTime):
         tweet_fields_list = ["id",
-                            "text",
-                            "author_id",
-                            "created_at",
-                            "conversation_id",
-                            "in_reply_to_user_id",
-                            "referenced_tweets",
-                            "attachments"]
+                             "text",
+                             "author_id",
+                             "created_at",
+                             "conversation_id",
+                             "in_reply_to_user_id",
+                             "referenced_tweets",
+                             "attachments"]
         expansions_list = ["referenced_tweets.id", "attachments.media_keys"]
-        media_fields_list=["media_key","type","url"]
+        media_fields_list = ["media_key","type","url"]
     
         cred = Utilities.loadCredentials()
         client = tweepy.Client(cred.Bearer_Token)
@@ -147,7 +148,7 @@ class RetrieveTweets:
     
         for response in responses:
             
-            if (response.data == None):
+            if (response.data is None):
                 continue
             
             # get the tweets in the data, the oldest tweet will always be in the front of the list

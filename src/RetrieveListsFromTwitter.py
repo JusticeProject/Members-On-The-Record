@@ -1,3 +1,4 @@
+import time
 import tweepy
 import Classes
 import Utilities
@@ -36,10 +37,8 @@ class RetrieveListsFromTwitter():
             fullName = item.name
             bio = item.description
             
-            user = Classes.TwitterUser(handle, idStr, "0", website, fullName, bio)
+            user = Classes.TwitterUser(handle, idStr, 0, website, fullName, bio)
             listOfUsers.append(user)
-        
-        client = 0 # "disconnect"
         
         return listOfUsers
     
@@ -68,41 +67,52 @@ class RetrieveListsFromTwitter():
                 self.logger.log("adding handle @" + handle)
         
         if (len(handlesToLookup) > 0):
-            listOfUsers = self.doMultipleUserLookup(handlesToLookup)
-            for user in listOfUsers:
-                dictOfTwitterUsers[user.twitterHandle] = user
+            for i in range(0, len(handlesToLookup), 100):
+                # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
+                batch = handlesToLookup[i:i+100]
+                results = self.doMultipleUserLookup(batch)
+                for user in results:
+                    dictOfTwitterUsers[user.twitterHandle] = user
 
     ###########################################################################
     ###########################################################################
 
     def getTwitterUsersFromTwitterLists(self, listIDNumbers):
-        dictOfTwitterUsers = {}
+        user_fields_list = ["username",
+                            "id",
+                            "url",
+                            "name",
+                            "description"]
+
+        # using v2 of the Twitter API
         cred = Utilities.loadCredentials()
-        
-        # using v1.1 of the Twitter API
-        auth = tweepy.OAuthHandler(cred.API_Key, cred.API_Secret_Key)
-        auth.set_access_token(cred.Access_Token, cred.Access_Token_Secret)
-        api = tweepy.API(auth, retry_count=3, retry_delay=10, wait_on_rate_limit=True)
-        
+        client = tweepy.Client(cred.Bearer_Token)
+
+        dictOfTwitterUsers = {}
+
         for listID in listIDNumbers:
-            # count is the number of results to try and retrieve per page,
-            # we will try to do it all in one page
             self.logger.log("retrieving members for list id " + str(listID))
-            users = api.get_list_members(list_id=listID, count=1000)
+            responses = tweepy.Paginator(client.get_list_members, str(listID), user_fields=user_fields_list)
+
+            users = []
+
+            for response in responses:
+                if (response.data is not None):
+                    users += response.data
+                time.sleep(1) # don't exceed the rate limit
+
             self.logger.log("retrieved " + str(len(users)) + " users")
             
             for user in users:
-                handle = user.screen_name.lower()
-                idStr = user.id_str
+                handle = user.username.lower()
+                idStr = str(user.id)
                 website = user.url
                 fullName = user.name
                 bio = user.description
                 
-                data = Classes.TwitterUser(handle, idStr, "0", website, fullName, bio)
+                data = Classes.TwitterUser(handle, idStr, 0, website, fullName, bio)
                 dictOfTwitterUsers[handle] = data
-        
-        api = 0 # "disconnect"
-        
+
         return dictOfTwitterUsers
 
     ###########################################################################
