@@ -160,7 +160,7 @@ Hormuz
 
 Category=Egypt
 Keywords=Egypt
-Cairo
+Cairo~greenecounty~Greene County
 el-Sisi
 al-Sisi
 _Sisi
@@ -201,7 +201,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway
 Erdogan
 Erdoğan
 Ankara
