@@ -24,6 +24,7 @@ pip install tweepy
 pip install jinja2
 pip install PyGithub
 pip install pytesseract
+pip install beautifulsoup4
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
