@@ -426,20 +426,34 @@ def getDomainOfURL(url):
 # helper function for retrieving all HTML data from a website
 
 def getWebsiteHTML(url):
+    if (url == ""):
+        return ""
+
     for retries in range(0, 3):
         try:
             # some websites don't like Python scripts scraping their data, so use a custom 
             # header which makes us look like an innocent web browser
             req = urllib.request.Request(url, headers=CUSTOM_HTTP_HEADER)
-            conn = urllib.request.urlopen(req, timeout=5)
+            conn = urllib.request.urlopen(req, timeout=3)
             data = conn.read()
             conn.close()
             decodedData = data.decode('utf-8')
             return decodedData
         except:
             if (retries <= 1):
-                time.sleep(3)
-    
+                time.sleep(1)
+
+    for retries in range(0, 3):
+        try:
+            # some websites don't work with urlopen, so we'll try the requests library
+            result = requests.get(url, headers=CUSTOM_HTTP_HEADER, timeout=3)
+            decodedData = result.text
+            result.close()
+            return decodedData
+        except:
+            if (retries <= 1):
+                time.sleep(1)
+
     return ""
 
 ###############################################################################

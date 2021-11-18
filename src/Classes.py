@@ -100,6 +100,10 @@ class Tweet:
         self.list_of_referenced_tweets = []
         self.list_of_attachments = []
         self.text = ""
+
+        # These items are not stored to a file
+        self.keyword_phrase = ""
+        self.dictLinks = {} # key = shortened url, value = tuple of (full url, title of website)
         
     def setData(self, lineOfData):
         line_split = lineOfData.split(",", 8)
