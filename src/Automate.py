@@ -62,7 +62,7 @@ while True:
         if (numTweetsRetrieved > 0):
             # search every Tweet we just retrieved and look for the keywords
             step4 = AnalyzeTweets.AnalyzeTweets(logger)
-            resultsFilePath = step4.run()
+            resultsFilePath = step4.run("", True, False)
         
             # upload results to GitHub and Google Drive
             step5 = UploadResults.UploadResults(logger)

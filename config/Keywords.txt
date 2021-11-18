@@ -201,7 +201,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive
 Erdogan
 Erdoğan
 Ankara

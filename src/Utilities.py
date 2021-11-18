@@ -394,8 +394,13 @@ def unshortenURL(url):
     if (redirectURL == ""):
         message = "Warning: could not find a redirect URL for " + url
         return "", message
-    else:
-        return redirectURL, ""
+
+    # Clean up some of the links. Example:
+    # https://www.google.com/amp/s/www.cbsnews.com/amp/news/child-tax-credit-november-2021-fifth-check-deposit/
+    if ("/www.google.com/amp/s/" in redirectURL):
+        redirectURL = redirectURL.replace("www.google.com/amp/s/", "")
+
+    return redirectURL, ""
 
 ###############################################################################
 ###############################################################################
