@@ -36,7 +36,8 @@ iron-dome
 Abraham+accord
 Palestin
 Hamas
-Abbas
+Mahmoud+Abbas
+President+Abbas
 Shtayyeh
 Fatah
 PFLP
@@ -196,7 +197,6 @@ Jordan Ambassador
 Category=Iraq
 Keywords=Baghdad
 Iraq
-Persian+Gulf
 Fallujah
 
 Category=Turkey
@@ -221,7 +221,7 @@ Western+Sahara
 
 Category=Algeria
 Keywords=Algeria
-Algiers
+Algiers~Alice Harte
 
 Category=Tunisia
 Keywords=Tunisia
@@ -233,6 +233,7 @@ United+Arab+Emirate
 Emirati
 Abu+Dhabi
 ^UAE
+^U.A.E.
 
 Category=Kuwait
 Keywords=Kuwait
@@ -290,6 +291,7 @@ Category=Other - Middle East
 Keywords=Middle East
 MiddleEast
 Mideast
+Persian+Gulf
 Drone+strike
 Reaper+drone
 drone+kill
@@ -319,3 +321,4 @@ DAWN MENA
 settler+attack
 settler+violence
 settler+violent
+Abbas

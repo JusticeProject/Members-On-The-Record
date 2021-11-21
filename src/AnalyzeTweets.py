@@ -445,7 +445,7 @@ class AnalyzeTweets:
     ###########################################################################
 
     def cleanLink(self, link):
-        pattern = re.compile(r"(.)[.,!\"')+]*$") # look for .,!"')+ chars at the right side of the string...
+        pattern = re.compile(r"(.)[.,…!\"')+]*$") # look for .,…!"')+ chars at the right side of the string...
         link = pattern.sub(r"\1", link) # ...and remove them while keeping group 1
         return link
     
@@ -627,11 +627,18 @@ class AnalyzeTweets:
             title = conversation[0].dictLinks[link][1]
             if (self.leftHighlightSpan in title):
                 # replace any regex metacharacters in the url with . which makes the next regex easier
-                realURL = re.sub(r"[$^*+?{}\[\]\\|()]", ".", realURL)
-                # find all text for the url from <a to </a>, group 2 is the visible text which we won't be keeping,
-                # instead of group 2 we will insert the website title which has been highlighted with keywords
-                regex = re.compile(r'(<a.*?' + realURL + '">)' + r'(.*?)(</a>)')
-                formattedTweet.text = regex.sub(r"\1" + title + r"\3", formattedTweet.text)
+                realUrlNoMeta = re.sub(r"[$^*+?{}\[\]\\|()]", ".", realURL)
+                # find all text for the url from <a to </a>
+                regex = re.compile(r'(<a.*?' + realUrlNoMeta + '">)' + r'(.*?)(</a>)')
+                found = regex.search(formattedTweet.text)
+                if found:
+                    # insert the website title which has been highlighted with keywords, while keeping the
+                    # surrounding hyperlink tags
+                    formattedTweet.text = regex.sub(r"\1" + title + r"\3", formattedTweet.text)
+                else:
+                    # It did not find the link with the tags. It might be in the tooltip, so just
+                    # replace the link with (Highlighted Title)
+                    formattedTweet.text = formattedTweet.text.replace(link, "(" + title + ")")
 
         return formattedTweet
 
