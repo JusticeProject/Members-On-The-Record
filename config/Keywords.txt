@@ -138,7 +138,7 @@ Keywords=Syria
 Damascus
 
 Category=Lebanon
-Keywords=Lebanon
+Keywords=Lebanon~Mt. Lebanon
 Lebanese
 Beirut
 Hezbollah
@@ -201,7 +201,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr
 Erdogan
 Erdoğan
 Ankara
