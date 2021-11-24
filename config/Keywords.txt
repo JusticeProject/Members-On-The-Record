@@ -79,7 +79,9 @@ jstreet
 ifnotnow
 NSO Group
 NSOGroup
+NSO-Group
 Pegasus+Spyware
+Pegasus+Software
 Sheikh+Jarrah
 Silwan
 @TomNides

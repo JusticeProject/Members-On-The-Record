@@ -445,7 +445,7 @@ class AnalyzeTweets:
     ###########################################################################
 
     def cleanLink(self, link):
-        pattern = re.compile(r"(.)[.,…!\"')+]*$") # look for .,…!"')+ chars at the right side of the string...
+        pattern = re.compile(r"(.)[.,…!\"”')+]*$") # look for .,…!"”')+ chars at the right side of the string...
         link = pattern.sub(r"\1", link) # ...and remove them while keeping group 1
         return link
     
