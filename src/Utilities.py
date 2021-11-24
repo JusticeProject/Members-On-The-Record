@@ -1,3 +1,4 @@
+import platform
 import os
 import os.path
 import pathlib
@@ -21,32 +22,68 @@ KEYWORDS_FILE_NAME = "../config/Keywords.txt"
 TEMPLATE_HTML_FILE_NAME = "template.html"
 TEMPLATE_INDEX_RESULTS_FILE_NAME = "template-index-of-results.html"
 
-CUSTOM_HTTP_HEADER = {
+BYPASS_URL_UNSHORTENER = False
+
+CUSTOM_HTTP_HEADER_WIN10 = {
+    "Sec-Ch-Ua":'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+    "Device-Memory":"8",
+    "Sec-Ch-Ua-Model":'',
+    "Rtt":"50",
+    "Sec-Ch-Ua-Mobile":"?0",
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+    "Sec-Ch-Ua-Arch":'"x86"',
+    "Viewport-Width":"1536",
+    "Sec-Ch-Ua-Full-Version":'"96.0.4664.45"',
+    "Sec-Ch-Ua-Platform-Version":'"10.0.0"',
+    "Dpr":"1.25",
+    "Downlink":"10",
+    "Ect":"4g",
+    "Sec-Ch-Prefers-Color-Scheme":"light",
+    "Sec-Ch-Ua-Platform":'"Windows"',
     "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "Sec-Fetch-Site":"none",
+    "Sec-Fetch-Mode":"navigate",
+    "Sec-Fetch-Dest":"document",
     "Accept-Encoding":"gzip, deflate",
     "Accept-Language":"en-US,en;q=0.9",
-    "Device-Memory":"8",
-    "Downlink":"10",
-    "Dpr":"1.25",
-    "Ect":"4g",
-    "Rtt":"50",
-    "Sec-Ch-Prefers-Color-Scheme":"light",
-    "Sec-Ch-Ua":'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
-    "Sec-Ch-Ua-Arch":'"x86"',
-    "Sec-Ch-Ua-Full-Version":'"96.0.4664.45"',
-    "Sec-Ch-Ua-Mobile":"?0",
-    "Sec-Ch-Ua-Model":'""',
-    "Sec-Ch-Ua-Platform":'"Windows"',
-    "Sec-Ch-Ua-Platform-Version":'"10.0.0"',
-    "Sec-Fetch-Dest":"document",
-    "Sec-Fetch-Mode":"navigate",
-    "Sec-Fetch-Site":"none",
     "Sec-Fetch-User":"?1",
-    "Upgrade-Insecure-Requests":"1",
-    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36"
+    "Upgrade-Insecure-Requests":"1"
 }
 
-BYPASS_URL_UNSHORTENER = False
+CUSTOM_HTTP_HEADER_WIN7 = {
+    "Sec-Ch-Ua":'" Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
+    "Device-Memory":"4",
+    "Sec-Ch-Ua-Model":'',
+    "Rtt":"50",
+    "Sec-Ch-Ua-Mobile":"?0",
+    "User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+    "Sec-Ch-Ua-Arch":'"x86"',
+    "Viewport-Width":"1600",
+    "Sec-Ch-Ua-Full-Version":'"96.0.4664.45"',
+    "Sec-Ch-Ua-Platform-Version":'"0.0.0"',
+    "Dpr":"1",
+    "Downlink":"4.15",
+    "Ect":"4g",
+    "Sec-Ch-Prefers-Color-Scheme":"light",
+    "Sec-Ch-Ua-Platform":'"Windows"',
+    "Accept":"application/signed-exchange;v=b3;q=0.7,*/*;q=0.8",
+    "Sec-Fetch-Site":"none",
+    "Sec-Fetch-Mode":"navigate",
+    "Sec-Fetch-Dest":"document",
+    "Accept-Encoding":"gzip, deflate",
+    "Accept-Language":"en-US,en;q=0.9",
+    "Sec-Fetch-User":"?1",
+    "Upgrade-Insecure-Requests":"1"
+}
+
+###############################################################################
+###############################################################################
+
+def getCustomHeader():
+    if ("Windows-10" in platform.platform()):
+        return CUSTOM_HTTP_HEADER_WIN10
+    else:
+        return CUSTOM_HTTP_HEADER_WIN7
 
 ###############################################################################
 ###############################################################################
@@ -461,7 +498,7 @@ def getWebsiteHTML(url):
     #     try:
     #         # some websites don't like Python scripts scraping their data, so use a custom
     #         # header which makes us look like an innocent web browser
-    #         req = urllib.request.Request(url, headers=CUSTOM_HTTP_HEADER)
+    #         req = urllib.request.Request(url, headers=getCustomHeader())
     #         conn = urllib.request.urlopen(req, timeout=3)
     #         data = conn.read()
     #         conn.close()
@@ -474,7 +511,7 @@ def getWebsiteHTML(url):
     for retries in range(0, 3):
         try:
             # some websites don't work with urlopen, so we'll try the requests library
-            result = requests.get(url, headers=CUSTOM_HTTP_HEADER, timeout=3)
+            result = requests.get(url, headers=getCustomHeader(), timeout=3)
             decodedData = result.text
             result.close()
             return decodedData

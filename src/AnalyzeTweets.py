@@ -70,7 +70,7 @@ class AnalyzeTweets:
             for retries in range(0, 3):
                 try:
                     seconds = retries + 2  # first 2 seconds, then 3, then 4
-                    req = requests.get(url, headers=Utilities.CUSTOM_HTTP_HEADER, timeout=seconds)
+                    req = requests.get(url, headers=Utilities.getCustomHeader(), timeout=seconds)
                     file = open(localPath, "wb")
                     file.write(req.content)
                     file.close()
@@ -96,6 +96,31 @@ class AnalyzeTweets:
             text = text.replace("<", "") # clean up the text, these symbols could cause problems with html formatting
             text = text.replace(">", "")
             return text
+
+    ###########################################################################
+    ###########################################################################
+
+    def getWebsiteTitle(self, shortenedURL, url):
+        # if link points to twitter or a pdf, don't download it
+        if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
+            return ""
+
+        html = Utilities.getWebsiteHTML(url)
+        parsed_html = BeautifulSoup(html, 'html.parser')
+        if (parsed_html.title is not None) and (parsed_html.title.string is not None):
+            title = parsed_html.title.string
+
+            # if they think we are a robot then they won't give us the correct title, so return ""
+            if ("Access denied" in title) and ("used Cloudflare to restrict access" in title):
+                return ""
+            elif ("Are you a robot?" in title):
+                return ""
+            else:
+                return title
+
+        # if we get this far then we couldn't figure it out
+        self.logger.log("Warning: no title found: " + shortenedURL + " " + url + " " + str(len(html)))
+        return ""
 
     ###########################################################################
     ###########################################################################
@@ -133,30 +158,8 @@ class AnalyzeTweets:
             if (realURL == ""):
                 continue
 
-            # if link points to twitter or a pdf, don't download it
-            if ("twitter.com" in realURL) or (realURL[-4:] == ".pdf") or (".pdf?" in realURL) or (".spotify.com" in realURL):
-                conversation[0].dictLinks[link] = (realURL, "")
-            else:
-                html = Utilities.getWebsiteHTML(realURL)
-                parsed_html = BeautifulSoup(html, 'html.parser')
-                if (parsed_html.title is None) or (parsed_html.title.string is None):
-                    domain = Utilities.getDomainOfURL(realURL)
-                    if ("bloomberg" in domain):
-                        # some websites are not static (they use javascript to display the content), for example:
-                        # https://news.bloomberglaw.com/daily-labor-report/nlrbs-salt-mine-tweet-decision-under-fire-at-third-circuit
-                        pattern = re.compile(r'title.*?content="(.*?)">')
-                        results = pattern.findall(html)
-                        if (len(results) > 0):
-                            title = results[0]
-                            self.logger.log("Notice: regex found title " + title)
-                            conversation[0].dictLinks[link] = (realURL, title)
-                else:
-                    conversation[0].dictLinks[link] = (realURL, parsed_html.title.string)
-
-            # if we get this far and the link has not been added to the dict, then we couldn't figure it out
-            if (link not in conversation[0].dictLinks.keys()):
-                self.logger.log("Warning: no title found: " + link + " " + realURL + " " + str(len(html)))
-                conversation[0].dictLinks[link] = (realURL, "")
+            title = self.getWebsiteTitle(link, realURL)
+            conversation[0].dictLinks[link] = (realURL, title)
 
     ###########################################################################
     ###########################################################################
