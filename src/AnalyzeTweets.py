@@ -1,9 +1,9 @@
 import re
 import os.path
 import time
+import copy
 import requests
 import pytesseract
-from bs4 import BeautifulSoup
 
 import Utilities
 import Classes
@@ -15,7 +15,7 @@ class AnalyzeTweets:
     def __init__(self, logger):
         self.logger = logger
         self.resultsFolder = ""
-        self.scanWebsiteTitles = True
+        self.dictOfURLs = {}
         self.scanImages = False
         
         # These HTML tags are used to highlight the keyword in the Tweet.
@@ -100,66 +100,25 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def getWebsiteTitle(self, shortenedURL, url):
-        # if link points to twitter or a pdf, don't download it
-        if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
-            return ""
-
-        html = Utilities.getWebsiteHTML(url)
-        parsed_html = BeautifulSoup(html, 'html.parser')
-        if (parsed_html.title is not None) and (parsed_html.title.string is not None):
-            title = parsed_html.title.string
-
-            # if they think we are a robot then they won't give us the correct title, so return ""
-            if ("Access denied" in title) and ("used Cloudflare to restrict access" in title):
-                return ""
-            elif ("Are you a robot?" in title):
-                return ""
-            else:
-                return title
-
-        # if we get this far then we couldn't figure it out
-        self.logger.log("Warning: no title found: " + shortenedURL + " " + url + " " + str(len(html)))
-        return ""
-
-    ###########################################################################
-    ###########################################################################
-
-    # Look for all links in the tweet's text field. We will unshorten each url that is outside of Twitter.com,
-    # and we will also grab the website's title because there may be keywords in there.
-    def gatherLinksAndTitles(self, conversation, tweet):
+    # Look for all links in the tweet. The website's title may have keywords in there.
+    def gatherLinksAndTitles(self, tweet):
         # If it is a retweet, the tweet text is shortened so we may get a bad link. Thus in the case of a retweet
         # we won't look at the user's tweet, we will only look at the ref tweet's links.
         if (tweet.is_ref_tweet == False) and (self.isConvARetweet([tweet])):
             return
 
-        quotedTweet = self.getQuotedTweet(tweet)
-        typeOfAttachment = self.getAttachment(tweet)
+        # if this tweet does not have any links then there is nothing to do
+        if (tweet.list_of_urls is None):
+            return
 
-        links = self.findAllLinks(tweet.text)
-
-        if (quotedTweet is not None) and (len(links) > 0):
-            links.pop(-1)
-        if (typeOfAttachment is not None) and (len(links) > 0):
-            links.pop(-1)
-
-        # all links that are found will be stored in the dict in the first tweet of the conversation
-        for link in links:
-            link = self.cleanLink(link)
-
+        # all links that are found will be stored in the dict
+        for shortened_url in tweet.list_of_urls:
             # if we already have the link in the dict, skip it
-            if (link in conversation[0].dictLinks.keys()):
+            if (shortened_url in tweet.dictLinks):
                 continue
 
-            realURL, message = Utilities.unshortenURL(link)
-            if (message != ""):
-                self.logger.log(message)
-
-            if (realURL == ""):
-                continue
-
-            title = self.getWebsiteTitle(link, realURL)
-            conversation[0].dictLinks[link] = (realURL, title)
+            url_obj = copy.deepcopy(self.dictOfURLs[shortened_url])
+            tweet.dictLinks[shortened_url] = url_obj
 
     ###########################################################################
     ###########################################################################
@@ -180,8 +139,7 @@ class AnalyzeTweets:
                 dictUserTweets.pop(tweet.id)
 
         for tweet in conversation:
-            if (self.scanWebsiteTitles):
-                self.gatherLinksAndTitles(conversation, tweet)
+            self.gatherLinksAndTitles(tweet)
 
             # insert refTweets in the right place, don't pop from the dict because they may be needed more than once
             if (tweet.list_of_referenced_tweets is not None):
@@ -190,8 +148,7 @@ class AnalyzeTweets:
                     # we cannot rely on this tweetId being in the ref tweets because the user may have deleted their tweet
                     if (tweetId in dictRefTweets.keys()):
                         refTweet = dictRefTweets[tweetId]
-                        if (self.scanWebsiteTitles):
-                            self.gatherLinksAndTitles(conversation, refTweet)
+                        self.gatherLinksAndTitles(refTweet)
                     else:
                         refTweet = Classes.Tweet() # just use an empty tweet
                     tweet.list_of_referenced_tweets[i+1] = refTweet
@@ -234,28 +191,27 @@ class AnalyzeTweets:
         for tweet in conversation:
             combinedText = combinedText + " " + tweet.text
 
+            # We won't be searching in the links for keywords. Twitter uses a URL shortener and sometimes
+            # keywords like BDS will appear in the link. Ex: https://t.co/Lo4kVBDsop
+            # ...but we will search the website titles.
+            for shortened_url in tweet.dictLinks:
+                combinedText = combinedText.replace(shortened_url, " ")
+                combinedText = combinedText + " " + tweet.dictLinks[shortened_url].title
+
             # Add text from each ref tweet
             if (tweet.list_of_referenced_tweets is not None):
                 for i in range(0, len(tweet.list_of_referenced_tweets), 2):
                     refTweet = tweet.list_of_referenced_tweets[i+1]
                     combinedText = combinedText + " " + refTweet.text
+                    for shortened_url in refTweet.dictLinks:
+                        combinedText = combinedText.replace(shortened_url, " ")
+                        combinedText = combinedText + " " + refTweet.dictLinks[shortened_url].title
                     
             # Add text from each attachment (image)
             if (self.scanImages) and (tweet.list_of_attachments is not None):
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     combinedText = combinedText + " " + tweet.list_of_attachments[i+1]
 
-        # We won't be searching in the links for keywords. Twitter uses a URL shortener and sometimes
-        # keywords like BDS will appear in the link. Ex: https://t.co/Lo4kVBDsop
-        links = self.findAllLinks(combinedText)
-        for link in links:
-            link = self.cleanLink(link)
-            combinedText = combinedText.replace(link, " ")
-
-        # ...but we will search the website titles for all the links that we found
-        for link in conversation[0].dictLinks:
-            combinedText = combinedText + " " + conversation[0].dictLinks[link][1]
-        
         combinedTextLower = combinedText.lower()
         
         # Search the combined text of the conversation, use the categories from Keywords.txt
@@ -293,23 +249,25 @@ class AnalyzeTweets:
         for tweet in conversation:
             tweet.text = self.highlightKeywords(tweet.text, phrase)
 
+            # highlight keywords in website titles
+            for shortened_url in tweet.dictLinks:
+                highlightedTitle = self.highlightKeywords(tweet.dictLinks[shortened_url].title, phrase)
+                tweet.dictLinks[shortened_url].title = highlightedTitle
+
             # highlight text in any referenced tweets
             if (tweet.list_of_referenced_tweets is not None):
                 for i in range(0, len(tweet.list_of_referenced_tweets), 2):
                     refTweet = tweet.list_of_referenced_tweets[i+1]
                     refTweet.text = self.highlightKeywords(refTweet.text, phrase)
+                    for shortened_url in refTweet.dictLinks:
+                        highlightedTitle = self.highlightKeywords(refTweet.dictLinks[shortened_url].title, phrase)
+                        refTweet.dictLinks[shortened_url].title = highlightedTitle
 
             # highlight text in any attachments
             if (self.scanImages) and (tweet.list_of_attachments is not None):
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     highlightedText = self.highlightKeywords(tweet.list_of_attachments[i+1], phrase)
                     tweet.list_of_attachments[i+1] = highlightedText
-
-        # highlight keywords in website titles
-        for link in conversation[0].dictLinks:
-            url = conversation[0].dictLinks[link][0]
-            highlightedTitle = self.highlightKeywords(conversation[0].dictLinks[link][1], phrase)
-            conversation[0].dictLinks[link] = (url, highlightedTitle)
 
         return
 
@@ -443,18 +401,28 @@ class AnalyzeTweets:
         regex = re.compile(r"(https://\S+)")
         links = regex.findall(text)
         return links
+    
+    ###########################################################################
+    ###########################################################################
+
+    def getUrlsForConv(self, conversation):
+        convUrls = {}
+
+        for tweet in conversation:
+            for shortened_url in tweet.dictLinks:
+                convUrls[shortened_url] = tweet.dictLinks[shortened_url]
+
+            if (tweet.list_of_referenced_tweets is not None):
+                for i in range(0, len(tweet.list_of_referenced_tweets), 2):
+                    refTweet = tweet.list_of_referenced_tweets[i + 1]
+                    for shortened_url in refTweet.dictLinks:
+                        convUrls[shortened_url] = refTweet.dictLinks[shortened_url]
+
+        return convUrls
 
     ###########################################################################
     ###########################################################################
 
-    def cleanLink(self, link):
-        pattern = re.compile(r"(.)[.,…!\"”')+]*$") # look for .,…!"”')+ chars at the right side of the string...
-        link = pattern.sub(r"\1", link) # ...and remove them while keeping group 1
-        return link
-    
-    ###########################################################################
-    ###########################################################################
-    
     # Tooltips will be used to display the text of a quoted Tweet or a reply in the
     # conversation. These are Tweets from other users, not the main user we are dealing
     # with. The link will be available for clicking on as well so you can see the 
@@ -506,47 +474,29 @@ class AnalyzeTweets:
     ###########################################################################
 
     # For each link in the Tweet's text we will make it an HTML hyperlink.
-    def formatLinksInText(self, tweet, dictLinks):
-        quotedTweet = self.getQuotedTweet(tweet)
-        typeOfAttachment = self.getAttachment(tweet)
-        
-        links = self.findAllLinks(tweet.text)
+    def formatLinksInText(self, tweet):
         text = tweet.text
-    
-        # link to the quoted tweet will be at the end of the tweet text
-        if (quotedTweet is not None) and (len(links) > 0):
-            text = self.convertLink(text, links[-1], links[-1], "Link to quoted tweet", True, quotedTweet.text)
-            links.pop(-1)
-        
-        if (typeOfAttachment is not None) and (len(links) > 0):
-            text = self.convertLink(text, links[-1], links[-1], "Link to " + typeOfAttachment)
-            links.pop(-1)
-    
-        # handle any remaining links, these links could be in the middle of the text and run into other text, thus
-        # creating a bad link, but we'll try our best to clean it up
-        for link in links:
-            link = self.cleanLink(link)
 
-            # don't unshorten again if we already have them
-            if (link in dictLinks.keys()):
-                realURL = dictLinks[link][0]
+        for shortened_url in tweet.dictLinks:
+            url_obj = tweet.dictLinks[shortened_url]
+            expanded_url = url_obj.expanded_url
+
+            if ("twitter.com" in expanded_url) and ("/photo/" in expanded_url):
+                text = self.convertLink(text, shortened_url, expanded_url, "Link to image")
+            elif ("twitter.com" in expanded_url) and ("/video/" in expanded_url):
+                text = self.convertLink(text, shortened_url, expanded_url, "Link to video")
+            elif ("twitter.com" in expanded_url) and ("/status/" in expanded_url): # TODO: could do regex and look for twitter.com/blah/status/123434
+                quotedTweet = self.getQuotedTweet(tweet)
+                if (quotedTweet is None):
+                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet")
+                else:
+                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
             else:
-                realURL, message = Utilities.unshortenURL(link)
-                if (message != ""):
-                    self.logger.log(message)
-            
-            domain = Utilities.getDomainOfURL(realURL)
-    
-            if (domain == ""):
-                self.logger.log("Warning: failed to parse url " + link)
-                continue # we couldn't parse the url properly, leave it as is and move on to the next link
-            elif ("twitter.com" in realURL) and ("/photo/" in realURL):
-                descr = "Link to image"
-            elif ("twitter.com" in realURL) and ("/video/" in realURL):
-                descr = "Link to video"
-            else:
-                descr = "Link to " + domain
-            text = self.convertLink(text, link, realURL, descr)
+                domain = Utilities.getDomainOfURL(expanded_url)
+                if (domain == ""):
+                    self.logger.log("Warning: failed to parse url " + expanded_url)
+                else:
+                    text = self.convertLink(text, shortened_url, expanded_url, "Link to " + domain)
     
         return text
     
@@ -581,22 +531,22 @@ class AnalyzeTweets:
                     # Double check we have a valid ref tweet that was received from Twitter
                     refTweet = conversation[0].list_of_referenced_tweets[i+1]
                     if (refTweet.text == ""):
-                        formattedTweet.text = self.formatLinksInText(conversation[0], conversation[0].dictLinks)
+                        formattedTweet.text = self.formatLinksInText(conversation[0])
                     else:
-                        formattedTweet.text = self.formatLinksInText(refTweet, conversation[0].dictLinks)
+                        formattedTweet.text = self.formatLinksInText(refTweet)
         elif (self.isTweetAReplyToSomeoneElse(conversation[0]) == True) or (self.isTweetAReplyToThemself(conversation[0]) == True):
             link = self.getRepliedToLink(conversation[0], "Tweet")
             if (link == ""):
                 formattedTweet.type = "Tweet"
             else:
                 formattedTweet.type = "In reply to " + link
-            formattedTweet.text = self.formatLinksInText(conversation[0], conversation[0].dictLinks)
+            formattedTweet.text = self.formatLinksInText(conversation[0])
         else:
             if (len(conversation) == 1):
                 formattedTweet.type = "Tweet"
             else:
                 formattedTweet.type = "Twitter thread"
-            formattedTweet.text = self.formatLinksInText(conversation[0], conversation[0].dictLinks)
+            formattedTweet.text = self.formatLinksInText(conversation[0])
     
         # if they replied to their tweet, add the additional tweet(s)
         for i in range(1, len(conversation)):
@@ -604,7 +554,7 @@ class AnalyzeTweets:
             # if they replied to someone else's tweet in between
             if (self.isTweetAReplyToSomeoneElse(currentTweet)):
                 formattedTweet.text += " " + self.getRepliedToLink(currentTweet, "Link to reply")
-            formattedTweet.text += " " + self.formatLinksInText(currentTweet, conversation[0].dictLinks)
+            formattedTweet.text += " " + self.formatLinksInText(currentTweet)
     
         # if there are multiple hyperlinks in a row, put a little space in between for readability
         regexLinkSpace = re.compile(r"</a>\s*<a")
@@ -625,23 +575,25 @@ class AnalyzeTweets:
             formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
 
         # if we found some keywords in a website title, display that title
-        for link in conversation[0].dictLinks.keys():
-            realURL = conversation[0].dictLinks[link][0]
-            title = conversation[0].dictLinks[link][1]
+        allConvUrls = self.getUrlsForConv(conversation)
+        for shortened_url in allConvUrls:
+            expanded_url = allConvUrls[shortened_url].expanded_url
+            title = allConvUrls[shortened_url].title
             if (self.leftHighlightSpan in title):
                 # replace any regex metacharacters in the url with . which makes the next regex easier
-                realUrlNoMeta = re.sub(r"[$^*+?{}\[\]\\|()]", ".", realURL)
+                url_no_meta = re.sub(r"[$^*+?{}\[\]\\|()]", ".", expanded_url)
                 # find all text for the url from <a to </a>
-                regex = re.compile(r'(<a.*?' + realUrlNoMeta + '">)' + r'(.*?)(</a>)')
+                regex = re.compile(r'(<a.*?' + url_no_meta + '">)' + r'(.*?)(</a>)')
                 found = regex.search(formattedTweet.text)
                 if found:
                     # insert the website title which has been highlighted with keywords, while keeping the
-                    # surrounding hyperlink tags
-                    formattedTweet.text = regex.sub(r"\1" + title + r"\3", formattedTweet.text)
+                    # surrounding hyperlink tags. Add a ... after the title because sometimes Twitter doesn't
+                    # give us the full title.
+                    formattedTweet.text = regex.sub(r"\1" + title + r"...\3", formattedTweet.text)
                 else:
                     # It did not find the link with the tags. It might be in the tooltip, so just
                     # replace the link with (Highlighted Title)
-                    formattedTweet.text = formattedTweet.text.replace(link, "(" + title + ")")
+                    formattedTweet.text = formattedTweet.text.replace(shortened_url, "(" + title + ")")
 
         return formattedTweet
 
@@ -707,8 +659,7 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def run(self, path = "", scanWebsiteTitles = True, scanImages = False):
-        self.scanWebsiteTitles = scanWebsiteTitles
+    def run(self, path = "", scanImages = False):
         self.scanImages = scanImages
 
         dictOfKeywords = Utilities.getKeywords()
@@ -720,7 +671,7 @@ class AnalyzeTweets:
             self.resultsFolder = path
         self.logger.log("Analyzing results for " + self.resultsFolder)
         listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
-        
+        self.dictOfURLs = Utilities.loadURLs(self.resultsFolder)
         
         for member in listOfMembers:
             for handle in member.twitter:
@@ -729,7 +680,7 @@ class AnalyzeTweets:
         
                 # Get the Tweets for one Twitter handle at a time.
                 dictUserTweets,dictRefTweets = self.getTweetsForHandle(listOfAllTweets, handle)
-                self.logger.log("Analyzing " + str(len(dictUserTweets)) + " tweets for handle " + handle)
+                #self.logger.log("Analyzing " + str(len(dictUserTweets)) + " tweets for handle " + handle)
                 
                 # Go through each Tweet and remove it from the dictionary so we don't process it again.
                 # Tweets from the same conversation will be removed from the dictionary in getConversation.
@@ -786,5 +737,5 @@ class AnalyzeTweets:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = AnalyzeTweets(logger)
-    instance.run("", True, False)
+    instance.run("", False)
     

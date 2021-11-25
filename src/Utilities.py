@@ -22,8 +22,6 @@ KEYWORDS_FILE_NAME = "../config/Keywords.txt"
 TEMPLATE_HTML_FILE_NAME = "template.html"
 TEMPLATE_INDEX_RESULTS_FILE_NAME = "template-index-of-results.html"
 
-BYPASS_URL_UNSHORTENER = False
-
 CUSTOM_HTTP_HEADER_WIN10 = {
     "Sec-Ch-Ua":'Not A;Brand";v="99", "Chromium";v="96", "Google Chrome";v="96"',
     "Device-Memory":"8",
@@ -473,44 +471,6 @@ def saveHTMLResults(folder, filename, html):
     
     logMessage = "data written to file " + OUTPUT_FILE_NAME
     return logMessage, OUTPUT_FILE_NAME
-
-###############################################################################
-###############################################################################
-
-# TODO: remove this
-def unshortenURL(url):
-    # This is when testing new keywords and we don't want to wait
-    if (BYPASS_URL_UNSHORTENER == True):
-        return url, ""
-
-    time.sleep(1)  # be nice to Twitter
-
-    # Visit Twitter's shortened url, grab the html data, and look for the redirect url.
-    redirectURL = getRedirectURL(url)
-    if (redirectURL == ""):
-        message = "Warning: could not find a redirect URL for " + url
-        return "", message
-
-    # Clean up some of the links. Example:
-    # https://www.google.com/amp/s/www.cbsnews.com/amp/news/child-tax-credit-november-2021-fifth-check-deposit/
-    if ("/www.google.com/amp/s/" in redirectURL):
-        redirectURL = redirectURL.replace("www.google.com/amp/s/", "")
-
-    return redirectURL, ""
-
-###############################################################################
-###############################################################################
-
-# TODO: remove this
-def getRedirectURL(url):
-    html = getWebsiteHTML(url)
-
-    if ("URL=" in html):
-        redirectURL = html.split("URL=")[1]
-        redirectURL = redirectURL.split('"')[0]
-        return redirectURL
-    else:
-        return ""
 
 ###############################################################################
 ###############################################################################
