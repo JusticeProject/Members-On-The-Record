@@ -374,6 +374,41 @@ def loadTweets(path):
 ###############################################################################
 ###############################################################################
 
+def saveURLs(dictOfURLs, scanDate):
+    RESULTS_FOLDER = "../output/" + scanDate
+    if (os.path.exists(RESULTS_FOLDER) == False):
+        os.mkdir(RESULTS_FOLDER)
+
+    URLS_FILENAME = RESULTS_FOLDER + "/URLs.txt"
+
+    # we are appending to the file because we could retrieve tweets more than once
+    file = open(URLS_FILENAME, "a", encoding="utf-8")
+    for shortened_url in dictOfURLs.keys():
+        url_obj = dictOfURLs[shortened_url]
+        file.write(str(url_obj) + "\n")
+    file.close()
+
+    logMessage = "Data written to file " + URLS_FILENAME
+    return logMessage
+
+###############################################################################
+###############################################################################
+
+def loadURLs(path):
+    dictOfURLs = {}
+
+    fileLines = open(path + "URLs.txt", "r", encoding="utf-8").readlines()
+    for line in fileLines:
+        url_obj = Classes.URL()
+        url_obj.setData(line.strip())
+        key = url_obj.shortened_url
+        dictOfURLs[key] = url_obj
+
+    return dictOfURLs
+
+###############################################################################
+###############################################################################
+
 def getKeywords():
     dictOfKeywords = {}
     
@@ -442,13 +477,14 @@ def saveHTMLResults(folder, filename, html):
 ###############################################################################
 ###############################################################################
 
+# TODO: remove this
 def unshortenURL(url):
     # This is when testing new keywords and we don't want to wait
     if (BYPASS_URL_UNSHORTENER == True):
         return url, ""
-    
-    time.sleep(1) # be nice to Twitter
-    
+
+    time.sleep(1)  # be nice to Twitter
+
     # Visit Twitter's shortened url, grab the html data, and look for the redirect url.
     redirectURL = getRedirectURL(url)
     if (redirectURL == ""):
@@ -465,9 +501,10 @@ def unshortenURL(url):
 ###############################################################################
 ###############################################################################
 
-def getRedirectURL(url):    
+# TODO: remove this
+def getRedirectURL(url):
     html = getWebsiteHTML(url)
-    
+
     if ("URL=" in html):
         redirectURL = html.split("URL=")[1]
         redirectURL = redirectURL.split('"')[0]

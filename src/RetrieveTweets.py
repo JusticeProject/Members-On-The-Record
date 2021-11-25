@@ -80,10 +80,31 @@ class RetrieveTweets:
             tweet.list_of_attachments = rawTweet.attachments["media_keys"]
         else:
             tweet.list_of_attachments = None
-        
+
+        # grab the urls if there are any
+        urls = {}
+        if (rawTweet.entities is not None) and ("urls" in rawTweet.entities.keys()):
+            for item in rawTweet.entities["urls"]:
+                shortened_url = item["url"]
+
+                # store the shortened url in the Tweet object
+                if (shortened_url not in tweet.list_of_urls):
+                    tweet.list_of_urls.append(shortened_url)
+
+                # store the shortened url plus the expanded info in URL object, these will be kept in a separate file
+                if (shortened_url not in urls):
+                    url_obj = Classes.URL()
+                    url_obj.shortened_url = shortened_url
+                    url_obj.expanded_url = item["expanded_url"]
+                    if ("title" in item.keys()):
+                        url_obj.title = item["title"]
+                    if ("description" in item.keys()):
+                        url_obj.description = item["description"]
+                    urls[shortened_url] = url_obj
+
         tweet.text = rawTweet.text
         
-        return tweet
+        return tweet, urls
 
     ###########################################################################
     ###########################################################################
@@ -119,7 +140,8 @@ class RetrieveTweets:
                              "conversation_id",
                              "in_reply_to_user_id",
                              "referenced_tweets",
-                             "attachments"]
+                             "attachments",
+                             "entities"]
         expansions_list = ["referenced_tweets.id", "attachments.media_keys"]
         media_fields_list = ["media_key","type","url"]
     
@@ -144,6 +166,7 @@ class RetrieveTweets:
                                          expansions=expansions_list)
     
         tweets = []
+        dictOfUrls = {}
         listOfMedia = []
     
         for response in responses:
@@ -153,15 +176,17 @@ class RetrieveTweets:
             
             # get the tweets in the data, the oldest tweet will always be in the front of the list
             for rawTweet in response.data:
-                tweet = self.copyTweetData(rawTweet, False)
+                tweet, urls = self.copyTweetData(rawTweet, False)
                 tweets.insert(0, tweet)
+                dictOfUrls.update(urls)
                 
             # get the tweets in the includes which detail the referenced tweets, if there are any,
             # these will always be at the back of the list
             if "tweets" in response.includes.keys():
                 for rawTweet in response.includes["tweets"]:
-                    tweet = self.copyTweetData(rawTweet, True)
+                    tweet, urls = self.copyTweetData(rawTweet, True)
                     tweets.append(tweet)
+                    dictOfUrls.update(urls)
     
             # grab the media keys if there are any
             if "media" in response.includes.keys():
@@ -175,7 +200,7 @@ class RetrieveTweets:
         self.replaceMediaKeysWithData(tweets, listOfMedia)
         
         self.logger.log("received " + str(len(tweets)) + " for handle " + user.twitterHandle)
-        return tweets
+        return tweets, dictOfUrls
     
     ###########################################################################
     ###########################################################################
@@ -207,6 +232,7 @@ class RetrieveTweets:
         numHandlesRetrieved = 0
         numTweetsSaved = 0
         tweetsToSave = []
+        urlsToSave = {}
         for member in listOfMembers:
             for handle in member.twitter:
                 if (handle == ""):
@@ -216,9 +242,10 @@ class RetrieveTweets:
                 
                 for retries in range(0, 3):
                     try:
-                        newTweets = self.retrieveTweetsForUser(user, startTime)
+                        newTweets, urls = self.retrieveTweetsForUser(user, startTime)
                         newTweets.insert(0, "#" + handle) # this will be used to separate tweets between different twitter handles
                         tweetsToSave = tweetsToSave + newTweets
+                        urlsToSave.update(urls)
                         break
                     except BaseException as e:
                         if (retries <= 1):
@@ -245,7 +272,12 @@ class RetrieveTweets:
             logMessage = Utilities.saveTweets(tweetsToSave, currentDate)
             self.logger.log(logMessage)
             numTweetsSaved += len(tweetsToSave)
-    
+
+        # save the urls, run might be called more than once so need to append urls to the file
+        self.logger.log("Saving {} urls".format(len(urlsToSave)))
+        logMessage = Utilities.saveURLs(urlsToSave, currentDate)
+        self.logger.log(logMessage)
+
         # save the most recent tweet ids so we don't grab the same tweets again
         logMessage = Utilities.saveUserLookup(userLookupDict)
         self.logger.log(logMessage)
@@ -261,5 +293,5 @@ if __name__ == "__main__":
     logger = Utilities.Logger()
     logger.prepareLogFile()
     instance = RetrieveTweets(logger)
-    instance.run(2, 7)
+    instance.run(2, 2)
     
