@@ -193,18 +193,15 @@ class URL:
         self.shortened_url = ""
         self.expanded_url = ""
         self.title = ""
-        self.description = ""
 
     def setData(self, lineOfData):
-        line_split = lineOfData.split(",", 3)
+        line_split = lineOfData.split(",", 2)
         self.shortened_url = line_split[0]
         self.expanded_url = line_split[1]
         self.title = line_split[2]
-        self.description = line_split[3]
 
     def __str__(self):
-        totalString = self.shortened_url + "," + self.expanded_url + "," + \
-                      self.title.replace(",", "") + "," + self.description
+        totalString = self.shortened_url + "," + self.expanded_url + "," + self.title
 
         # make all single quotes standard, sometimes the funny single quotes appear
         if ("’" in totalString) or ("ʻ" in totalString):

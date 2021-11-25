@@ -98,8 +98,6 @@ class RetrieveTweets:
                     url_obj.expanded_url = item["expanded_url"]
                     if ("title" in item.keys()):
                         url_obj.title = item["title"]
-                    if ("description" in item.keys()):
-                        url_obj.description = item["description"]
                     urls[shortened_url] = url_obj
 
         tweet.text = rawTweet.text
