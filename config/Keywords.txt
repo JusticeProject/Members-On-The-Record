@@ -203,7 +203,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey
 Erdogan
 Erdoğan
 Ankara
@@ -320,7 +320,7 @@ ArabSpring
 Islamic+Republic
 DAWN MENA
 @DAWNmenaorg
-settler+attack
-settler+violence
-settler+violent
+settler+attack~Thanksgiving
+settler+violence~Thanksgiving
+settler+violent~Thanksgiving
 Abbas
