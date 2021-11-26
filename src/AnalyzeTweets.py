@@ -480,6 +480,7 @@ class AnalyzeTweets:
         for shortened_url in tweet.dictLinks:
             url_obj = tweet.dictLinks[shortened_url]
             expanded_url = url_obj.expanded_url
+            title = url_obj.title
 
             if ("twitter.com" in expanded_url) and ("/photo/" in expanded_url):
                 text = self.convertLink(text, shortened_url, expanded_url, "Link to image")
@@ -493,8 +494,8 @@ class AnalyzeTweets:
                     text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
             else:
                 domain = Utilities.getDomainOfURL(expanded_url)
-                if (domain == ""):
-                    self.logger.log("Warning: failed to parse url " + expanded_url)
+                if (len(title) > 0):
+                    text = self.convertLink(text, shortened_url, expanded_url, title + "... | " + domain)
                 else:
                     text = self.convertLink(text, shortened_url, expanded_url, "Link to " + domain)
     
@@ -574,26 +575,16 @@ class AnalyzeTweets:
         if (self.leftHighlightSpan not in formattedTweet.text) and (self.leftHighlightSpan in attachmentText):
             formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
 
-        # if we found some keywords in a website title, display that title
+        # If any of the shortened urls are still in the text, it's probably in a tooltip. Replace these links with
+        # their title if it has one.
         allConvUrls = self.getUrlsForConv(conversation)
         for shortened_url in allConvUrls:
-            expanded_url = allConvUrls[shortened_url].expanded_url
-            title = allConvUrls[shortened_url].title
-            if (self.leftHighlightSpan in title):
-                # replace any regex metacharacters in the url with . which makes the next regex easier
-                url_no_meta = re.sub(r"[$^*+?{}\[\]\\|()]", ".", expanded_url)
-                # find all text for the url from <a to </a>
-                regex = re.compile(r'(<a.*?' + url_no_meta + '">)' + r'(.*?)(</a>)')
-                found = regex.search(formattedTweet.text)
-                if found:
-                    # insert the website title which has been highlighted with keywords, while keeping the
-                    # surrounding hyperlink tags. Add a ... after the title because sometimes Twitter doesn't
-                    # give us the full title.
-                    formattedTweet.text = regex.sub(r"\1" + title + r"...\3", formattedTweet.text)
-                else:
-                    # It did not find the link with the tags. It might be in the tooltip, so just
-                    # replace the link with (Highlighted Title)
+            if (shortened_url in formattedTweet.text):
+                title = allConvUrls[shortened_url].title
+                if (len(title) > 0):
                     formattedTweet.text = formattedTweet.text.replace(shortened_url, "(" + title + ")")
+                else:
+                    formattedTweet.text = formattedTweet.text.replace(shortened_url, "")
 
         return formattedTweet
 
