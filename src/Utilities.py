@@ -478,9 +478,13 @@ def saveHTMLResults(folder, filename, html):
 def getDomainOfURL(url):
     if (url == ""):
         return ""
-    else:
-        domain = urlparse(url).netloc
-        return domain
+
+    domain = urlparse(url).netloc
+
+    if (domain.startswith("www.")):
+        domain = domain[4:]
+
+    return domain
 
 ###############################################################################
 ###############################################################################
