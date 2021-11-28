@@ -35,7 +35,9 @@ irondome
 iron-dome
 Abraham+accord
 Palestin
-Hamas
+^Hamas
+^HAMAS
+_Hamas
 Mahmoud+Abbas
 President+Abbas
 Shtayyeh
@@ -55,7 +57,7 @@ Judea
 ^Samaria
 Zionism
 Zionist
-Golan+Heights
+^Golan+Heights
 HR+2590
 H.R.+2590
 two state+solution
