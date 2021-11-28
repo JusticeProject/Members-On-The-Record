@@ -4,6 +4,7 @@ import time
 import copy
 import requests
 import pytesseract
+from bs4 import BeautifulSoup
 
 import Utilities
 import Classes
@@ -96,6 +97,50 @@ class AnalyzeTweets:
             text = text.replace("<", "") # clean up the text, these symbols could cause problems with html formatting
             text = text.replace(">", "")
             return text
+
+    ###########################################################################
+    ###########################################################################
+
+    def getWebsiteTitle(self, url):
+        # if link points to twitter or a pdf, don't download it
+        if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
+            return ""
+
+        self.logger.log("Looking for title at " + url)
+
+        html = Utilities.getWebsiteHTML(url)
+        parsed_html = BeautifulSoup(html, 'html.parser')
+        if (parsed_html.title is not None) and (parsed_html.title.string is not None):
+            title = parsed_html.title.string
+            title = title.strip()
+            title = title.replace("\n", "")
+
+            # if they think we are a robot then they won't give us the correct title, so return ""
+            if ("Access denied" in title) or ("used Cloudflare to restrict access" in title) or \
+                ("Are you a robot?" in title) or ("Resource Unavailable" in title):
+                self.logger.log("Ignoring title: " + title)
+                return ""
+            else:
+                self.logger.log("Found title: " + title)
+                return title
+
+        # if we get this far then we couldn't figure it out
+        self.logger.log("Warning: no title found: " + url + " " + str(len(html)))
+        return ""
+
+    ###########################################################################
+    ###########################################################################
+
+    def findMissingWebsiteTitles(self):
+        self.logger.log("Looking for missing website titles")
+        for shortened_url in self.dictOfURLs:
+            url_obj = self.dictOfURLs[shortened_url]
+
+            if (url_obj.title.strip() == ""):
+                expanded_url = url_obj.expanded_url
+                title = self.getWebsiteTitle(expanded_url)
+                if (title != ""):
+                    url_obj.title = title
 
     ###########################################################################
     ###########################################################################
@@ -495,9 +540,14 @@ class AnalyzeTweets:
             else:
                 domain = Utilities.getDomainOfURL(expanded_url)
                 if (len(title) > 0):
-                    text = self.convertLink(text, shortened_url, expanded_url, title + "... | " + domain)
+                    if ("|" in title) or (" - " in title):
+                        visibleText = title
+                    else:
+                        visibleText = title + "... | " + domain
                 else:
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to " + domain)
+                    visibleText = "Link to " + domain
+                
+                text = self.convertLink(text, shortened_url, expanded_url, visibleText)
     
         return text
     
@@ -662,7 +712,12 @@ class AnalyzeTweets:
             self.resultsFolder = path
         self.logger.log("Analyzing results for " + self.resultsFolder)
         listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
+
         self.dictOfURLs = Utilities.loadURLs(self.resultsFolder)
+        self.findMissingWebsiteTitles()
+        scanDate = self.resultsFolder.strip("/").rsplit("/", 1)[1]
+        logMessage = Utilities.saveURLs(self.dictOfURLs, scanDate, False)
+        self.logger.log(logMessage)
         
         for member in listOfMembers:
             for handle in member.twitter:

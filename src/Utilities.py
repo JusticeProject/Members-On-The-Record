@@ -372,15 +372,19 @@ def loadTweets(path):
 ###############################################################################
 ###############################################################################
 
-def saveURLs(dictOfURLs, scanDate):
+def saveURLs(dictOfURLs, scanDate, append=True):
     RESULTS_FOLDER = "../output/" + scanDate
     if (os.path.exists(RESULTS_FOLDER) == False):
         os.mkdir(RESULTS_FOLDER)
 
     URLS_FILENAME = RESULTS_FOLDER + "/URLs.txt"
 
-    # we are appending to the file because we could retrieve tweets more than once
-    file = open(URLS_FILENAME, "a", encoding="utf-8")
+    if (append):
+        mode = "a"
+    else:
+        mode = "w"
+    
+    file = open(URLS_FILENAME, mode, encoding="utf-8")
     for shortened_url in dictOfURLs.keys():
         url_obj = dictOfURLs[shortened_url]
         file.write(str(url_obj) + "\n")
