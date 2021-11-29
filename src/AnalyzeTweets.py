@@ -107,6 +107,9 @@ class AnalyzeTweets:
             return ""
 
         self.logger.log("Looking for title at " + url)
+        
+        # slow down the website retrieval a tad in case we are connecting to the same websites over and over
+        time.sleep(2)
 
         html = Utilities.getWebsiteHTML(url)
         parsed_html = BeautifulSoup(html, 'html.parser')
@@ -118,7 +121,7 @@ class AnalyzeTweets:
             # if they think we are a robot then they won't give us the correct title, so return ""
             if ("Access denied" in title) or ("used Cloudflare to restrict access" in title) or \
                 ("Are you a robot?" in title) or ("Resource Unavailable" in title):
-                self.logger.log("Ignoring title: " + title)
+                self.logger.log("Warning: Ignoring title: " + title)
                 return ""
             else:
                 self.logger.log("Found title: " + title)
