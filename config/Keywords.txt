@@ -253,7 +253,7 @@ Al-Jazeera
 
 Category=Oman
 Keywords=^Oman
-Muscat
+Muscat~Muscatine
 
 Category=Yemen
 Keywords=Yemen
