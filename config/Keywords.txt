@@ -165,7 +165,7 @@ Hormuz
 
 Category=Egypt
 Keywords=Egypt
-Cairo~greenecounty~Greene County
+Cairo~greenecounty~Greene County~Illinois~Chicago
 el-Sisi
 al-Sisi
 _Sisi
