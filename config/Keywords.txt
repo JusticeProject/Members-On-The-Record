@@ -308,7 +308,8 @@ drone+attack
 Al Qaeda
 AlQaeda
 Al-Qaeda
-Islamic+State
+Islamic State
+IslamicState
 Kurds
 Kurdish
 Kurdistan
@@ -320,6 +321,8 @@ Jihad
 Arab Spring
 ArabSpring
 Islamic+Republic
+Islamic+terror
+Muslim+terror
 DAWN MENA
 @DAWNmenaorg
 settler+attack~Thanksgiving
