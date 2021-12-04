@@ -40,6 +40,7 @@ while True:
         startSecs = time.time()
 
         # use git to make sure we have the most recent version of some important files that might change often
+        logger.log("Retrieving latest Keywords...")
         result = subprocess.run(["git", "pull"], capture_output=True)
         output = result.stdout.decode() + result.stderr.decode()
         lines = [line for line in output.split("\n") if line.strip() != ""]

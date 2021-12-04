@@ -34,7 +34,6 @@ logger = Utilities.Logger()
 folders = getAllResultsFolders()
 instance = AnalyzeTweets.AnalyzeTweets(logger)
 
-Utilities.BYPASS_URL_UNSHORTENER = True
 if (os.path.exists("../output/test/") == False):
     os.mkdir("../output/test/")
 
