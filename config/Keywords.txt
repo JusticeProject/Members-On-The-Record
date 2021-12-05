@@ -156,6 +156,7 @@ Ayatollah
 Khomeini
 Khamenei
 ^Iran
+^IRAN
 _Iran
 Iranian
 JCPOA
