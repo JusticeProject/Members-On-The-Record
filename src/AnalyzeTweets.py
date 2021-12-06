@@ -101,7 +101,7 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def getWebsiteTitle(self, url):
+    def getWebsiteTitle(self, url, currentPlatformHeaders):
         # if link points to twitter or a pdf, don't download it
         if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
             return ""
@@ -111,7 +111,7 @@ class AnalyzeTweets:
         # slow down the website retrieval a tad in case we are connecting to the same websites over and over
         time.sleep(2)
 
-        html = Utilities.getWebsiteHTML(url)
+        html = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
         parsed_html = BeautifulSoup(html, 'html.parser')
         if (parsed_html.title is not None) and (parsed_html.title.string is not None):
             title = parsed_html.title.string
@@ -134,14 +134,14 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def findMissingWebsiteTitles(self):
-        self.logger.log("Looking for missing website titles")
+    def findMissingWebsiteTitles(self, currentPlatformHeaders):
+        self.logger.log("Looking for missing website titles with currentPlatformHeaders = " + str(currentPlatformHeaders))
         for shortened_url in self.dictOfURLs:
             url_obj = self.dictOfURLs[shortened_url]
 
             if (url_obj.title.strip() == ""):
                 expanded_url = url_obj.expanded_url
-                title = self.getWebsiteTitle(expanded_url)
+                title = self.getWebsiteTitle(expanded_url, currentPlatformHeaders)
                 if (title != ""):
                     url_obj.title = title
 
@@ -717,7 +717,8 @@ class AnalyzeTweets:
         listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
 
         self.dictOfURLs = Utilities.loadURLs(self.resultsFolder)
-        self.findMissingWebsiteTitles()
+        self.findMissingWebsiteTitles(True) # use one set of HTTP headers
+        self.findMissingWebsiteTitles(False) # use a different set of HTTP headers
         scanDate = self.resultsFolder.strip("/").rsplit("/", 1)[1]
         logMessage = Utilities.saveURLs(self.dictOfURLs, scanDate, False)
         self.logger.log(logMessage)

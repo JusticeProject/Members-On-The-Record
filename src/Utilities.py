@@ -85,8 +85,14 @@ CUSTOM_HTTP_HEADER_IPHONE = {
 ###############################################################################
 ###############################################################################
 
-def getCustomHeader():
-    return CUSTOM_HTTP_HEADER_IPHONE
+def getCustomHeader(currentPlatform = True):
+    if (currentPlatform):
+        if ("Windows-10" in platform.platform()):
+            return CUSTOM_HTTP_HEADER_WIN10
+        else:
+            return CUSTOM_HTTP_HEADER_WIN7
+    else:
+        return CUSTOM_HTTP_HEADER_IPHONE
 
 ###############################################################################
 ###############################################################################
@@ -500,7 +506,7 @@ def getDomainOfURL(url):
 
 # helper function for retrieving all HTML data from a website
 
-def getWebsiteHTML(url):
+def getWebsiteHTML(url, currentPlatformHeaders = True):
     if (url == ""):
         return ""
 
@@ -521,7 +527,8 @@ def getWebsiteHTML(url):
     for retries in range(0, 3):
         try:
             # some websites don't work with urlopen, so we'll try the requests library
-            result = requests.get(url, headers=getCustomHeader(), timeout=3)
+            custom_header = getCustomHeader(currentPlatformHeaders)
+            result = requests.get(url, headers=custom_header, timeout=3)
             decodedData = result.text
             result.close()
             return decodedData
