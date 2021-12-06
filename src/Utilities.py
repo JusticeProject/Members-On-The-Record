@@ -74,14 +74,19 @@ CUSTOM_HTTP_HEADER_WIN7 = {
     "Upgrade-Insecure-Requests":"1"
 }
 
+CUSTOM_HTTP_HEADER_IPHONE = {
+    "User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1",
+    "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Encoding":"gzip, deflate, br",
+    "Accept-Language":"en-US,en;q=0.9",
+    "Referer":"https://www.google.com/"
+}
+
 ###############################################################################
 ###############################################################################
 
 def getCustomHeader():
-    if ("Windows-10" in platform.platform()):
-        return CUSTOM_HTTP_HEADER_WIN10
-    else:
-        return CUSTOM_HTTP_HEADER_WIN7
+    return CUSTOM_HTTP_HEADER_IPHONE
 
 ###############################################################################
 ###############################################################################
