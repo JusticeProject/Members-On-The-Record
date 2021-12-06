@@ -126,6 +126,9 @@ class AnalyzeTweets:
             else:
                 self.logger.log("Found title: " + title)
                 return title
+        elif ("PDF" in html[:5]):
+            self.logger.log("Found PDF file")
+            return "PDF"
 
         # if we get this far then we couldn't figure it out
         self.logger.log("Warning: no title found: " + url + " " + str(len(html)))

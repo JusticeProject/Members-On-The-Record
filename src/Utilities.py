@@ -7,7 +7,7 @@ import re
 import jinja2
 import requests
 from urllib.parse import urlparse
-import urllib.request
+import brotlicffi
 import time
 
 import Classes
@@ -42,7 +42,7 @@ CUSTOM_HTTP_HEADER_WIN10 = {
     "Sec-Fetch-Site":"none",
     "Sec-Fetch-Mode":"navigate",
     "Sec-Fetch-Dest":"document",
-    "Accept-Encoding":"gzip, deflate",
+    "Accept-Encoding":"gzip, deflate, br",
     "Accept-Language":"en-US,en;q=0.9",
     "Sec-Fetch-User":"?1",
     "Upgrade-Insecure-Requests":"1"
@@ -68,7 +68,7 @@ CUSTOM_HTTP_HEADER_WIN7 = {
     "Sec-Fetch-Site":"none",
     "Sec-Fetch-Mode":"navigate",
     "Sec-Fetch-Dest":"document",
-    "Accept-Encoding":"gzip, deflate",
+    "Accept-Encoding":"gzip, deflate, br",
     "Accept-Language":"en-US,en;q=0.9",
     "Sec-Fetch-User":"?1",
     "Upgrade-Insecure-Requests":"1"
@@ -510,26 +510,17 @@ def getWebsiteHTML(url, currentPlatformHeaders = True):
     if (url == ""):
         return ""
 
-    # for retries in range(0, 3):
-    #     try:
-    #         # some websites don't like Python scripts scraping their data, so use a custom
-    #         # header which makes us look like an innocent web browser
-    #         req = urllib.request.Request(url, headers=getCustomHeader())
-    #         conn = urllib.request.urlopen(req, timeout=3)
-    #         data = conn.read()
-    #         conn.close()
-    #         decodedData = data.decode('utf-8')
-    #         return decodedData
-    #     except:
-    #         if (retries <= 1):
-    #             time.sleep(1)
-
     for retries in range(0, 3):
         try:
-            # some websites don't work with urlopen, so we'll try the requests library
             custom_header = getCustomHeader(currentPlatformHeaders)
             result = requests.get(url, headers=custom_header, timeout=3)
-            decodedData = result.text
+
+            # TODO: the requests documentation says it should automatically decompress brotli encodings, but it wasn't doing that...
+            if ("Content-Encoding" in result.headers.keys()) and (result.headers["Content-Encoding"] == "br"):
+                decodedData = brotlicffi.decompress(result.content).decode() # decode from bytes to str
+            else:
+                decodedData = result.text
+            
             result.close()
             return decodedData
         except:
