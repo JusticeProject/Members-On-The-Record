@@ -1,4 +1,5 @@
 import tweepy
+from bs4 import BeautifulSoup
 import Utilities
 import Classes
 
@@ -50,6 +51,56 @@ class RetrieveTweets:
                 for handle in idStrDict.keys():
                     userLookupDict[handle].idStr = idStrDict[handle]
             
+    ###########################################################################
+    ###########################################################################
+
+    def getWebsiteTitle(self, url, currentPlatformHeaders):
+        # if link points to twitter or a pdf, don't download it
+        if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
+            return ""
+
+        self.logger.log("Looking for title at " + url)
+        
+        # slow down the website retrieval a tad in case we are connecting to the same websites over and over
+        time.sleep(2)
+
+        html = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
+        parsed_html = BeautifulSoup(html, 'html.parser')
+        if (parsed_html.title is not None) and (parsed_html.title.string is not None):
+            title = parsed_html.title.string
+            title = title.strip()
+            title = title.replace("\n", "")
+
+            # if they think we are a robot then they won't give us the correct title, so return ""
+            if ("Access denied" in title) or ("used Cloudflare to restrict access" in title) or \
+                ("Are you a robot?" in title) or ("Resource Unavailable" in title):
+                self.logger.log("Warning: Ignoring title: " + title)
+                return ""
+            else:
+                self.logger.log("Found title: " + title)
+                return title
+        elif ("PDF" in html[:5]):
+            self.logger.log("Found PDF file")
+            return "PDF"
+
+        # if we get this far then we couldn't figure it out
+        self.logger.log("Warning: no title found: " + url + " " + str(len(html)))
+        return ""
+
+    ###########################################################################
+    ###########################################################################
+
+    def findMissingWebsiteTitles(self, dictOfURLs, currentPlatformHeaders):
+        self.logger.log("Looking for missing website titles with currentPlatformHeaders = " + str(currentPlatformHeaders))
+        for shortened_url in dictOfURLs:
+            url_obj = dictOfURLs[shortened_url]
+
+            if (url_obj.title.strip() == ""):
+                expanded_url = url_obj.expanded_url
+                title = self.getWebsiteTitle(expanded_url, currentPlatformHeaders)
+                if (title != ""):
+                    url_obj.title = title
+
     ###########################################################################
     ###########################################################################
 
@@ -270,6 +321,10 @@ class RetrieveTweets:
             logMessage = Utilities.saveTweets(tweetsToSave, currentDate)
             self.logger.log(logMessage)
             numTweetsSaved += len(tweetsToSave)
+
+        # before we save the urls we will grab any missing website titles
+        self.findMissingWebsiteTitles(urlsToSave, True) # use one set of HTTP headers
+        self.findMissingWebsiteTitles(urlsToSave, False) # use a different set of HTTP headers
 
         # save the urls, run might be called more than once so need to append urls to the file
         self.logger.log("Saving {} urls".format(len(urlsToSave)))
