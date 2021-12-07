@@ -86,13 +86,9 @@ class UploadResults:
         self.logger.log(logMessage)
 
         # update the file on GitHub
-        filename = "../output/index-of-results.html"
-        file = open(filename, "r", encoding="utf-8")
-        data = file.read()
-        file.close()
         contents = repo.get_contents("docs/index-of-results.html")
         repo.update_file(path="docs/index-of-results.html", message="Auto-commit: updating list of days with results",
-                         content=data, sha=contents.sha, branch="main")
+                         content=htmlResults, sha=contents.sha, branch="main")
         self.logger.log("Uploaded index-of-results.html to GitHub")
 
     ###########################################################################
