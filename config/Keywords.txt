@@ -227,7 +227,7 @@ Western+Sahara
 
 Category=Algeria
 Keywords=Algeria
-Algiers~Alice Harte
+Algiers~Alice Harte~Louisiana~Orleans
 
 Category=Tunisia
 Keywords=Tunisia
@@ -255,7 +255,7 @@ Al-Jazeera
 
 Category=Oman
 Keywords=^Oman
-Muscat~Muscatine
+^Muscat~Muscatine
 
 Category=Yemen
 Keywords=Yemen
