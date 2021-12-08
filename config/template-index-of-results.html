@@ -20,9 +20,7 @@
                         <p><span style="text-decoration: underline;"><em><strong>{{month}}</strong></em></span></p>
                         
                         {% for page in listOfPages %}
-                            <p>
-                                <a href="https://justiceproject.github.io/Members-On-The-Record/{{page.subfolder}}/{{page.filename}}">{{page.visibleText}}</a>
-                            </p>
+                            <p><a href="https://justiceproject.github.io/Members-On-The-Record/{{page.subfolder}}/{{page.filename}}">{{page.visibleText}}</a></p>
                         {% endfor %}
                         <br>
                     {% endfor %}
