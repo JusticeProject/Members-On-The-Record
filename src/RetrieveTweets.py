@@ -70,6 +70,7 @@ class RetrieveTweets:
             title = parsed_html.title.string
             title = title.strip()
             title = title.replace("\n", "")
+            title = title.replace("\r", "")
 
             # if they think we are a robot then they won't give us the correct title, so return ""
             if ("Access denied" in title) or ("used Cloudflare to restrict access" in title) or \
