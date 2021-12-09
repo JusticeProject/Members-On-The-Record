@@ -228,7 +228,6 @@ Western+Sahara
 
 Category=Algeria
 Keywords=Algeria
-Algiers~Alice Harte~Louisiana~Orleans
 
 Category=Tunisia
 Keywords=Tunisia
@@ -331,4 +330,3 @@ DAWN MENA
 settler+attack~Thanksgiving
 settler+violence~Thanksgiving
 settler+violent~Thanksgiving
-Abbas
