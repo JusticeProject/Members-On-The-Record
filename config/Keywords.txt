@@ -249,9 +249,6 @@ Keywords=Bahrain
 
 Category=Qatar
 Keywords=Qatar
-Al Jazeera
-AlJazeera
-Al-Jazeera
 
 Category=Oman
 Keywords=^Oman
@@ -330,3 +327,6 @@ DAWN MENA
 settler+attack~Thanksgiving
 settler+violence~Thanksgiving
 settler+violent~Thanksgiving
+Al Jazeera
+AlJazeera
+Al-Jazeera
