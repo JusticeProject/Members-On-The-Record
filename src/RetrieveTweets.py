@@ -54,6 +54,21 @@ class RetrieveTweets:
     ###########################################################################
     ###########################################################################
 
+    def giveDefaultWebsiteTitles(self, dictOfURLs):
+        self.logger.log("Giving default website titles, and adding | where appropriate")
+
+        for shortened_url in dictOfURLs:
+            url_obj = dictOfURLs[shortened_url]
+            domain = Utilities.getDomainOfURL(url_obj.expanded_url)
+
+            if (url_obj.title.strip() == ""):    
+                url_obj.title = "Link to " + domain
+            elif ("|" not in url_obj.title) and (" - " not in url_obj.title):
+                url_obj.title += "... | " + domain
+
+    ###########################################################################
+    ###########################################################################
+
     def getWebsiteTitle(self, url, currentPlatformHeaders):
         # if link points to twitter or a pdf, don't download it
         if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
@@ -326,6 +341,7 @@ class RetrieveTweets:
         # before we save the urls we will grab any missing website titles
         self.findMissingWebsiteTitles(urlsToSave, True) # use one set of HTTP headers
         self.findMissingWebsiteTitles(urlsToSave, False) # use a different set of HTTP headers
+        self.giveDefaultWebsiteTitles(urlsToSave)
 
         # save the urls, run might be called more than once so need to append urls to the file
         self.logger.log("Saving {} urls".format(len(urlsToSave)))

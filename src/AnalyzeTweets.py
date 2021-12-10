@@ -493,16 +493,7 @@ class AnalyzeTweets:
                 else:
                     text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
             else:
-                domain = Utilities.getDomainOfURL(expanded_url)
-                if (len(title) > 0):
-                    if ("|" in title) or (" - " in title):
-                        visibleText = title
-                    else:
-                        visibleText = title + "... | " + domain
-                else:
-                    visibleText = "Link to " + domain
-                
-                text = self.convertLink(text, shortened_url, expanded_url, visibleText)
+                text = self.convertLink(text, shortened_url, expanded_url, title)
     
         return text
     
