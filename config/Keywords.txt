@@ -85,6 +85,8 @@ NSOGroup
 NSO-Group
 Pegasus+Spyware
 Pegasus+Software
+Candiru+Spyware
+Candiru+Software
 Sheikh+Jarrah
 Silwan
 ^Atarot
@@ -93,6 +95,9 @@ Tom Nides
 Thomas Nides
 Thomas R. Nides
 Ambassador Nides
+Ambassador+Mike+Herzog
+Ambassador+Michael+Herzog
+@AmbHerzog
 David Friedman
 David M Friedman
 @DavidM_Friedman
