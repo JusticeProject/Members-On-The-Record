@@ -64,15 +64,19 @@ class RetrieveTweets:
             if (url_obj.title.strip() == ""):    
                 url_obj.title = "Link to " + domain
             elif ("|" not in url_obj.title) and (" - " not in url_obj.title):
-                url_obj.title += "... | " + domain
+                url_obj.title += "... | " + domain # Twitter sometimes gives us a truncated title, hence the ...
 
     ###########################################################################
     ###########################################################################
 
     def getWebsiteTitle(self, url, currentPlatformHeaders):
-        # if link points to twitter or a pdf, don't download it
-        if ("twitter.com" in url) or (url[-4:] == ".pdf") or (".pdf?" in url):
+        # if link points to twitter, don't retrieve it
+        if ("twitter.com" in url):
             return ""
+
+        # if we know beforehand that it's a PDF, don't download it
+        if (url[-4:] == ".pdf") or (".pdf?" in url):
+            return "Link to PDF | " + Utilities.getDomainOfURL(url)
 
         self.logger.log("Looking for title at " + url)
         
@@ -94,10 +98,12 @@ class RetrieveTweets:
                 return ""
             else:
                 self.logger.log("Found title: " + title)
+                if ("|" not in title) and (" - " not in title):
+                    title += " | " + Utilities.getDomainOfURL(url)
                 return title
         elif ("PDF" in html[:5]):
             self.logger.log("Found PDF file")
-            return "PDF"
+            return "Link to PDF | " + Utilities.getDomainOfURL(url)
 
         # if we get this far then we couldn't figure it out
         self.logger.log("Warning: no title found: " + url + " " + str(len(html)))
