@@ -314,6 +314,7 @@ AlQaeda
 Al-Qaeda
 Islamic State
 IslamicState
+_Sharia
 Kurds
 Kurdish
 Kurdistan
@@ -322,6 +323,7 @@ Isis's
 Yazidi
 Yezidi
 Jihad
+_Fatwa
 Arab Spring
 ArabSpring
 Islamic+Republic
