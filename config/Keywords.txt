@@ -34,6 +34,8 @@ iron dome
 irondome
 iron-dome
 Abraham+accord
+Palestinian
+Palestine
 Palestin
 ^Hamas
 ^HAMAS
@@ -188,6 +190,7 @@ Keywords=Saudi
 _Arabia
 Arabian
 Riyadh
+Khashoggi
 Khashog
 _MBS
 ^MBS's
@@ -315,6 +318,7 @@ Al-Qaeda
 Islamic State
 IslamicState
 _Sharia
+mullah
 Kurds
 Kurdish
 Kurdistan
