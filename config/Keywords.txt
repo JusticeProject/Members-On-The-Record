@@ -232,7 +232,9 @@ Keywords=Morocco
 Moroccan
 Rabat
 ^Casablanca
-Western+Sahara
+Western Sahara
+Western-Sahara
+WesternSahara
 
 Category=Algeria
 Keywords=Algeria
