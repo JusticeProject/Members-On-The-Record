@@ -149,6 +149,11 @@ Yeshiva
 Category=Syria
 Keywords=Syria
 ^Assad
+_Assad
+Assad's
+Bashar+Assad
+Aleppo
+^Idlib
 Damascus
 
 Category=Lebanon
