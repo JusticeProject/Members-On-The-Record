@@ -24,7 +24,8 @@ Some keywords are reserved, so if you use them you might have problems. This inc
 words specific to this project: MOTR
 
 Category=Israel - Palestine
-Keywords=Israel
+Keywords=Jewish State
+Israel
 ^Isreal
 Netanyahu
 Naftali+Bennett
