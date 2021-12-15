@@ -131,21 +131,6 @@ Keywords=Apartheid
 Aparhteid
 Aparthied
 
-Category=Jewish, Anti-semitism
-Keywords=Semitism
-Semitic
-Judaism
-Holocaust
-pogrom
-_Jew
-_Jews
-Jew's
-Jews'
-Jewish
-Jewry
-Synagogue
-Yeshiva
-
 Category=Syria
 Keywords=Syria
 ^Assad
@@ -349,3 +334,18 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
+
+Category=Jewish, Anti-semitism
+Keywords=Semitism
+Semitic
+Judaism
+Holocaust
+pogrom
+_Jew
+_Jews
+Jew's
+Jews'
+Jewish
+Jewry
+Synagogue
+Yeshiva
