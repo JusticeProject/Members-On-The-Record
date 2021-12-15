@@ -280,6 +280,21 @@ Keywords=Pakistan
 Islamabad
 Karachi
 
+Category=Jewish, Anti-semitism
+Keywords=Semitism
+Semitic
+Judaism
+Holocaust
+pogrom
+_Jew
+_Jews
+Jew's
+Jews'
+Jewish
+Jewry
+Synagogue
+Yeshiva
+
 Category=Afghanistan
 Keywords=Afghanistan
 Afghan
@@ -334,18 +349,3 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
-
-Category=Jewish, Anti-semitism
-Keywords=Semitism
-Semitic
-Judaism
-Holocaust
-pogrom
-_Jew
-_Jews
-Jew's
-Jews'
-Jewish
-Jewry
-Synagogue
-Yeshiva
