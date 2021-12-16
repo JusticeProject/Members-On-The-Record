@@ -71,6 +71,8 @@ UNRWA
 _BDS
 BDS's
 BDSer
+anti-BDS
+anti-boycott
 boycott+divest+sanction
 ben+jerry+divest
 ben+jerry+boycott
