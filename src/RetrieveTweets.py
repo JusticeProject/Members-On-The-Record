@@ -1,5 +1,4 @@
 import tweepy
-from bs4 import BeautifulSoup
 import Utilities
 import Classes
 
@@ -83,25 +82,27 @@ class RetrieveTweets:
         # slow down the website retrieval a tad in case we are connecting to the same websites over and over
         time.sleep(2)
 
-        html = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
-        parsed_html = BeautifulSoup(html, 'html.parser')
-        if (parsed_html.title is not None) and (parsed_html.title.string is not None):
-            title = parsed_html.title.string
-            title = title.strip()
-            title = title.replace("\n", "")
-            title = title.replace("\r", "")
+        html, respcode = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
+        title = Utilities.extractTitleFromHTML(html)
 
-            # if they think we are a robot then they won't give us the correct title, so return ""
-            if ("Access denied" in title) or ("used Cloudflare to restrict access" in title) or \
-                ("Are you a robot?" in title) or ("Resource Unavailable" in title):
-                self.logger.log("Warning: Ignoring title: " + title)
+        # if they think we are a robot then they won't give us the correct title
+        if (respcode >= 400):
+            self.logger.log("Warning: received response code {}, checking the Google cache".format(respcode))
+            cached_html, cached_respcode = Utilities.getWebsiteFromGoogleCache(url, currentPlatformHeaders)
+            cached_title = Utilities.extractTitleFromHTML(cached_html)
+            if (cached_respcode >= 400):
+                self.logger.log("Warning: received response code {} from Google cache".format(cached_respcode))
                 return ""
             else:
-                self.logger.log("Found title: " + title)
-                if ("|" not in title) and (" - " not in title):
-                    title += " | " + Utilities.getDomainOfURL(url)
-                return title
-        elif ("PDF" in html[:5]):
+                title = cached_title
+        
+        if (title != ""):
+            self.logger.log("Found title: " + title)
+            if ("|" not in title) and (" - " not in title):
+                title += " | " + Utilities.getDomainOfURL(url)
+            return title
+        
+        if ("PDF" in html[:5]):
             self.logger.log("Found PDF file")
             return "Link to PDF | " + Utilities.getDomainOfURL(url)
 

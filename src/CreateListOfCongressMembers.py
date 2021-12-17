@@ -63,7 +63,7 @@ class CreateListOfCongressMembers:
         # Now let's see when the legislator data on GitHub was last updated.
         dateOfLatestData = ""
         commitHistoryURL = "https://github.com/unitedstates/congress-legislators/commits/gh-pages/legislators-current.csv"
-        html = Utilities.getWebsiteHTML(commitHistoryURL)
+        html, respcode = Utilities.getWebsiteHTML(commitHistoryURL)
         lines = html.split("\n")
         for line in lines:
             if ("Commits on " in line):

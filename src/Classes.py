@@ -236,23 +236,11 @@ class Page:
 
 class Credentials:
     def __init__(self):
-        self.API_Key = ""
-        self.API_Secret_Key = ""
         self.Bearer_Token = ""
-        self.Access_Token = ""
-        self.Access_Token_Secret = ""
         self.GitHub_Token = ""
     
     def setData(self, lineOfData):
-        if ("API_Key=" in lineOfData):
-            self.API_Key = lineOfData.split("API_Key=")[1].strip()
-        elif ("API_Secret_Key=" in lineOfData):
-            self.API_Secret_Key = lineOfData.split("API_Secret_Key=")[1].strip()
-        elif ("Bearer_Token=" in lineOfData):
-            self.Bearer_Token = lineOfData.split("Bearer_Token=")[1].strip()
-        elif ("Access_Token=" in lineOfData):
-            self.Access_Token = lineOfData.split("Access_Token=")[1].strip()
-        elif ("Access_Token_Secret=" in lineOfData):
-            self.Access_Token_Secret = lineOfData.split("Access_Token_Secret=")[1].strip()
+        if ("Twitter_Bearer_Token=" in lineOfData):
+            self.Bearer_Token = lineOfData.split("Twitter_Bearer_Token=")[1].strip()
         elif ("GitHub_Token=" in lineOfData):
             self.GitHub_Token = lineOfData.split("GitHub_Token=")[1].strip()

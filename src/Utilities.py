@@ -6,6 +6,7 @@ import datetime
 import re
 import jinja2
 import requests
+from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import brotlicffi
 import time
@@ -508,7 +509,7 @@ def getDomainOfURL(url):
 
 def getWebsiteHTML(url, currentPlatformHeaders = True):
     if (url == ""):
-        return ""
+        return "", 0
 
     for retries in range(0, 3):
         try:
@@ -522,11 +523,35 @@ def getWebsiteHTML(url, currentPlatformHeaders = True):
                 decodedData = result.text
             
             result.close()
-            return decodedData
+            return decodedData, result.status_code
         except:
             if (retries <= 1):
                 time.sleep(1)
 
+    return "", 0
+
+###############################################################################
+###############################################################################
+
+def getWebsiteFromGoogleCache(url, currentPlatformHeaders = True):
+    return getWebsiteHTML("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
+
+###############################################################################
+###############################################################################
+
+def extractTitleFromHTML(html):
+    try:
+        parsed_html = BeautifulSoup(html, 'html.parser')
+    except:
+        return ""
+
+    if (parsed_html.title is not None) and (parsed_html.title.string is not None):
+            title = parsed_html.title.string
+            title = title.strip()
+            title = title.replace("\n", "")
+            title = title.replace("\r", "")
+            return title
+    
     return ""
 
 ###############################################################################

@@ -237,6 +237,14 @@ class AnalyzeTweets:
                     conversation[0].keyword_phrase = phrase
                     return category
         
+
+        # until we have a reliable search algorithm for the country of Jordan, we will just log
+        # the tweets that mention the word
+        if ("jordan" in combinedTextLower) and ("jim_jordan" not in combinedTextLower) and ("jim jordan" not in combinedTextLower):
+            self.logger.log("Notice: conversation id {} contains Jordan".format(conversation[0].conversation_id))
+            self.logger.log("combinedTextLower = " + combinedTextLower)
+
+        # no category was found
         return None
         
     ###########################################################################

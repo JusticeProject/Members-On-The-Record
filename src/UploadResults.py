@@ -95,10 +95,6 @@ class UploadResults:
     ###########################################################################
     
     def uploadToGoogleDrive(self):
-        # make a backup of the userLookup file which tells us the most recent tweet id for each Twitter handle
-        distutils.file_util.copy_file(Utilities.USER_LOOKUP_FILENAME, GOOGLE_DRIVE_RESULTS)
-        self.logger.log("copied " + Utilities.USER_LOOKUP_FILENAME + " to " + GOOGLE_DRIVE_RESULTS)
-        
         # make a backup of the raw tweet data in case we need to analyze it again
         recentResultsFolder = Utilities.getMostRecentResultsFolder().rstrip("/")
         justTheFolderName = recentResultsFolder.rsplit("/", 1)[1]
@@ -106,6 +102,18 @@ class UploadResults:
         destinationPath = GOOGLE_DRIVE_RESULTS + todaysMonth + "/" + justTheFolderName
         distutils.dir_util.copy_tree(recentResultsFolder, destinationPath)
         self.logger.log("copied " + justTheFolderName + " to " + destinationPath)
+
+        # make a backup of the userLookup file which tells us the most recent tweet id for each Twitter handle
+        distutils.file_util.copy_file(Utilities.USER_LOOKUP_FILENAME, destinationPath)
+        self.logger.log("copied " + Utilities.USER_LOOKUP_FILENAME + " to " + destinationPath)
+
+        # make a backup of the list of Congress members that was used
+        distutils.file_util.copy_file(Utilities.LIST_OF_CONGRESS_MEMBERS_FILENAME, destinationPath)
+        self.logger.log("copied " + Utilities.LIST_OF_CONGRESS_MEMBERS_FILENAME + " to " + destinationPath)
+
+        # make a backup of the list of Twitter handles that we retrieved from the Twitter lists
+        distutils.file_util.copy_file(Utilities.TWITTER_USERS_FROM_LISTS_FILENAME, destinationPath)
+        self.logger.log("copied " + Utilities.TWITTER_USERS_FROM_LISTS_FILENAME + " to " + destinationPath)
     
     ###########################################################################
     ###########################################################################
