@@ -1,6 +1,2 @@
-API_Key=xxxxxxxxxxxxxxxxxxxx
-API_Secret_Key=xxxxxxxxxxxxxxxxxxxx
-Bearer_Token=xxxxxxxxxxxxxxxxxxxx
-Access_Token=xxxxxxxxxxxxxxxxxxxx
-Access_Token_Secret=xxxxxxxxxxxxxxxxxxxx
+Twitter_Bearer_Token=xxxxxxxxxxxxxxxxxxxx
 GitHub_Token=xxxxxxxxxxxxxxxxxxxx
