@@ -12,43 +12,6 @@ TWEETS_PER_FILE = 1000
 class RetrieveTweets:
     def __init__(self, logger):
         self.logger = logger
-
-    ###########################################################################
-    ###########################################################################
-    
-    def doMultipleUserLookup(self, handlesToLookup):
-        cred = Utilities.loadCredentials()
-        client = tweepy.Client(cred.Bearer_Token)
-        
-        params = ",".join(handlesToLookup)
-        response = client.get_users(usernames=params)
-        self.logger.log("received response in doMultipleUserLookup")
-        
-        idStrDict = {}
-        for item in response.data:
-            self.logger.log("received username=" + item.username + ", id=" + str(item.id))
-            idStrDict[item.username.lower()] = str(item.id)
-        
-        return idStrDict
-
-    ###########################################################################
-    ###########################################################################
-
-    # check if a twitter handle has no id string, do user lookup if needed
-    def findMissingUserIds(self, userLookupDict):
-        handlesToLookup = []
-        for handle in userLookupDict.keys():
-            if (userLookupDict[handle].idStr == ""):
-                self.logger.log("need idStr for handle " + handle)
-                handlesToLookup.append(handle)
-
-        if (len(handlesToLookup) > 0):
-            for i in range(0, len(handlesToLookup), 100):
-                # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
-                batch = handlesToLookup[i:i + 100]
-                idStrDict = self.doMultipleUserLookup(batch)
-                for handle in idStrDict.keys():
-                    userLookupDict[handle].idStr = idStrDict[handle]
             
     ###########################################################################
     ###########################################################################
@@ -293,13 +256,6 @@ class RetrieveTweets:
         listOfMembers = Utilities.loadCongressMembers()
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
         userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
-        
-        try:
-            self.findMissingUserIds(userLookupDict)
-        except BaseException as e:
-            self.logger.log("Error: failed to find missing user ids: " + str(e.args))
-        logMessage = Utilities.saveUserLookup(userLookupDict)
-        self.logger.log(logMessage)
     
         numHandlesRetrieved = 0
         numTweetsSaved = 0

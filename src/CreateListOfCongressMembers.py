@@ -1,5 +1,7 @@
 import os
+import tweepy
 import urllib.request
+import time
 
 import Classes
 import Utilities
@@ -23,7 +25,7 @@ partyDict = {"Democrat":"D", "Republican":"R", "Independent":"I"}
 commonNicknameDict = {"Tom":"Thomas", "Chris":"Christopher", "Dick":"Richard", 
                       "Rob":"Robert", "Bob":"Robert", "Ben":"Benjamin", "Dan":"Daniel",
                       "Don":"Donald", "Greg":"Gregory", "Mike":"Michael", "Jerry":"Jerrold",
-                      "Jim":"James", "Dave":"David", "Matt":"Matthew", "Lou":"Luis"}
+                      "Jim":"James", "Dave":"David", "Matt":"Matthew", "Lou":"Luis", "Jeff":"Jefferson"}
 
 ###############################################################################
 ###############################################################################
@@ -366,6 +368,83 @@ class CreateListOfCongressMembers:
 
     ###########################################################################
     ###########################################################################
+    
+    def doMultipleUserLookup(self, handlesToLookup, verbose):
+        cred = Utilities.loadCredentials()
+        client = tweepy.Client(cred.Bearer_Token)
+        
+        params = ",".join(handlesToLookup)
+        response = client.get_users(usernames=params)
+        self.logger.log("received response in doMultipleUserLookup")
+        
+        idStrDict = {}
+        for item in response.data:
+            if (verbose):
+                self.logger.log("received username=" + item.username + ", id=" + str(item.id))
+            idStrDict[item.username.lower()] = str(item.id)
+        
+        time.sleep(1)
+
+        return idStrDict
+
+    ###########################################################################
+    ###########################################################################
+
+    # check if a twitter handle has no id string, do user lookup if needed
+    def findMissingUserIds(self, userLookupDict):
+        self.logger.log("Looking for missing user ID numbers")
+
+        handlesToLookup = []
+        for handle in userLookupDict.keys():
+            if (userLookupDict[handle].idStr == ""):
+                self.logger.log("need idStr for handle " + handle)
+                handlesToLookup.append(handle)
+
+        if (len(handlesToLookup) > 0):
+            for i in range(0, len(handlesToLookup), 100):
+                # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
+                batch = handlesToLookup[i:i + 100]
+                idStrDict = self.doMultipleUserLookup(batch, True)
+
+                if (len(batch) != len(idStrDict)):
+                    self.logger.log("Warnng: after user lookup, length of batch: {} does not equal length of idStrDict: {}".format(len(batch), len(idStrDict)))
+
+                for handle in idStrDict.keys():
+                    userLookupDict[handle].idStr = idStrDict[handle]
+
+    ###########################################################################
+    ###########################################################################
+
+    def removeStaleTwitterHandles(self, listOfMembers, userLookupDict):
+        self.logger.log("Checking for stale Twitter handles")
+
+        handlesToLookup = []
+        for member in listOfMembers:
+            for handle in member.twitter:
+                if (handle.strip() != ""):
+                    handlesToLookup.append(handle)
+
+        for i in range(0, len(handlesToLookup), 100):
+            # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
+            batch = handlesToLookup[i:i + 100]
+            idStrDict = self.doMultipleUserLookup(batch, False)
+
+            if (len(batch) != len(idStrDict)):
+                for handle in batch:
+                    if handle not in idStrDict.keys():
+                        print("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and UserLookup.txt".format(handle))
+
+                        # remove from listOfMembers
+                        for member in listOfMembers:
+                            if (handle in member.twitter):
+                                member.twitter.remove(handle)
+
+                        # remove from userLookupDict
+                        if (handle in userLookupDict.keys()):
+                            userLookupDict.pop(handle)
+
+    ###########################################################################
+    ###########################################################################
 
     def run(self):
         
@@ -391,6 +470,23 @@ class CreateListOfCongressMembers:
         self.logger.log("Trying to match personal Twitter accounts with their owners in Congress")
         listOfMembers = self.addPersonalAccounts(listOfMembers, dictOfTwitterUsers)
         self.lookForMissingTwitterHandles(listOfMembers)
+
+        # Load (or create) the userLookup file which relates a Twitter handle to an ID number
+        userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
+
+        try:
+            self.removeStaleTwitterHandles(listOfMembers, userLookupDict)
+        except BaseException as e:
+            self.logger.log("Warning: failed to remove stale Twitter handles: " + str(e.args))
+
+        try:
+            self.findMissingUserIds(userLookupDict)
+        except BaseException as e:
+            self.logger.log("Warning: failed to find missing user ids: " + str(e.args))
+
+        logMessage = Utilities.saveUserLookup(userLookupDict)
+        self.logger.log(logMessage)
+
         logMessage = Utilities.saveCongressMembers(listOfMembers)
         self.logger.log(logMessage)
 
