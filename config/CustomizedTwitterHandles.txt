@@ -9,7 +9,6 @@ exclude=@davidperduega
 exclude=@marthamcsallyaz
 exclude=@kamalaharris
 exclude=@teammeadows
-exclude=@rep_watkins
 
 exclude=@reprichmond
 exclude=@cedricrichmond
