@@ -432,7 +432,7 @@ class CreateListOfCongressMembers:
             if (len(batch) != len(idStrDict)):
                 for handle in batch:
                     if handle not in idStrDict.keys():
-                        print("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and UserLookup.txt".format(handle))
+                        self.logger.log("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and UserLookup.txt".format(handle))
 
                         # remove from listOfMembers
                         for member in listOfMembers:
