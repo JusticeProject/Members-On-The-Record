@@ -1,0 +1,3 @@
+To=
+Bcc=alice@example.com,bob@example.com
+From=you@example.com
