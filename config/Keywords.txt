@@ -25,6 +25,8 @@ words specific to this project: MOTR
 
 Category=Israel - Palestine
 Keywords=Jewish State
+Jewish-State
+JewishState
 Israel
 ^Isreal
 Netanyahu
@@ -266,6 +268,8 @@ Sana'a
 Category=Horn of Africa
 Keywords=Somalia
 Horn of Africa
+HornOfAfrica
+Horn-Of-Africa
 Somaliland
 Eritrea
 Djibouti
