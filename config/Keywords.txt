@@ -50,6 +50,7 @@ Fatah
 PFLP
 Tel Aviv
 Jerusalem
+Aqsa+Mosque
 Ramallah
 ^Hebron
 _Hebron
@@ -58,6 +59,7 @@ Home Demoli
 House Demoli
 West Bank
 WestBank
+West-Bank
 Judea
 ^Samaria
 Zionism
