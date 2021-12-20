@@ -26,6 +26,7 @@ pip install PyGithub
 pip install pytesseract
 pip install beautifulsoup4
 pip install brotlicffi
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
