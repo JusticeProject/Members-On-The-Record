@@ -36,6 +36,7 @@ class UploadResults:
                          message="Auto-commit: upload today's results", content=data, branch="main")
 
         self.logger.log("Uploaded today's results to GitHub: " + gitHubPath)
+        return todaysResultsFileName
 
     ###########################################################################
     ###########################################################################
@@ -126,11 +127,12 @@ class UploadResults:
         cred = Utilities.loadCredentials()
         git = Github(cred.GitHub_Token)
         repo = git.get_user().get_repo("Members-On-The-Record")
+        todaysResultsFileName = None
 
         # upload today's results to GitHub, if it fails then no point in continuing
         for retries in range(0, 3):
             try:
-                self.uploadTodaysResults(repo, todaysResultsPath)
+                todaysResultsFileName = self.uploadTodaysResults(repo, todaysResultsPath)
                 break # if we got this far without an exception then break out of the for loop
             except BaseException as e:
                 strError = str(e.args)
@@ -138,7 +140,7 @@ class UploadResults:
                 if (retries <= 1):
                     time.sleep(5)
                 else:
-                    return
+                    return None
         
         # Get all the results that are currently stored on GitHub, if it fails then no point in continuing.
         # This info will be used to create the index in the next step.
@@ -152,7 +154,7 @@ class UploadResults:
                 if (retries <= 1):
                     time.sleep(5)
                 else:
-                    return
+                    return None
         
         # update the index of results on GitHub
         for retries in range(0, 3):
@@ -165,8 +167,10 @@ class UploadResults:
                 if (retries <= 1):
                     time.sleep(5)
                 else:
-                    return
-        
+                    return None
+
+        return todaysResultsFileName
+
 ###############################################################################
 ###############################################################################
     

@@ -8,6 +8,7 @@ import CreateListOfCongressMembers
 import RetrieveTweets
 import AnalyzeTweets
 import UploadResults
+import EmailNotifications
 
 ###############################################################################
 ###############################################################################
@@ -79,7 +80,15 @@ while True:
         
             # upload results to GitHub and Google Drive
             step5 = UploadResults.UploadResults(logger)
-            step5.run(resultsFilePath)
+            todaysResultsFileName = step5.run(resultsFilePath)
+
+            # wait 5 minutes for the new results to go live, then send email
+            if (todaysResultsFileName is not None):
+                time.sleep(5 * 60)
+                step6 = EmailNotifications.EmailNotifications(logger)
+                step6.run(todaysResultsFileName)
+            else:
+                logger.log("Upload was not successful, not sending email notification")
         
         stopSecs = time.time()
         diffMins = int((stopSecs - startSecs) / 60.0)
