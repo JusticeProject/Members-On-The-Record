@@ -132,9 +132,8 @@ class RetrieveTweets:
                 if (shortened_url not in urls):
                     url_obj = Classes.URL()
                     url_obj.shortened_url = shortened_url
-                    url_obj.expanded_url = item["expanded_url"]
-                    if ("title" in item.keys()):
-                        url_obj.title = item["title"]
+                    url_obj.expanded_url = item.get("expanded_url", "")
+                    url_obj.title = item.get("title", "")
                     urls[shortened_url] = url_obj
 
         tweet.text = rawTweet.text
@@ -203,6 +202,7 @@ class RetrieveTweets:
         tweets = []
         dictOfUrls = {}
         listOfMedia = []
+        mostRecentTweetId = 0
     
         for response in responses:
             
@@ -228,11 +228,16 @@ class RetrieveTweets:
                 listOfMedia = listOfMedia + response.includes["media"]
     
             # get the newest id, this will be used as since_id for the next request
-            if int(response.meta["newest_id"]) > user.mostRecentTweetId:
-                user.mostRecentTweetId = int(response.meta["newest_id"])
+            if int(response.meta["newest_id"]) > mostRecentTweetId:
+                mostRecentTweetId = int(response.meta["newest_id"])
     
         # replace the media keys with the actual data
         self.replaceMediaKeysWithData(tweets, listOfMedia)
+
+        # check if we need to update the user's most recent tweet id, if we got this far then there
+        # were no exceptions so it's safe to update it now
+        if (mostRecentTweetId > user.mostRecentTweetId):
+            user.mostRecentTweetId = mostRecentTweetId
         
         self.logger.log("received " + str(len(tweets)) + " for handle " + user.twitterHandle)
         return tweets, dictOfUrls
