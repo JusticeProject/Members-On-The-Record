@@ -131,6 +131,8 @@ addameer
 @972mag
 haaretz
 @theIMEU
+@AJCGlobal
+@J_Insider
 
 Category=Apartheid
 Keywords=Apartheid
@@ -181,7 +183,7 @@ Muslim+Brotherhood
 Tahrir
 
 Category=Saudi Arabia
-Keywords=Saudi
+Keywords=Saudi~@MassAuditor
 ^Arabia~@Arabia_Alliance
 ^ARABIA
 _Arabia
