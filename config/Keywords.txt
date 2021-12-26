@@ -96,6 +96,8 @@ Pegasus+Spyware
 Pegasus+Software
 Candiru+Spyware
 Candiru+Software
+Cytrox
+Intellexa
 Sheikh+Jarrah
 Silwan
 ^Atarot
@@ -121,6 +123,7 @@ ngo-monitor
 knesset
 _IDF
 shin bet
+Shabak
 mossad
 Blue Wolf
 al haq
