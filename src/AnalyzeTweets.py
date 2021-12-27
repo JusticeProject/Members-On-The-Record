@@ -23,8 +23,8 @@ class AnalyzeTweets:
         self.rightHighlightSpan = '</span>'
 
         # These HTML tags are used to show the text captured from images/photos
-        self.leftBlockQuote = ' [Text captured from image:<blockquote style="white-space: pre-line">'
-        self.rightBlockQuote = "</blockquote>]"
+        self.leftBlockQuote = '<blockquote style="white-space: pre-line">[Text captured from image:\n\n'
+        self.rightBlockQuote = "]</blockquote>"
 
     ###########################################################################
     ###########################################################################
@@ -53,49 +53,6 @@ class AnalyzeTweets:
                     dictUserTweets[tweet.id] = tweet
 
         return dictUserTweets,dictRefTweets
-
-    ###########################################################################
-    ###########################################################################
-    
-    def downloadPhoto(self, url):
-        filename = url.rsplit("/", 1)[1]
-        localPath = self.resultsFolder + filename
-        
-        if (os.path.exists(localPath)):
-            self.logger.log(localPath + " already exists")
-            return localPath
-        else:
-            time.sleep(1) # be nice to Twitter, don't hit them too fast with lots of requests for downloads
-
-            for retries in range(0, 3):
-                try:
-                    seconds = retries + 2  # first 2 seconds, then 3, then 4
-                    req = requests.get(url, headers=Utilities.getCustomHeader(), timeout=seconds)
-                    file = open(localPath, "wb")
-                    file.write(req.content)
-                    file.close()
-                    self.logger.log("After " + str(retries) + " retries, image saved to " + localPath)
-                    return localPath
-                except BaseException as e:
-                    if (retries < 2):
-                        time.sleep(1)
-                    else:
-                        self.logger.log("Warning: could not download photo: " + str(e.args))
-            
-        return ""
-
-    ###########################################################################
-    ###########################################################################
-
-    def convertPhotoToText(self, localPath):
-        if (localPath == ""):
-            return ""
-        else:
-            pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-            text = pytesseract.image_to_string(localPath)
-            text = text.replace("<", "") # clean up the text, these symbols could cause problems with html formatting
-            text = text.replace(">", "")
-            return text
 
     ###########################################################################
     ###########################################################################
@@ -158,9 +115,13 @@ class AnalyzeTweets:
             if (self.scanImages) and (tweet.list_of_attachments is not None):
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     if (tweet.list_of_attachments[i] == "photo"):
-                        url = tweet.list_of_attachments[i+1]
-                        localPath = self.downloadPhoto(url)
-                        capturedText = self.convertPhotoToText(localPath)
+                        filename = tweet.list_of_attachments[i+1].rsplit("/", 1)[1]
+                        localPath = self.resultsFolder + "images/" + filename[:-3] + "txt"
+                        capturedText = ""
+                        if (os.path.exists(localPath)):
+                            file = open(localPath, "r", encoding="utf-8")
+                            capturedText = file.read()
+                            file.close()
                         tweet.list_of_attachments[i+1] = capturedText
                     else:
                         # for all other types of attachments we won't search the text
@@ -576,7 +537,7 @@ class AnalyzeTweets:
         #attachmentText = re.sub(r"(\S)(\n)(\S)", r"\1 \3", attachmentText)
 
         # include the attachment text if needed
-        if (self.leftHighlightSpan not in formattedTweet.text) and (self.leftHighlightSpan in attachmentText):
+        if (self.leftHighlightSpan in attachmentText):
             formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
 
         # If any of the shortened urls are still in the text, it's probably in a tooltip. Replace these links with
@@ -654,7 +615,7 @@ class AnalyzeTweets:
     ###########################################################################
     ###########################################################################
 
-    def run(self, path = "", scanImages = False):
+    def run(self, path, scanImages):
         self.scanImages = scanImages
 
         dictOfKeywords = Utilities.getKeywords()
@@ -732,5 +693,5 @@ class AnalyzeTweets:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = AnalyzeTweets(logger)
-    instance.run("", False)
+    instance.run("", True)
     
