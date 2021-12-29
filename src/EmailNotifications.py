@@ -1,13 +1,7 @@
-import os.path
 from email.mime.text import MIMEText
-import base64
+import smtplib
 from bs4 import BeautifulSoup
 import re
-
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
 
 import Utilities
 
@@ -17,41 +11,6 @@ import Utilities
 class EmailNotifications:
     def __init__(self, logger):
         self.logger = logger
-    
-    ###########################################################################
-    ###########################################################################
-
-    def getCredentials(self, userAtTerminal):
-        # If modifying these scopes, delete the file token.json.
-        SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-
-        creds = None
-
-        # The file token.json stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-        if os.path.exists('../config/token.json'):
-            creds = Credentials.from_authorized_user_file('../config/token.json', SCOPES)
-
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                self.logger.log("Refreshing the token in the credentials file")
-                creds.refresh(Request())
-            else:
-                if (userAtTerminal):
-                    flow = InstalledAppFlow.from_client_secrets_file('../config/credentials.json', SCOPES)
-                    creds = flow.run_local_server(port=0)
-                else:
-                    self.logger.log("Warning: gmail credentials expired, need to do manual login")
-                    return None
-
-        # Save the credentials for the next run
-        with open('../config/token.json', 'w') as token:
-            token.write(creds.to_json())
-            self.logger.log("Credentials have been saved for the next run")
-
-        return creds
 
     ###########################################################################
     ###########################################################################
@@ -74,21 +33,28 @@ class EmailNotifications:
                 elif ("From=" in line):
                     message["From"] = line.split("From=")[1].strip()
 
-        raw = base64.urlsafe_b64encode(message.as_bytes())
-        raw = raw.decode()
-        raw_data = {"raw":raw}
-
-        return raw_data
+        return message
 
     ###########################################################################
     ###########################################################################
 
-    def sendEmail(self, creds, msg):
-        # Call the Gmail API
-        service = build('gmail', 'v1', credentials=creds)
-        user = service.users()
-        gmail = user.messages()
-        gmail.send(userId="me", body=msg).execute()
+    def sendEmail(self, msg):
+        username = ""
+        password = ""
+        with open("../config/Email.txt") as file:
+            lines = file.readlines()
+            for line in lines:
+                if ("Email_Username=" in line):
+                    username = line.split("Email_Username=")[1].strip()
+                elif ("Email_Password=" in line):
+                    password = line.split("Email_Password=")[1].strip()
+
+        s = smtplib.SMTP("smtp.gmail.com", 587)
+        s.starttls()
+        s.login(username, password)
+        result = s.send_message(msg)
+        self.logger.log(str(result))
+        s.quit()
         self.logger.log("Finished sending email notification")
 
     ###########################################################################
@@ -125,7 +91,7 @@ class EmailNotifications:
     ###########################################################################
     ###########################################################################
 
-    def run(self, todaysResultsFileName, userAtTerminal = False):
+    def run(self, todaysResultsFileName):
         uploaded = self.areNewResultsAvailable(todaysResultsFileName)
         if (not uploaded):
             return
@@ -135,10 +101,7 @@ class EmailNotifications:
         msg = self.createMessage(dateReadable)
 
         try:
-            creds = self.getCredentials(userAtTerminal)
-            if (not creds):
-                return
-            self.sendEmail(creds, msg)
+            self.sendEmail(msg)
         except BaseException as e:
             self.logger.log("Warning: exception when trying to send email: {}".format(e.args))
 
@@ -149,4 +112,4 @@ if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = EmailNotifications(logger)
     # need to fill in filename of today's results, ex: 2021-12-19-Sun.html
-    instance.run("today.html", True)
+    instance.run("today.html")
