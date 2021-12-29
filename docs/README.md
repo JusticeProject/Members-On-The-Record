@@ -1,5 +1,5 @@
 # Members On The Record (Automated)
-An automated search for U.S. Congress members' Tweets about the Middle East. Tweets are categorized by country and the results are neatly formatted in HTML.
+This software will perform an automated search for U.S. Congress members' Tweets about the Middle East. Tweets are categorized by country and the results are neatly formatted in HTML.
 
 ## Directory structure
 #### config folder
@@ -26,7 +26,6 @@ pip install PyGithub
 pip install pytesseract
 pip install beautifulsoup4
 pip install brotlicffi
-pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
