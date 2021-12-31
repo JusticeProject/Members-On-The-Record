@@ -2,6 +2,7 @@ from email.mime.text import MIMEText
 import smtplib
 from bs4 import BeautifulSoup
 import re
+import time
 
 import Utilities
 
@@ -92,9 +93,18 @@ class EmailNotifications:
     ###########################################################################
 
     def run(self, todaysResultsFileName):
-        uploaded = self.areNewResultsAvailable(todaysResultsFileName)
-        if (not uploaded):
-            return
+        MAX_TRIES = 5
+        for i in range(1, MAX_TRIES + 1):
+            uploaded = self.areNewResultsAvailable(todaysResultsFileName)
+            if (uploaded):
+                break
+            else:
+                if (i < MAX_TRIES):
+                    self.logger.log("Waiting a littler longer to see if the new results appear")
+                    time.sleep(60)
+                else:
+                    self.logger.log("Warning: not waiting any longer for the new results")
+                    return
 
         dateSortable = todaysResultsFileName.split(".html")[0]
         dateReadable = Utilities.convertDateToReadable(dateSortable)
