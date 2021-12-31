@@ -14,6 +14,7 @@ import time
 import Classes
 
 CONFIG_FILE_NAME = "../config/Config.txt"
+CREDENTIALS_FILE_NAME = "../config/Credentials.txt"
 CUSTOMIZED_HANDLES_FILE_NAME = "../config/CustomizedTwitterHandles.txt"
 LIST_OF_CONGRESS_MEMBERS_FILENAME = "../output/ListOfCongressMembers.txt"
 TWITTER_USERS_FROM_LISTS_FILENAME = "../output/TwitterUsersFromTwitterLists.txt"
@@ -100,11 +101,22 @@ def getCustomHeader(currentPlatform = True):
 
 def loadCredentials():
     cred = Classes.Credentials()
-    configLines = open(CONFIG_FILE_NAME, "r").readlines()
-    for line in configLines:
+    credLines = open(CREDENTIALS_FILE_NAME, "r").readlines()
+    for line in credLines:
         cred.setData(line)
     
     return cred
+
+###############################################################################
+###############################################################################
+
+def loadConfig():
+    config = Classes.Config()
+    configLines = open(CONFIG_FILE_NAME, "r").readlines()
+    for line in configLines:
+        config.setData(line)
+    
+    return config
 
 ###############################################################################
 ###############################################################################

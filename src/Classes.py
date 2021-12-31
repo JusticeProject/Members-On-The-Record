@@ -244,3 +244,19 @@ class Credentials:
             self.Bearer_Token = lineOfData.split("Twitter_Bearer_Token=")[1].strip()
         elif ("GitHub_Token=" in lineOfData):
             self.GitHub_Token = lineOfData.split("GitHub_Token=")[1].strip()
+
+###############################################################################
+###############################################################################
+
+class Config:
+    def __init__(self):
+        self.Scan_On_Startup = ""
+        self.Scan_Images = ""
+    
+    def setData(self, lineOfData):
+        if ("Scan_On_Startup=" in lineOfData):
+            text = lineOfData.split("Scan_On_Startup=")[1].strip()
+            self.Scan_On_Startup = bool(int(text))
+        elif ("Scan_Images=" in lineOfData):
+            text = lineOfData.split("Scan_Images=")[1].strip()
+            self.Scan_Images = bool(int(text))

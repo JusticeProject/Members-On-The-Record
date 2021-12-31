@@ -6,6 +6,7 @@ import Utilities
 import RetrieveListsFromTwitter
 import CreateListOfCongressMembers
 import RetrieveTweets
+import ProcessImages
 import AnalyzeTweets
 import UploadResults
 import EmailNotifications
@@ -18,7 +19,8 @@ SCAN_HOUR = 11
 
 # If True then it will scan right away, then proceed to scan every day at SCAN_HOUR.
 # If False then it will only scan at the SCAN_HOUR.
-scanOnStartup = True
+config = Utilities.loadConfig()
+scanOnStartup = config.Scan_On_Startup
 
 # If we haven't done any scans yet, this specifies how many days in the past as the starting
 # point for the Tweet retrieval. For subsequent scans it will only get new Tweets since the
@@ -71,12 +73,19 @@ while True:
             time.sleep(30 * 60)
             numTweetsRetrieved += step3.run(3, numberOfDaysForFirstScan) # slow it down a tad just in case
         
+        # Download the photos that Congress members posted because there could be statements or Congressional letters.
+        # But first check if it has been enabled in the config file.
+        config = Utilities.loadConfig()
+        if (config.Scan_Images):
+            step3_5 = ProcessImages.ProcessImages(logger)
+            step3_5.run()
+        
         # if we retrieved any tweets then analyze them, if not then nothing we can do because we don't want 
         # to upload yesterday's data
         if (numTweetsRetrieved > 0):
             # search every Tweet we just retrieved and look for the keywords
             step4 = AnalyzeTweets.AnalyzeTweets(logger)
-            resultsFilePath = step4.run("", False)
+            resultsFilePath = step4.run("", config.Scan_Images)
         
             # upload results to GitHub and Google Drive
             step5 = UploadResults.UploadResults(logger)

@@ -23,8 +23,8 @@ class AnalyzeTweets:
         self.rightHighlightSpan = '</span>'
 
         # These HTML tags are used to show the text captured from images/photos
-        self.leftBlockQuote = '<blockquote style="white-space: pre-line">[Text captured from image:\n\n'
-        self.rightBlockQuote = "]</blockquote>"
+        self.leftBlockQuote = '<blockquote style="white-space: pre-line"><strong>Text captured from image:</strong>\n\n'
+        self.rightBlockQuote = "</blockquote>"
 
     ###########################################################################
     ###########################################################################
@@ -532,24 +532,27 @@ class AnalyzeTweets:
             if (self.scanImages) and (tweet.list_of_attachments is not None):
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     attachmentText = attachmentText + " " + tweet.list_of_attachments[i+1]
-        # Replace single newlines with a space, keep multi-newlines. We find a pattern with char-newline-char
-        # and replace it with char-space-char. Groups \1 and \3 are the chars that we need to keep in the string.
-        #attachmentText = re.sub(r"(\S)(\n)(\S)", r"\1 \3", attachmentText)
+        # Remove excessive whitespace such as "\n\n\n\n\n" or " \n \n \n \n"
+        # Replace 3 or more newlines with 2 newlines. Sometimes there is a space in there too. 
+        # Groups \1 and \3 are the chars that we need to keep in the string.
+        attachmentText = re.sub(r"(.)( *\n){3,}(.)", r"\1\n\n\3", attachmentText)
 
         # include the attachment text if needed
         if (self.leftHighlightSpan in attachmentText):
             formattedTweet.text += self.leftBlockQuote + attachmentText + self.rightBlockQuote
 
         # If any of the shortened urls are still in the text, it's probably in a tooltip. Replace these links with
-        # their title if it has one.
+        # their title if it has one. Tooltips can show up in the .text or in the .type (when they are replying to a Tweet)
         allConvUrls = self.getUrlsForConv(conversation)
         for shortened_url in allConvUrls:
-            if (shortened_url in formattedTweet.text):
+            if (shortened_url in formattedTweet.text) or (shortened_url in formattedTweet.type):
                 title = allConvUrls[shortened_url].title
                 if (len(title) > 0):
                     formattedTweet.text = formattedTweet.text.replace(shortened_url, "(" + title + ")")
+                    formattedTweet.type = formattedTweet.type.replace(shortened_url, "(" + title + ")")
                 else:
                     formattedTweet.text = formattedTweet.text.replace(shortened_url, "")
+                    formattedTweet.type = formattedTweet.type.replace(shortened_url, "")
 
         return formattedTweet
 

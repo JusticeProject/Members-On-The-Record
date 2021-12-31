@@ -216,7 +216,7 @@ class ProcessImages:
         p.join()
         self.logger.log("joined with second process")
         
-        self.logger.log("removing image files")
+        self.logger.log("removing image files, keeping the text files")
         files = os.listdir(self.imagesFolder)
         for filename in files:
             if (filename[-3:] == "txt"):

@@ -1,2 +1,2 @@
-Twitter_Bearer_Token=xxxxxxxxxxxxxxxxxxxx
-GitHub_Token=xxxxxxxxxxxxxxxxxxxx
+Scan_On_Startup=1
+Scan_Images=1
