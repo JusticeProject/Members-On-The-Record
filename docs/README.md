@@ -24,6 +24,7 @@ pip install tweepy
 pip install jinja2
 pip install PyGithub
 pip install pytesseract
+pip install numpy
 pip install beautifulsoup4
 pip install brotlicffi
 ```
@@ -33,7 +34,6 @@ python .\Automate.py
 ```
 
 ## TODO list
-* When a member of Congress posts an image, it could contain a letter with lots of text that could be searched. I have an implementation using pytesseract but it is currently disabled since it gives lots of false positives.
 * Continuously improve the search algorithm and the list of keyword search terms to ensure only relevant Tweets are in the results and are categorized properly. Example: Tweets about the country Jordan may not be accurately found because Jordan is such a common name.
 * Automate the search of Congress Members' floor speeches and press releases by scraping the data from senate.gov, house.gov, and congress.gov while obeying the sites' robots.txt files.
 
