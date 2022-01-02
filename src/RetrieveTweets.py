@@ -61,6 +61,11 @@ class RetrieveTweets:
         
         if (title != ""):
             self.logger.log("Found title: " + title)
+
+            if ("are you a robot?" in title.lower()):
+                self.logger.log("Warning: this site knows we are a bot")
+                return ""
+
             if ("|" not in title) and (" - " not in title):
                 title += " | " + Utilities.getDomainOfURL(url)
             return title
