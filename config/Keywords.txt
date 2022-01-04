@@ -50,6 +50,7 @@ Fatah
 PFLP
 Tel Aviv
 Jerusalem
+^Haifa
 Aqsa+Mosque
 Ramallah
 ^Hebron
@@ -136,6 +137,7 @@ haaretz
 @theIMEU
 @AJCGlobal
 @J_Insider
+@HananyaNaftali
 
 Category=Apartheid
 Keywords=Apartheid
