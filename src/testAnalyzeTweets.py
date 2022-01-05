@@ -41,6 +41,6 @@ logger.prepareLogFile("../output/test/")
 
 for folder in folders:
     print("\ntesting folder " + folder)
-    resultsPath = instance.run(folder)
+    resultsPath = instance.run(folder, False)
     justTheFileName = resultsPath.rsplit("/", 1)[1]
     distutils.file_util.copy_file(resultsPath, "../output/test/" + justTheFileName)
