@@ -45,13 +45,13 @@ class RetrieveTweets:
         # slow down the website retrieval a tad in case we are connecting to the same websites over and over
         time.sleep(2)
 
-        html, respcode = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
+        html, binary_data, respcode = Utilities.getWebsiteData(url, currentPlatformHeaders)
         title = Utilities.extractTitleFromHTML(html)
 
         # if they think we are a robot then they won't give us the correct title
         if (respcode >= 400):
             self.logger.log("Warning: received response code {}, checking the Google cache".format(respcode))
-            cached_html, cached_respcode = Utilities.getWebsiteFromGoogleCache(url, currentPlatformHeaders)
+            cached_html, binary_data, cached_respcode = Utilities.getWebsiteFromGoogleCache(url, currentPlatformHeaders)
             cached_title = Utilities.extractTitleFromHTML(cached_html)
             if (cached_respcode >= 400):
                 self.logger.log("Warning: received response code {} from Google cache".format(cached_respcode))
@@ -70,12 +70,12 @@ class RetrieveTweets:
                 title += " | " + Utilities.getDomainOfURL(url)
             return title
         
-        if ("PDF" in html[:5]):
+        if ("PDF" in binary_data[:5]):
             self.logger.log("Found PDF file")
             return "Link to PDF | " + Utilities.getDomainOfURL(url)
 
         # if we get this far then we couldn't figure it out
-        self.logger.log("Warning: no title found: " + url + " " + str(len(html)))
+        self.logger.log("Warning: no title found: " + url + " " + str(len(html)) + " " + str(len(binary_data)))
         return ""
 
     ###########################################################################

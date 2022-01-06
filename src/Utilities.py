@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import brotlicffi
 import time
+from typing import Tuple
 
 import Classes
 
@@ -481,7 +482,8 @@ def saveGweets(listOfGweets, scanDate):
     
     GWEETS_FILENAME = RESULTS_FOLDER + "/Gweets1.txt"
     
-    file = open(GWEETS_FILENAME, "w", encoding="utf-8")
+    # append in case we are testing and we download more gweets
+    file = open(GWEETS_FILENAME, "a", encoding="utf-8")
     for gweet in listOfGweets:
         file.write(str(gweet) + "\n")
     file.close()
@@ -628,39 +630,53 @@ def getDomainOfURL(url):
 
 # helper function for retrieving all HTML data from a website
 
-def getWebsiteHTML(url, currentPlatformHeaders = True):
+def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
     if (url == ""):
-        return "", 0
+        return "", bytes(), 0
 
     for retries in range(0, 3):
         try:
             custom_header = getCustomHeader(currentPlatformHeaders)
-            result = requests.get(url, headers=custom_header, timeout=3)
+            result = requests.get(url, headers=custom_header, timeout=10, stream=True)
+            result.raise_for_status() # if an HTTP error occurred, it will raise an exception
 
-            # TODO: the requests documentation says it should automatically decompress brotli encodings, but it wasn't doing that...
-            if ("Content-Encoding" in result.headers.keys()) and (result.headers["Content-Encoding"] == "br"):
-                decodedData = brotlicffi.decompress(result.content).decode() # decode from bytes to str
-            else:
-                decodedData = result.text
+            text_data = ""
+            binary_data = bytes()
+
+            start = time.time()
+            for chunk in result.iter_content(4096, decode_unicode=True):
+                if isinstance(chunk, str):
+                    text_data += chunk
+                elif isinstance(chunk, bytes):
+                    binary_data += chunk
+
+                if (time.time() - start) > 60: # if it's taking more than 60 seconds, don't wait any longer
+                    result.close()
+                    raise ValueError("timeout reached")
             
             result.close()
-            return decodedData, result.status_code
+            return text_data, binary_data, result.status_code
+        except ValueError:
+            return text_data, binary_data, 1001
         except:
             if (retries <= 1):
                 time.sleep(1)
 
-    return "", 1000
+    return "", bytes(), 1000
 
 ###############################################################################
 ###############################################################################
 
 def getWebsiteFromGoogleCache(url, currentPlatformHeaders = True):
-    return getWebsiteHTML("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
+    return getWebsiteData("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
 
 ###############################################################################
 ###############################################################################
 
 def extractTitleFromHTML(html):
+    if (html == ""):
+        return ""
+
     try:
         parsed_html = BeautifulSoup(html, 'html.parser')
     except:

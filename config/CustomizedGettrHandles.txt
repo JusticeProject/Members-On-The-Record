@@ -16,3 +16,6 @@
 @SenatorLankford=https://www.lankford.senate.gov
 @laurenboebert=https://boebert.house.gov
 @SteveScalise=https://scalise.house.gov
+@repandybiggsaz=https://biggs.house.gov
+@RepDonaldsPress=https://donalds.house.gov
+@reppfluger=https://pfluger.house.gov

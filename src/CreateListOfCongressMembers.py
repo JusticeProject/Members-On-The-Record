@@ -65,7 +65,7 @@ class CreateListOfCongressMembers:
         # Now let's see when the legislator data on GitHub was last updated.
         dateOfLatestData = ""
         commitHistoryURL = "https://github.com/unitedstates/congress-legislators/commits/gh-pages/legislators-current.csv"
-        html, respcode = Utilities.getWebsiteHTML(commitHistoryURL)
+        html, binary_data, respcode = Utilities.getWebsiteData(commitHistoryURL)
         lines = html.split("\n")
         for line in lines:
             if ("Commits on " in line):
@@ -448,12 +448,19 @@ class CreateListOfCongressMembers:
 
     def addGettrHandles(self, listOfMembers):
         listOfIncludes = Utilities.getCustomizedGettrHandles()
+        self.logger.log("Looking for matches for Gettr handles")
 
+        numberMatched = 0
         for handle,url in listOfIncludes:
             for member in listOfMembers:
                 if (member.url == url):
                     member.gettr.append(handle)
+                    numberMatched += 1
+                    self.logger.log("Gettr handle {} matched".format(handle))
                     break
+
+        if (numberMatched != len(listOfIncludes)):
+            self.logger.log("Warning: have {} Gettr handles but only {} were matched".format(len(listOfIncludes), numberMatched))
 
     ###########################################################################
     ###########################################################################
