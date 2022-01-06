@@ -365,5 +365,5 @@ Al Jazeera
 AlJazeera
 Al-Jazeera
 
-Category=Gettr accounts. These might be added to the daily scan in the near future.
+Category=Who's talking about Gettr? Gettr accounts might be added to the daily scan in the near future.
 Keywords=Gettr
