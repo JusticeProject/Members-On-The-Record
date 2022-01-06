@@ -265,7 +265,7 @@ class RetrieveTweets:
     
         listOfMembers = Utilities.loadCongressMembers()
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
-        userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
+        twitterLookupDict = Utilities.loadTwitterLookup(listOfMembers, dictOfTwitterUsers)
     
         numHandlesRetrieved = 0
         numTweetsSaved = 0
@@ -276,7 +276,7 @@ class RetrieveTweets:
                 if (handle == ""):
                     continue
             
-                user = userLookupDict[handle]
+                user = twitterLookupDict[handle]
                 
                 for retries in range(0, 3):
                     try:
@@ -322,7 +322,7 @@ class RetrieveTweets:
         self.logger.log(logMessage)
 
         # save the most recent tweet ids so we don't grab the same tweets again
-        logMessage = Utilities.saveUserLookup(userLookupDict)
+        logMessage = Utilities.saveUserLookup(twitterLookupDict)
         self.logger.log(logMessage)
         
         self.logger.log("Retrieved a total of " + str(numTweetsSaved) + " tweets")

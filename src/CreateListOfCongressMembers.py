@@ -391,12 +391,12 @@ class CreateListOfCongressMembers:
     ###########################################################################
 
     # check if a twitter handle has no id string, do user lookup if needed
-    def findMissingUserIds(self, userLookupDict):
+    def findMissingUserIds(self, twitterLookupDict):
         self.logger.log("Looking for missing user ID numbers")
 
         handlesToLookup = []
-        for handle in userLookupDict.keys():
-            if (userLookupDict[handle].idStr == ""):
+        for handle in twitterLookupDict.keys():
+            if (twitterLookupDict[handle].idStr == ""):
                 self.logger.log("need idStr for handle " + handle)
                 handlesToLookup.append(handle)
 
@@ -410,12 +410,12 @@ class CreateListOfCongressMembers:
                     self.logger.log("Warnng: after user lookup, length of batch: {} does not equal length of idStrDict: {}".format(len(batch), len(idStrDict)))
 
                 for handle in idStrDict.keys():
-                    userLookupDict[handle].idStr = idStrDict[handle]
+                    twitterLookupDict[handle].idStr = idStrDict[handle]
 
     ###########################################################################
     ###########################################################################
 
-    def removeStaleTwitterHandles(self, listOfMembers, userLookupDict):
+    def removeStaleTwitterHandles(self, listOfMembers, twitterLookupDict):
         self.logger.log("Checking for stale Twitter handles")
 
         handlesToLookup = []
@@ -432,16 +432,28 @@ class CreateListOfCongressMembers:
             if (len(batch) != len(idStrDict)):
                 for handle in batch:
                     if handle not in idStrDict.keys():
-                        self.logger.log("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and UserLookup.txt".format(handle))
+                        self.logger.log("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and TwitterLookup.txt".format(handle))
 
                         # remove from listOfMembers
                         for member in listOfMembers:
                             if (handle in member.twitter):
                                 member.twitter.remove(handle)
 
-                        # remove from userLookupDict
-                        if (handle in userLookupDict.keys()):
-                            userLookupDict.pop(handle)
+                        # remove from twitterLookupDict
+                        if (handle in twitterLookupDict.keys()):
+                            twitterLookupDict.pop(handle)
+
+    ###########################################################################
+    ###########################################################################
+
+    def addGettrHandles(self, listOfMembers):
+        listOfIncludes = Utilities.getCustomizedGettrHandles()
+
+        for handle,url in listOfIncludes:
+            for member in listOfMembers:
+                if (member.url == url):
+                    member.gettr.append(handle)
+                    break
 
     ###########################################################################
     ###########################################################################
@@ -471,20 +483,23 @@ class CreateListOfCongressMembers:
         listOfMembers = self.addPersonalAccounts(listOfMembers, dictOfTwitterUsers)
         self.lookForMissingTwitterHandles(listOfMembers)
 
-        # Load (or create) the userLookup file which relates a Twitter handle to an ID number
-        userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
+        # Load (or create) the twitterLookup file which relates a Twitter handle to an ID number
+        twitterLookupDict = Utilities.loadTwitterLookup(listOfMembers, dictOfTwitterUsers)
 
         try:
-            self.removeStaleTwitterHandles(listOfMembers, userLookupDict)
+            self.removeStaleTwitterHandles(listOfMembers, twitterLookupDict)
         except BaseException as e:
             self.logger.log("Warning: failed to remove stale Twitter handles: " + str(e.args))
 
         try:
-            self.findMissingUserIds(userLookupDict)
+            self.findMissingUserIds(twitterLookupDict)
         except BaseException as e:
             self.logger.log("Warning: failed to find missing user ids: " + str(e.args))
 
-        logMessage = Utilities.saveUserLookup(userLookupDict)
+        # add the gettr handles
+        self.addGettrHandles(listOfMembers)
+
+        logMessage = Utilities.saveTwitterLookup(twitterLookupDict)
         self.logger.log(logMessage)
 
         logMessage = Utilities.saveCongressMembers(listOfMembers)

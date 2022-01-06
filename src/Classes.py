@@ -13,6 +13,7 @@ class CongressMember:
         self.url = ""
         self.url_press = ""
         self.twitter = []
+        self.gettr = []
         
     def setData(self, lineOfData):
         line_split = lineOfData.split(",")
@@ -29,22 +30,25 @@ class CongressMember:
         self.url = line_split[10]
         self.url_press = line_split[11]
         self.twitter = []
-        for handle in line_split[12:]:
+        for handle in line_split[12].split(";"):
             self.twitter.append(handle.lower().strip())
+        self.gettr = []
+        for handle in line_split[13].split(";"):
+            self.gettr.append(handle.lower().strip())
     
     def __str__(self):
         totalString = self.last_name + "," + self.first_name + "," + self.middle_name + "," + \
             self.suffix + "," + self.nickname + "," + self.full_name + "," + self.house + "," + \
             self.state + "," + self.district + "," + self.party + "," + self.url + "," + self.url_press + ","
 
-        if (len(self.twitter) == 1) and (self.twitter[0] == ""):
-            totalString += ","
-        for handle in self.twitter:
-            if (len(handle) > 0):
-                totalString = totalString + handle + ","
+        joinedHandles = ";".join(self.twitter)
+        totalString += joinedHandles + ","
+
+        joinedHandles = ";".join(self.gettr)
+        totalString += joinedHandles + ","
 
         totalString = totalString.replace("\n", "")
-        return totalString[:-1] # don't include the last comma
+        return totalString
     
     def __lt__(self, other):
         return self.last_name < other.last_name
@@ -90,6 +94,22 @@ class TwitterUser:
         return self.twitterHandle + "," + self.idStr + "," + str(self.mostRecentTweetId) + "," + \
             self.website + "," + self.name + "," + self.description
         
+###############################################################################
+###############################################################################
+
+class GettrUser:
+    def __init__(self):
+        self.gettrHandle = ""
+        self.mostRecentPostIdStr = ""
+
+    def setData(self, lineOfData):
+        line_split = lineOfData.split(",")
+        self.gettrHandle = line_split[0]
+        self.mostRecentPostIdStr = line_split[1]
+    
+    def __str__(self):
+        return self.gettrHandle + "," + self.mostRecentPostIdStr
+
 ###############################################################################
 ###############################################################################
 
