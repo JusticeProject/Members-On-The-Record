@@ -19,3 +19,4 @@
 @repandybiggsaz=https://biggs.house.gov
 @RepDonaldsPress=https://donalds.house.gov
 @reppfluger=https://pfluger.house.gov
+@SenLummis=https://www.lummis.senate.gov

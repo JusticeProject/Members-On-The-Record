@@ -8,7 +8,6 @@ import jinja2
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-import brotlicffi
 import time
 from typing import Tuple
 
@@ -507,12 +506,12 @@ def loadGweets(path):
 ###############################################################################
 ###############################################################################
 
-def saveURLs(dictOfURLs, scanDate, append=True):
+def saveURLs(dictOfURLs, scanDate, socialMedia = "Twitter", append=True):
     RESULTS_FOLDER = "../output/" + scanDate
     if (os.path.exists(RESULTS_FOLDER) == False):
         os.mkdir(RESULTS_FOLDER)
 
-    URLS_FILENAME = RESULTS_FOLDER + "/URLs.txt"
+    URLS_FILENAME = RESULTS_FOLDER + "/" + socialMedia + "URLs.txt"
 
     if (append):
         mode = "a"
@@ -531,10 +530,11 @@ def saveURLs(dictOfURLs, scanDate, append=True):
 ###############################################################################
 ###############################################################################
 
-def loadURLs(path):
+def loadURLs(path, socialMedia = "Twitter"):
     dictOfURLs = {}
 
-    fileLines = open(path + "URLs.txt", "r", encoding="utf-8").readlines()
+    fileName = socialMedia + "URLs.txt"
+    fileLines = open(path + fileName, "r", encoding="utf-8").readlines()
     for line in fileLines:
         url_obj = Classes.URL()
         url_obj.setData(line.strip())
@@ -637,7 +637,7 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
     for retries in range(0, 3):
         try:
             custom_header = getCustomHeader(currentPlatformHeaders)
-            result = requests.get(url, headers=custom_header, timeout=10, stream=True)
+            result = requests.get(url, headers=custom_header, timeout=3, stream=True)
             result.raise_for_status() # if an HTTP error occurred, it will raise an exception
 
             text_data = ""
@@ -690,6 +690,28 @@ def extractTitleFromHTML(html):
             return title
     
     return ""
+
+###############################################################################
+###############################################################################
+
+def integerToBase36(number: int):
+    alphabet="0123456789abcdefghijklmnopqrstuvwxyz"
+
+    if (number < len(alphabet)):
+        return alphabet[number]
+
+    base36 = ""
+    while number != 0:
+        number, remainder = divmod(number, len(alphabet)) # gives (x//y, x%y)
+        base36 = alphabet[remainder] + base36
+
+    return base36
+
+###############################################################################
+###############################################################################
+
+def base36ToInteger(number: str):
+    return int(number, 36)
 
 ###############################################################################
 ###############################################################################

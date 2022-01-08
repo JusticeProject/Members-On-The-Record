@@ -70,7 +70,7 @@ class RetrieveTweets:
                 title += " | " + Utilities.getDomainOfURL(url)
             return title
         
-        if ("PDF" in binary_data[:5]):
+        if (b"PDF" in binary_data[:5]):
             self.logger.log("Found PDF file")
             return "Link to PDF | " + Utilities.getDomainOfURL(url)
 
@@ -318,11 +318,11 @@ class RetrieveTweets:
 
         # save the urls, run might be called more than once so need to append urls to the file
         self.logger.log("Saving {} urls".format(len(urlsToSave)))
-        logMessage = Utilities.saveURLs(urlsToSave, currentDate)
+        logMessage = Utilities.saveURLs(urlsToSave, currentDate, "Twitter", True)
         self.logger.log(logMessage)
 
         # save the most recent tweet ids so we don't grab the same tweets again
-        logMessage = Utilities.saveUserLookup(twitterLookupDict)
+        logMessage = Utilities.saveTwitterLookup(twitterLookupDict)
         self.logger.log(logMessage)
         
         self.logger.log("Retrieved a total of " + str(numTweetsSaved) + " tweets")

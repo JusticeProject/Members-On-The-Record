@@ -116,7 +116,9 @@ class GettrUser:
 class Tweet:
     def __init__(self):
         self.id = 0
+        self.id_str = ""
         self.author_id = 0
+        self.author_id_str = ""
         self.created_at = ""
         self.conversation_id = 0
         self.in_reply_to_user_id = 0
@@ -131,44 +133,46 @@ class Tweet:
         self.dictLinks = {} # key = shortened url, value = URL object
         
     def setData(self, lineOfData):
-        line_split = lineOfData.split(",", 9)
+        line_split = lineOfData.split(",", 11)
         
         self.id = int(line_split[0])
-        self.author_id = int(line_split[1])
-        self.created_at = line_split[2]
-        self.conversation_id = int(line_split[3])
-        self.in_reply_to_user_id = int(line_split[4])
+        self.id_str = line_split[1]
+        self.author_id = int(line_split[2])
+        self.author_id_str = line_split[3]
+        self.created_at = line_split[4]
+        self.conversation_id = int(line_split[5])
+        self.in_reply_to_user_id = int(line_split[6])
         
-        if (line_split[5] == "False"):
+        if (line_split[7] == "False"):
             self.is_ref_tweet = False
         else:
             self.is_ref_tweet = True
             
-        if (line_split[6] == ""):
+        if (line_split[8] == ""):
             self.list_of_referenced_tweets = None
         else:
-            self.list_of_referenced_tweets = line_split[6].split(";")
+            self.list_of_referenced_tweets = line_split[8].split(";")
             for i in range(0, len(self.list_of_referenced_tweets), 2):
                 self.list_of_referenced_tweets[i+1] = int(self.list_of_referenced_tweets[i+1])
         
-        if (line_split[7] == ""):
+        if (line_split[9] == ""):
             self.list_of_attachments = None
         else:
-            self.list_of_attachments = line_split[7].split(";")
+            self.list_of_attachments = line_split[9].split(";")
 
-        if (line_split[8] == ""):
+        if (line_split[10] == ""):
             self.list_of_urls = None
         else:
-            self.list_of_urls = line_split[8].split(";")
+            self.list_of_urls = line_split[10].split(";")
         
-        self.text = line_split[9].strip()
+        self.text = line_split[11].strip()
         # make all single quotes standard, sometimes the funny single quotes appear
         if ("’" in self.text) or ("ʻ" in self.text):
             self.text = self.text.replace("’", "'")
             self.text = self.text.replace("ʻ", "'")
         
     def __str__(self):
-        totalString = str(self.id) + "," + str(self.author_id) + "," + \
+        totalString = str(self.id) + "," + self.id_str + "," + str(self.author_id) + "," + self.author_id_str + "," + \
             self.created_at + "," + str(self.conversation_id) + ","
         
         if (self.in_reply_to_user_id is None):
@@ -235,12 +239,14 @@ class URL:
 
 class FormattedTweet:
     def __init__(self):
-        self.id = 0
-        self.name = ""
-        self.partyAndState = ""
+        self.link = ""
+        self.namePartyState = ""
         self.day = ""
         self.type = ""
         self.text = ""
+
+    def __lt__(self, other):
+        return self.namePartyState < other.namePartyState
 
 ###############################################################################
 ###############################################################################
