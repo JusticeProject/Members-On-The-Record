@@ -205,7 +205,7 @@ Keywords=Jordanian
 ^King+Abdullah
 Prince+Hussein
 Dina+Kawar
-^Amman
+^Amman~@PhilAmmann
 Jordan River
 JoEmbassyUS
 USEmbassyJordan
