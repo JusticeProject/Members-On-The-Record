@@ -213,6 +213,11 @@ class AnalyzeTweets:
             self.logger.log("Warning: conversation id {} contains Jordan".format(conversation[0].conversation_id))
             self.logger.log("combinedTextLower = " + combinedTextLower)
 
+        # Look for more gettr accounts. Look in the Tweets, don't look in the Gweets.
+        if (conversation[0].author_id > 0) and ("gettr" in combinedTextLower):
+            self.logger.log("Warning: gettr alert for conversation id {}".format(conversation[0].conversation_id))
+            self.logger.log("combinedTextLower = " + combinedTextLower)
+
         # no category was found
         return None
         

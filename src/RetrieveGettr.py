@@ -24,6 +24,13 @@ class RetrieveGettr:
     ###########################################################################
     ###########################################################################
 
+    def cleanText(self, text):
+        cleanedText = text.replace("& ", "&amp; ")
+        return cleanedText
+
+    ###########################################################################
+    ###########################################################################
+
     def getAttachedQuotedGweet(self, post):
         quotedGweet = Classes.Tweet()
         quotedGweet.id = Utilities.base36ToInteger(post["_id"])
@@ -32,7 +39,9 @@ class RetrieveGettr:
         quotedGweet.created_at = Utilities.convertUdateToReadable(int(post["udate"]))
         quotedGweet.conversation_id = quotedGweet.id
         quotedGweet.is_ref_tweet = True
-        quotedGweet.text = post.get("txt", "")
+        
+        text = post.get("txt", "")
+        quotedGweet.text = self.cleanText(text)
 
         return quotedGweet
 
@@ -51,7 +60,9 @@ class RetrieveGettr:
         gweet.created_at = Utilities.convertUdateToReadable(int(rawPost["udate"]))
         gweet.conversation_id = gweet.id
         gweet.is_ref_tweet = True
-        gweet.text = rawPost.get("txt", "")
+
+        text = rawPost.get("txt", "")
+        gweet.text = self.cleanText(text)
 
         return gweet
 
@@ -103,15 +114,15 @@ class RetrieveGettr:
         listOfGweets = []
         dictOfURLs = {}
         for post in listOfRawPosts:
+            udate = int(post["udate"])
+            if (Utilities.daysSinceUdate(udate) > 14):
+                continue # ignore Gweets older than 14 days
+
             gweet = Classes.Tweet()
             gweet.id = Utilities.base36ToInteger(post["_id"])
             gweet.id_str = post["_id"]
             gweet.author_id_str = user.gettrHandle
-            udate = int(post["udate"])
             gweet.created_at = Utilities.convertUdateToReadable(udate)
-            if (Utilities.daysSinceUdate(udate) > 14):
-                self.logger.log("  Skipping Gweet with date {}".format(gweet.created_at))
-                continue
             gweet.conversation_id = gweet.id
 
             action = post.get("action", "")
@@ -119,7 +130,8 @@ class RetrieveGettr:
                 action = "Gweet Repost of @" + post.get("uid", "?")
             else:
                 action = "Gweet Post"
-            gweet.text = action + "," + post.get("txt", "")
+            text = post.get("txt", "")
+            gweet.text = action + "," + self.cleanText(text)
 
             # look for a url in the text
             # prevsrc is the url
