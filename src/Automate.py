@@ -2,8 +2,6 @@ import time
 import subprocess
 from multiprocessing import Process, Queue
 
-from numpy import number
-
 import Utilities
 
 import RetrieveListsFromTwitter
@@ -100,8 +98,8 @@ def runScanLoop():
                 logger.log("Upload was not successful, not sending email notification")
 
             stopSecs = time.time()
-            diffMins = int((stopSecs - startSecs) / 60.0)
-            logger.log("Scan took " + str(diffMins) + " minutes")
+            diffMins = (stopSecs - startSecs) // 60.0
+            logger.log("Scan took about " + str(diffMins) + " minutes")
 
             logger.flushLogs()
 

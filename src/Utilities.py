@@ -393,6 +393,16 @@ def convertUdateToReadable(udate: int):
 ###############################################################################
 ###############################################################################
 
+def daysSinceUdate(udate: int):
+    then = datetime.datetime.fromtimestamp(udate / 1000, datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    diff = now - then
+    # Not counting partial days. It's just needed as a rough estimate.
+    return diff.days
+
+###############################################################################
+###############################################################################
+
 def getWashingtonTime():
     now = datetime.datetime.now()
     delta = datetime.timedelta(hours=1)

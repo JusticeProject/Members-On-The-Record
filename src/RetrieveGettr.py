@@ -47,7 +47,7 @@ class RetrieveGettr:
         gweet = Classes.Tweet()
         gweet.id = Utilities.base36ToInteger(rawPost["_id"])
         gweet.id_str = rawPost["_id"]
-        #gweet.author_id_str = # TODO: this may not be the uid in the raw data
+        #gweet.author_id_str = # this may not be the uid in the raw data
         gweet.created_at = Utilities.convertUdateToReadable(int(rawPost["udate"]))
         gweet.conversation_id = gweet.id
         gweet.is_ref_tweet = True
@@ -71,8 +71,6 @@ class RetrieveGettr:
     def retrieveGweetsForUser(self, user: Classes.GettrUser, numberOfPostsForFirstScan):
         client = PublicClient()
 
-        # TODO: could retrieve comments as well
-
         if (user.mostRecentPostIdStr.strip() == ""):
             self.logger.log("  Retrieving Gweets for {}, max of {}".format(user.gettrHandle, numberOfPostsForFirstScan))
             posts = client.user_activity(username=user.gettrHandle, max=numberOfPostsForFirstScan, type="posts")
@@ -84,6 +82,8 @@ class RetrieveGettr:
 
         listOfRawPosts = [post for post in posts]
         listOfRawPosts.reverse()
+
+        # TODO: could retrieve comments as well here
 
         # The format is:
         # post["action"] = shares_pst
@@ -107,7 +107,11 @@ class RetrieveGettr:
             gweet.id = Utilities.base36ToInteger(post["_id"])
             gweet.id_str = post["_id"]
             gweet.author_id_str = user.gettrHandle
-            gweet.created_at = Utilities.convertUdateToReadable(int(post["udate"]))
+            udate = int(post["udate"])
+            gweet.created_at = Utilities.convertUdateToReadable(udate)
+            if (Utilities.daysSinceUdate(udate) > 14):
+                self.logger.log("  Skipping Gweet with date {}".format(gweet.created_at))
+                continue
             gweet.conversation_id = gweet.id
 
             action = post.get("action", "")
@@ -236,4 +240,4 @@ class RetrieveGettr:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = RetrieveGettr(logger)
-    instance.run(10)
+    instance.run(60)
