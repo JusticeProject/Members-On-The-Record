@@ -21,6 +21,8 @@ exclude=@repmarciafudge
 exclude=@mlfudge
 exclude=@repfitzpatrick
 exclude=@MarthaRobyAL
+exclude=@devinnunes
+exclude=@repdevinnunes
 
 include=@TonyGonzales4TX
 include=@VoteBetty

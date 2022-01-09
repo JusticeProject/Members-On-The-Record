@@ -65,7 +65,7 @@ class EmailNotifications:
         self.logger.log("Checking if {} is in the index of results".format(todaysResultsFileName))
 
         # scrape the index page to verify that the link is there
-        html, respCode = Utilities.getWebsiteHTML("https://justiceproject.github.io/Members-On-The-Record/index-of-results.html")
+        html, binary_data, respCode = Utilities.getWebsiteData("https://justiceproject.github.io/Members-On-The-Record/index-of-results.html")
         if (todaysResultsFileName in html):
             try:
                 parsed_html = BeautifulSoup(html, "html.parser")
@@ -77,7 +77,7 @@ class EmailNotifications:
                 return False
 
             # go to the link to verify the data is there
-            html, respCode = Utilities.getWebsiteHTML(url)
+            html, binary_data, respCode = Utilities.getWebsiteData(url)
             self.logger.log("Length of new results html page is {}".format(len(html)))
             if (len(html) > 1000):
                 self.logger.log("Seems good, proceeding")

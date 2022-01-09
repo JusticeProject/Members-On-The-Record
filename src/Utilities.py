@@ -8,17 +8,20 @@ import jinja2
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-import brotlicffi
 import time
+from typing import Tuple
+from multiprocessing import Queue
 
 import Classes
 
 CONFIG_FILE_NAME = "../config/Config.txt"
 CREDENTIALS_FILE_NAME = "../config/Credentials.txt"
-CUSTOMIZED_HANDLES_FILE_NAME = "../config/CustomizedTwitterHandles.txt"
+CUSTOMIZED_TWITTER_HANDLES_FILE_NAME = "../config/CustomizedTwitterHandles.txt"
+CUSTOMIZED_GETTR_HANDLES_FILE_NAME = "../config/CustomizedGettrHandles.txt"
 LIST_OF_CONGRESS_MEMBERS_FILENAME = "../output/ListOfCongressMembers.txt"
 TWITTER_USERS_FROM_LISTS_FILENAME = "../output/TwitterUsersFromTwitterLists.txt"
-USER_LOOKUP_FILENAME = "../output/UserLookup.txt"
+TWITTER_LOOKUP_FILENAME = "../output/TwitterLookup.txt"
+GETTR_LOOKUP_FILENAME = "../output/GettrLookup.txt"
 DEFAULT_LOG_FOLDER = "../output/logs/"
 KEYWORDS_FILE_NAME = "../config/Keywords.txt"
 TEMPLATE_HTML_FILE_NAME = "template.html"
@@ -126,7 +129,7 @@ def getCustomizedTwitterHandles():
     listOfIncludes = []
     listOfSamePersons = []
     
-    lines = open(CUSTOMIZED_HANDLES_FILE_NAME, "r").readlines()
+    lines = open(CUSTOMIZED_TWITTER_HANDLES_FILE_NAME, "r").readlines()
     for line in lines:
         if ("exclude=@" in line):
             handle = line.split("@")[1]
@@ -143,6 +146,24 @@ def getCustomizedTwitterHandles():
             listOfSamePersons.append((handle1, handle2))
     
     return listOfExcludes,listOfIncludes,listOfSamePersons
+
+###############################################################################
+###############################################################################
+
+def getCustomizedGettrHandles():
+    listOfIncludes = []
+    
+    lines = open(CUSTOMIZED_GETTR_HANDLES_FILE_NAME, "r").readlines()
+    for line in lines:
+        line = line.strip()
+        if (line != ""):
+            pattern = re.compile(r"@(.*)=(.*)")
+            result = pattern.findall(line)[0]
+            handle = result[0].lower()
+            url = result[1].strip()
+            listOfIncludes.append((handle, url))
+    
+    return listOfIncludes
 
 ###############################################################################
 ###############################################################################
@@ -214,15 +235,15 @@ def saveTwitterUsers(dictOfTwitterUsers):
 ###############################################################################
 ###############################################################################
 
-# The UserLookup.txt file is used to connect each Twitter @handle to its user id number. 
+# The TwitterLookup.txt file is used to connect each Twitter @handle to its user id number. 
 # It also stores the most recent tweet we retrieved for that handle, thus when we retrieve
 # again we will start after that last tweet.
 
-def loadUserLookup(listOfMembers, dictOfTwitterUsers):
+def loadTwitterLookup(listOfMembers, dictOfTwitterUsers):
     userLookupDict = {}
     
-    if (os.path.exists(USER_LOOKUP_FILENAME)):
-        file = open(USER_LOOKUP_FILENAME, "r", encoding="utf-8")
+    if (os.path.exists(TWITTER_LOOKUP_FILENAME)):
+        file = open(TWITTER_LOOKUP_FILENAME, "r", encoding="utf-8")
         lines = file.readlines()
         file.close()
     
@@ -259,13 +280,61 @@ def loadUserLookup(listOfMembers, dictOfTwitterUsers):
 ###############################################################################
 ###############################################################################
 
-def saveUserLookup(userLookupDict):
-    file = open(USER_LOOKUP_FILENAME, "w", encoding="utf-8")
+# The GettrLookup.txt file is used to remember the most recent post id for each Gettr @handle.
+
+def loadGettrLookup(listOfMembers):
+    userLookupDict = {}
+    
+    if (os.path.exists(GETTR_LOOKUP_FILENAME)):
+        file = open(GETTR_LOOKUP_FILENAME, "r", encoding="utf-8")
+        lines = file.readlines()
+        file.close()
+    
+        for line in lines:
+            user = Classes.GettrUser()
+            user.setData(line.strip())
+            userLookupDict[user.gettrHandle] = user
+        
+        # check if there are any new handles that need to be added
+        for member in listOfMembers:
+            for handle in member.gettr:
+                if (handle != "") and (handle not in userLookupDict.keys()):
+                    user = Classes.GettrUser()
+                    user.gettrHandle = handle
+                    userLookupDict[handle] = user
+    else:
+        # file does not exist, so we need to gather the data
+        for member in listOfMembers:
+            for handle in member.gettr:
+                if (handle != ""):
+                    user = Classes.GettrUser()
+                    user.gettrHandle = handle
+                    userLookupDict[handle] = user
+            
+    return userLookupDict
+
+###############################################################################
+###############################################################################
+
+def saveTwitterLookup(userLookupDict):
+    file = open(TWITTER_LOOKUP_FILENAME, "w", encoding="utf-8")
     for handle in userLookupDict.keys():
         file.write(str(userLookupDict[handle]) + "\n")
     file.close()
     
-    logMessage = "data written to file " + USER_LOOKUP_FILENAME
+    logMessage = "data written to file " + TWITTER_LOOKUP_FILENAME
+    return logMessage
+
+###############################################################################
+###############################################################################
+
+def saveGettrLookup(userLookupDict):
+    file = open(GETTR_LOOKUP_FILENAME, "w", encoding="utf-8")
+    for handle in userLookupDict.keys():
+        file.write(str(userLookupDict[handle]) + "\n")
+    file.close()
+    
+    logMessage = "data written to file " + GETTR_LOOKUP_FILENAME
     return logMessage
 
 ###############################################################################
@@ -314,8 +383,27 @@ def convertYearMonthToReadable(yearMonth):
 ###############################################################################
 ###############################################################################
 
+# udate from gettr is the number of milliseconds since the epoch in utc timezone
+def convertUdateToReadable(udate: int):
+    result = datetime.datetime.fromtimestamp(udate / 1000, datetime.timezone.utc)
+    result = result.astimezone()
+    date = result.strftime("%m/%d/%Y")
+    return date
+
+###############################################################################
+###############################################################################
+
+def daysSinceUdate(udate: int):
+    then = datetime.datetime.fromtimestamp(udate / 1000, datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    diff = now - then
+    # Not counting partial days. It's just needed as a rough estimate.
+    return diff.days
+
+###############################################################################
+###############################################################################
+
 def getWashingtonTime():
-    # TODO: update Python and use the new timezone functionality
     now = datetime.datetime.now()
     delta = datetime.timedelta(hours=1)
     result = now + delta
@@ -396,12 +484,44 @@ def loadTweets(path):
 ###############################################################################
 ###############################################################################
 
-def saveURLs(dictOfURLs, scanDate, append=True):
+def saveGweets(listOfGweets, scanDate):
+    RESULTS_FOLDER = "../output/" + scanDate
+    if (os.path.exists(RESULTS_FOLDER) == False):
+        os.mkdir(RESULTS_FOLDER)
+    
+    GWEETS_FILENAME = RESULTS_FOLDER + "/Gweets1.txt"
+    
+    # append in case we are testing and we download more gweets
+    file = open(GWEETS_FILENAME, "a", encoding="utf-8")
+    for gweet in listOfGweets:
+        file.write(str(gweet) + "\n")
+    file.close()
+    
+    logMessage = "data written to file " + GWEETS_FILENAME
+    return logMessage
+
+###############################################################################
+###############################################################################
+
+def loadGweets(path):
+    listOfAllGweets = []
+    fileName = path + "/Gweets1.txt"
+
+    fileLines = open(fileName, "r", encoding="utf-8").readlines()
+    for line in fileLines:
+        listOfAllGweets.append(line.strip())
+
+    return listOfAllGweets
+
+###############################################################################
+###############################################################################
+
+def saveURLs(dictOfURLs, scanDate, socialMedia = "Twitter", append=True):
     RESULTS_FOLDER = "../output/" + scanDate
     if (os.path.exists(RESULTS_FOLDER) == False):
         os.mkdir(RESULTS_FOLDER)
 
-    URLS_FILENAME = RESULTS_FOLDER + "/URLs.txt"
+    URLS_FILENAME = RESULTS_FOLDER + "/" + socialMedia + "URLs.txt"
 
     if (append):
         mode = "a"
@@ -420,10 +540,11 @@ def saveURLs(dictOfURLs, scanDate, append=True):
 ###############################################################################
 ###############################################################################
 
-def loadURLs(path):
+def loadURLs(path, socialMedia = "Twitter"):
     dictOfURLs = {}
 
-    fileLines = open(path + "URLs.txt", "r", encoding="utf-8").readlines()
+    fileName = socialMedia + "URLs.txt"
+    fileLines = open(path + fileName, "r", encoding="utf-8").readlines()
     for line in fileLines:
         url_obj = Classes.URL()
         url_obj.setData(line.strip())
@@ -519,39 +640,53 @@ def getDomainOfURL(url):
 
 # helper function for retrieving all HTML data from a website
 
-def getWebsiteHTML(url, currentPlatformHeaders = True):
+def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
     if (url == ""):
-        return "", 0
+        return "", bytes(), 0
 
     for retries in range(0, 3):
         try:
             custom_header = getCustomHeader(currentPlatformHeaders)
-            result = requests.get(url, headers=custom_header, timeout=3)
+            result = requests.get(url, headers=custom_header, timeout=3, stream=True)
+            result.raise_for_status() # if an HTTP error occurred, it will raise an exception
 
-            # TODO: the requests documentation says it should automatically decompress brotli encodings, but it wasn't doing that...
-            if ("Content-Encoding" in result.headers.keys()) and (result.headers["Content-Encoding"] == "br"):
-                decodedData = brotlicffi.decompress(result.content).decode() # decode from bytes to str
-            else:
-                decodedData = result.text
+            text_data = ""
+            binary_data = bytes()
+
+            start = time.time()
+            for chunk in result.iter_content(4096, decode_unicode=True):
+                if isinstance(chunk, str):
+                    text_data += chunk
+                elif isinstance(chunk, bytes):
+                    binary_data += chunk
+
+                if (time.time() - start) > 60: # if it's taking more than 60 seconds, don't wait any longer
+                    result.close()
+                    raise ValueError("timeout reached")
             
             result.close()
-            return decodedData, result.status_code
+            return text_data, binary_data, result.status_code
+        except ValueError:
+            return text_data, binary_data, 1001
         except:
             if (retries <= 1):
                 time.sleep(1)
 
-    return "", 1000
+    return "", bytes(), 1000
 
 ###############################################################################
 ###############################################################################
 
 def getWebsiteFromGoogleCache(url, currentPlatformHeaders = True):
-    return getWebsiteHTML("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
+    return getWebsiteData("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
 
 ###############################################################################
 ###############################################################################
 
 def extractTitleFromHTML(html):
+    if (html == ""):
+        return ""
+
     try:
         parsed_html = BeautifulSoup(html, 'html.parser')
     except:
@@ -565,6 +700,28 @@ def extractTitleFromHTML(html):
             return title
     
     return ""
+
+###############################################################################
+###############################################################################
+
+def integerToBase36(number: int):
+    alphabet="0123456789abcdefghijklmnopqrstuvwxyz"
+
+    if (number < len(alphabet)):
+        return alphabet[number]
+
+    base36 = ""
+    while number != 0:
+        number, remainder = divmod(number, len(alphabet)) # gives (x//y, x%y)
+        base36 = alphabet[remainder] + base36
+
+    return base36
+
+###############################################################################
+###############################################################################
+
+def base36ToInteger(number: str):
+    return int(number, 36)
 
 ###############################################################################
 ###############################################################################
@@ -612,14 +769,12 @@ class Logger:
                 print(strError)
                 time.sleep(10)
         
-    def isErrorInLog(self):
-        self.flushLogs()
-        f = open(self.filename, "r", encoding="utf-8")
-        data = f.read()
-        f.close()
-        if ("Error:" in data):
-            return True
-        else:
-            return False
-        
-        
+###############################################################################
+###############################################################################
+
+class RemoteLogger:
+    def __init__(self, msgq: Queue):
+        self.msgq = msgq
+
+    def log(self, text):
+        self.msgq.put(text)

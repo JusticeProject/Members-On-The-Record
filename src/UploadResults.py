@@ -138,7 +138,7 @@ class UploadResults:
                 strError = str(e.args)
                 self.logger.log("Error: failed to upload today's results to GitHub: " + strError)
                 if (retries <= 1):
-                    time.sleep(5)
+                    time.sleep(15)
                 else:
                     return None
         
@@ -152,7 +152,7 @@ class UploadResults:
                 strError = str(e.args)
                 self.logger.log("Error: failed to retrieve all results on GitHub: " + strError)
                 if (retries <= 1):
-                    time.sleep(5)
+                    time.sleep(15)
                 else:
                     return None
         
@@ -165,7 +165,7 @@ class UploadResults:
                 strError = str(e.args)
                 self.logger.log("Error: failed to upload index of results to GitHub: " + strError)
                 if (retries <= 1):
-                    time.sleep(5)
+                    time.sleep(15)
                 else:
                     return None
 

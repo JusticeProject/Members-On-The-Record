@@ -45,13 +45,13 @@ class RetrieveTweets:
         # slow down the website retrieval a tad in case we are connecting to the same websites over and over
         time.sleep(2)
 
-        html, respcode = Utilities.getWebsiteHTML(url, currentPlatformHeaders)
+        html, binary_data, respcode = Utilities.getWebsiteData(url, currentPlatformHeaders)
         title = Utilities.extractTitleFromHTML(html)
 
         # if they think we are a robot then they won't give us the correct title
         if (respcode >= 400):
             self.logger.log("Warning: received response code {}, checking the Google cache".format(respcode))
-            cached_html, cached_respcode = Utilities.getWebsiteFromGoogleCache(url, currentPlatformHeaders)
+            cached_html, binary_data, cached_respcode = Utilities.getWebsiteFromGoogleCache(url, currentPlatformHeaders)
             cached_title = Utilities.extractTitleFromHTML(cached_html)
             if (cached_respcode >= 400):
                 self.logger.log("Warning: received response code {} from Google cache".format(cached_respcode))
@@ -70,12 +70,12 @@ class RetrieveTweets:
                 title += " | " + Utilities.getDomainOfURL(url)
             return title
         
-        if ("PDF" in html[:5]):
+        if (b"PDF" in binary_data[:5]):
             self.logger.log("Found PDF file")
             return "Link to PDF | " + Utilities.getDomainOfURL(url)
 
         # if we get this far then we couldn't figure it out
-        self.logger.log("Warning: no title found: " + url + " " + str(len(html)))
+        self.logger.log("Warning: no title found: " + url + " " + str(len(html)) + " " + str(len(binary_data)))
         return ""
 
     ###########################################################################
@@ -244,7 +244,7 @@ class RetrieveTweets:
         if (mostRecentTweetId > user.mostRecentTweetId):
             user.mostRecentTweetId = mostRecentTweetId
         
-        self.logger.log("received " + str(len(tweets)) + " for handle " + user.twitterHandle)
+        self.logger.log("received " + str(len(tweets)) + " tweets for handle " + user.twitterHandle)
         return tweets, dictOfUrls
     
     ###########################################################################
@@ -265,10 +265,11 @@ class RetrieveTweets:
     
         listOfMembers = Utilities.loadCongressMembers()
         dictOfTwitterUsers = Utilities.loadTwitterUsers()
-        userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
+        twitterLookupDict = Utilities.loadTwitterLookup(listOfMembers, dictOfTwitterUsers)
     
         numHandlesRetrieved = 0
         numTweetsSaved = 0
+        errorOccurred = False
         tweetsToSave = []
         urlsToSave = {}
         for member in listOfMembers:
@@ -276,7 +277,7 @@ class RetrieveTweets:
                 if (handle == ""):
                     continue
             
-                user = userLookupDict[handle]
+                user = twitterLookupDict[handle]
                 
                 for retries in range(0, 3):
                     try:
@@ -290,6 +291,7 @@ class RetrieveTweets:
                             self.logger.log("Warning: failed to retrieve tweets for handle " + handle)
                         else:
                             self.logger.log("Error: failed to retrieve tweets for handle " + handle)
+                            errorOccurred = True
                         self.logger.log(str(e.args))
                         time.sleep(2)
                 
@@ -318,16 +320,16 @@ class RetrieveTweets:
 
         # save the urls, run might be called more than once so need to append urls to the file
         self.logger.log("Saving {} urls".format(len(urlsToSave)))
-        logMessage = Utilities.saveURLs(urlsToSave, currentDate)
+        logMessage = Utilities.saveURLs(urlsToSave, currentDate, "Twitter", True)
         self.logger.log(logMessage)
 
         # save the most recent tweet ids so we don't grab the same tweets again
-        logMessage = Utilities.saveUserLookup(userLookupDict)
+        logMessage = Utilities.saveTwitterLookup(twitterLookupDict)
         self.logger.log(logMessage)
         
         self.logger.log("Retrieved a total of " + str(numTweetsSaved) + " tweets")
         self.logger.log("Finished retrieving tweets for " + str(numHandlesRetrieved) + " handles")
-        return numTweetsSaved
+        return errorOccurred
 
 ###############################################################################
 ###############################################################################

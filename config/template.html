@@ -73,7 +73,7 @@
                         <p><span style="text-decoration: underline;"><em><strong>{{category}}</strong></em></span></p>
                         
                         {% for formattedTweet in listOfFormattedTweets %}
-                            <p><a href="https://twitter.com/i/web/status/{{formattedTweet.id}}">{{formattedTweet.name}}{{formattedTweet.partyAndState}}</a> {{formattedTweet.day}}: {{formattedTweet.type}} &#8211; “<em>{{formattedTweet.text}}</em>”</p>
+                            <p><a href="{{formattedTweet.link}}">{{formattedTweet.namePartyState}}</a> {{formattedTweet.day}}: {{formattedTweet.type}} &#8211; “<em>{{formattedTweet.text}}</em>”</p>
                         {% endfor %}
                         <br>
                     {% endfor %}
