@@ -74,11 +74,11 @@ class RetrieveGettr:
         # TODO: could retrieve comments as well
 
         if (user.mostRecentPostIdStr.strip() == ""):
-            self.logger.log("Retrieving Gweets for {}, max of {}".format(user.gettrHandle, numberOfPostsForFirstScan))
+            self.logger.log("  Retrieving Gweets for {}, max of {}".format(user.gettrHandle, numberOfPostsForFirstScan))
             posts = client.user_activity(username=user.gettrHandle, max=numberOfPostsForFirstScan, type="posts")
         else:
             # start from most recent post retrieved, but need to add 1 so we don't get the same post as last time
-            self.logger.log("Retrieving Gweets for {}, after id {}".format(user.gettrHandle, user.mostRecentPostIdStr))
+            self.logger.log("  Retrieving Gweets for {}, after id {}".format(user.gettrHandle, user.mostRecentPostIdStr))
             until = self.incrementByOne(user.mostRecentPostIdStr)
             posts = client.user_activity(username=user.gettrHandle, until=until, type="posts")
 
@@ -170,7 +170,7 @@ class RetrieveGettr:
         if (len(listOfRawPosts) > 0):
             user.mostRecentPostIdStr = listOfRawPosts[-1]["_id"]
 
-        self.logger.log("Retrieved {} gweets for user {}".format(len(listOfGweets), user.gettrHandle))
+        self.logger.log("  Retrieved {} gweets for user {}".format(len(listOfGweets), user.gettrHandle))
 
         return listOfGweets, dictOfURLs
 
@@ -212,21 +212,21 @@ class RetrieveGettr:
                 time.sleep(random.randint(lower, upper))
 
         # save the Gweets to a file
-        self.logger.log("saving " + str(len(gweetsToSave)) + " gweets")
+        self.logger.log("  saving " + str(len(gweetsToSave)) + " gweets")
         logMessage = Utilities.saveGweets(gweetsToSave, currentDate)
-        self.logger.log(logMessage)
+        self.logger.log("  " + logMessage)
 
         # save the urls
-        self.logger.log("Saving {} urls".format(len(urlsToSave)))
+        self.logger.log("  Saving {} urls".format(len(urlsToSave)))
         logMessage = Utilities.saveURLs(urlsToSave, currentDate, "Gettr", True)
-        self.logger.log(logMessage)
+        self.logger.log("  " + logMessage)
 
         # save the most recent gweet ids so we don't grab the same ones again
         logMessage = Utilities.saveGettrLookup(gettrLookupDict)
-        self.logger.log(logMessage)
+        self.logger.log("  " + logMessage)
         
-        self.logger.log("Retrieved a total of " + str(len(gweetsToSave)) + " gweets")
-        self.logger.log("Finished retrieving gweets for " + str(numHandlesRetrieved) + " handles")
+        self.logger.log("  Retrieved a total of " + str(len(gweetsToSave)) + " gweets")
+        self.logger.log("  Finished retrieving gweets for " + str(numHandlesRetrieved) + " handles")
         
         return len(gweetsToSave)
 

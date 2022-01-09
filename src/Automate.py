@@ -151,13 +151,13 @@ def twitterProcess(logger: Utilities.RemoteLogger):
 ###############################################################################
 
 def gettrProcess(logger: Utilities.RemoteLogger):
-    logger.log("Gettr Process started")
+    logger.log("  Gettr Process started")
     
     # Retrieve Gweets
     instance = RetrieveGettr.RetrieveGettr(logger)
     instance.run(60)
 
-    logger.log("Gettr Process complete.")
+    logger.log("  Gettr Process complete.")
     logger.log("Done")
 
 ###############################################################################
