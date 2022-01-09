@@ -205,7 +205,7 @@ Keywords=Jordanian
 ^King+Abdullah
 Prince+Hussein
 Dina+Kawar
-^Amman
+^Amman~@PhilAmmann
 Jordan River
 JoEmbassyUS
 USEmbassyJordan
@@ -364,3 +364,6 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
+
+Category=Who's talking about Gettr? Gettr accounts might be added to the daily scan in the near future.
+Keywords=Gettr
