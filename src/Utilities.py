@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import time
 from typing import Tuple
+from multiprocessing import Queue
 
 import Classes
 
@@ -393,7 +394,6 @@ def convertUdateToReadable(udate: int):
 ###############################################################################
 
 def getWashingtonTime():
-    # TODO: update Python and use the new timezone functionality
     now = datetime.datetime.now()
     delta = datetime.timedelta(hours=1)
     result = now + delta
@@ -759,14 +759,12 @@ class Logger:
                 print(strError)
                 time.sleep(10)
         
-    def isErrorInLog(self):
-        self.flushLogs()
-        f = open(self.filename, "r", encoding="utf-8")
-        data = f.read()
-        f.close()
-        if ("Error:" in data):
-            return True
-        else:
-            return False
-        
-        
+###############################################################################
+###############################################################################
+
+class RemoteLogger:
+    def __init__(self, msgq: Queue):
+        self.msgq = msgq
+
+    def log(self, text):
+        self.msgq.put(text)

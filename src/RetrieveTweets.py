@@ -244,7 +244,7 @@ class RetrieveTweets:
         if (mostRecentTweetId > user.mostRecentTweetId):
             user.mostRecentTweetId = mostRecentTweetId
         
-        self.logger.log("received " + str(len(tweets)) + " for handle " + user.twitterHandle)
+        self.logger.log("received " + str(len(tweets)) + " tweets for handle " + user.twitterHandle)
         return tweets, dictOfUrls
     
     ###########################################################################
@@ -269,6 +269,7 @@ class RetrieveTweets:
     
         numHandlesRetrieved = 0
         numTweetsSaved = 0
+        errorOccurred = False
         tweetsToSave = []
         urlsToSave = {}
         for member in listOfMembers:
@@ -290,6 +291,7 @@ class RetrieveTweets:
                             self.logger.log("Warning: failed to retrieve tweets for handle " + handle)
                         else:
                             self.logger.log("Error: failed to retrieve tweets for handle " + handle)
+                            errorOccurred = True
                         self.logger.log(str(e.args))
                         time.sleep(2)
                 
@@ -327,7 +329,7 @@ class RetrieveTweets:
         
         self.logger.log("Retrieved a total of " + str(numTweetsSaved) + " tweets")
         self.logger.log("Finished retrieving tweets for " + str(numHandlesRetrieved) + " handles")
-        return numTweetsSaved
+        return errorOccurred
 
 ###############################################################################
 ###############################################################################

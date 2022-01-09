@@ -232,6 +232,9 @@ class URL:
             totalString = totalString.replace("’", "'")
             totalString = totalString.replace("ʻ", "'")
 
+        totalString = totalString.strip()
+        totalString = totalString.replace("\n", "")
+        totalString = totalString.replace("\r", "")
         return totalString
 
 ###############################################################################

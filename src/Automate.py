@@ -1,11 +1,15 @@
 import time
 import subprocess
+from multiprocessing import Process, Queue
+
+from numpy import number
 
 import Utilities
 
 import RetrieveListsFromTwitter
 import CreateListOfCongressMembers
 import RetrieveTweets
+import RetrieveGettr
 import ProcessImages
 import AnalyzeTweets
 import UploadResults
@@ -22,11 +26,6 @@ def runScanLoop():
     # If False then it will only scan at the SCAN_HOUR.
     config = Utilities.loadConfig()
     scanOnStartup = config.Scan_On_Startup
-
-    # If we haven't done any scans yet, this specifies how many days in the past as the starting
-    # point for the Tweet retrieval. For subsequent scans it will only get new Tweets since the
-    # last scan.
-    numberOfDaysForFirstScan = 2
 
     logger = Utilities.Logger()
 
@@ -60,42 +59,45 @@ def runScanLoop():
             step2 = CreateListOfCongressMembers.CreateListOfCongressMembers(logger)
             step2.run()
 
-            # retrieve the latest Tweets for each member of Congress
-            step3 = RetrieveTweets.RetrieveTweets(logger)
-            numTweetsRetrieved = step3.run(2, numberOfDaysForFirstScan)
+            # launch separate processes to grab the Tweets and Gweets, they will send us log messages using the Queue
+            q = Queue()
+            remoteLogger = Utilities.RemoteLogger(q)
+            p1 = Process(target=twitterProcess, args=(remoteLogger,))
+            p2 = Process(target=gettrProcess, args=(remoteLogger,))
+            p1.start()
+            p2.start()
 
-            # If errors then we'll try again. If it still doesn't work then we'll grab the tweets tomorrow.
-            # We won't miss any Tweets because we keep track of the most recent Tweet received for each user.
-            if (logger.isErrorInLog() == True):
-                logger.log("Problem detected in previous retrieval, will try to retrieve Tweets again")
-                time.sleep(30 * 60)
-                numTweetsRetrieved += step3.run(3, numberOfDaysForFirstScan) # slow it down a tad just in case
+            # wait until the processes are done
+            numberProcessesRunning = 2
+            while numberProcessesRunning > 0:
+                msg = q.get(block=True, timeout=None)
+                logger.log(msg)
 
-            # Download the photos that Congress members posted because there could be statements or Congressional letters.
-            # But first check if it has been enabled in the config file.
-            config = Utilities.loadConfig()
-            if (config.Scan_Images):
-                step3_5 = ProcessImages.ProcessImages(logger)
-                step3_5.run()
+                if (msg == "Done"):
+                    numberProcessesRunning -= 1
+                    logger.log("{} processes still running".format(numberProcessesRunning))
+            
+            # join with the other processes
+            p1.join()
+            logger.log("joined with Twitter Process")
+            p2.join()
+            logger.log("joined with Gettr Process")
 
-            # if we retrieved any tweets then analyze them, if not then nothing we can do because we don't want 
-            # to upload yesterday's data
-            if (numTweetsRetrieved > 0):
-                # search every Tweet we just retrieved and look for the keywords
-                step4 = AnalyzeTweets.AnalyzeTweets(logger)
-                resultsFilePath = step4.run("", config.Scan_Images)
+            # search every Tweet we just retrieved and look for the keywords
+            step3 = AnalyzeTweets.AnalyzeTweets(logger)
+            resultsFilePath = step3.run("", config.Scan_Images)
 
-                # upload results to GitHub and Google Drive
-                step5 = UploadResults.UploadResults(logger)
-                todaysResultsFileName = step5.run(resultsFilePath)
+            # upload results to GitHub and Google Drive
+            step4 = UploadResults.UploadResults(logger)
+            todaysResultsFileName = step4.run(resultsFilePath)
 
-                # wait 5 minutes for the new results to go live, then send email
-                if (todaysResultsFileName is not None):
-                    time.sleep(5 * 60)
-                    step6 = EmailNotifications.EmailNotifications(logger)
-                    step6.run(todaysResultsFileName)
-                else:
-                    logger.log("Upload was not successful, not sending email notification")
+            # wait 5 minutes for the new results to go live, then send email
+            if (todaysResultsFileName is not None):
+                time.sleep(5 * 60)
+                step5 = EmailNotifications.EmailNotifications(logger)
+                step5.run(todaysResultsFileName)
+            else:
+                logger.log("Upload was not successful, not sending email notification")
 
             stopSecs = time.time()
             diffMins = int((stopSecs - startSecs) / 60.0)
@@ -112,6 +114,51 @@ def runScanLoop():
             print("Will wait until hour " + str(SCAN_HOUR) + " for next scan")
 
         time.sleep(60)
+
+###############################################################################
+###############################################################################
+
+def twitterProcess(logger: Utilities.RemoteLogger):
+    logger.log("Twitter Process started")
+
+    # If we haven't done any scans yet, this specifies how many days in the past as the starting
+    # point for the Tweet retrieval. For subsequent scans it will only get new Tweets since the
+    # last scan.
+    numberOfDaysForFirstScan = 2
+
+    # retrieve the latest Tweets for each member of Congress
+    instance = RetrieveTweets.RetrieveTweets(logger)
+    errorOccurred = instance.run(2, numberOfDaysForFirstScan)
+
+    # If errors then we'll try again. If it still doesn't work then we'll grab the tweets tomorrow.
+    # We won't miss any Tweets because we keep track of the most recent Tweet received for each user.
+    if (errorOccurred):
+        logger.log("Problem detected in previous retrieval, will try to retrieve Tweets again")
+        time.sleep(30 * 60)
+        instance.run(3, numberOfDaysForFirstScan) # slow it down a tad just in case
+
+    # Download the photos that Congress members posted because there could be statements or Congressional letters.
+    # But first check if it has been enabled in the config file.
+    config = Utilities.loadConfig()
+    if (config.Scan_Images):
+        imager = ProcessImages.ProcessImages(logger)
+        imager.run()
+
+    logger.log("Twitter Process complete.")
+    logger.log("Done")
+
+###############################################################################
+###############################################################################
+
+def gettrProcess(logger: Utilities.RemoteLogger):
+    logger.log("Gettr Process started")
+    
+    # Retrieve Gweets
+    instance = RetrieveGettr.RetrieveGettr(logger)
+    instance.run(60)
+
+    logger.log("Gettr Process complete.")
+    logger.log("Done")
 
 ###############################################################################
 ###############################################################################

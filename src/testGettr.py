@@ -7,6 +7,13 @@ def getPosts(handle, amount):
     listOfPosts.reverse()
     return listOfPosts
 
+def getComments(handle, amount):
+    client = PublicClient()
+    comments = client.user_activity(username=handle, max=amount, type="comments")
+    listOfComments = [comment for comment in comments]
+    listOfComments.reverse()
+    return listOfComments
+
 def getSinglePost(id_str):
     client = PublicClient()
     response = client.all(first=id_str, last=id_str)
@@ -19,14 +26,17 @@ def getSingleComment(id_str):
     listOfPosts = [post for post in response]
     return listOfPosts[0]
 
-posts = getPosts("mattgaetz", 2)
-post = posts[0]
-print(post.get("action", "Nope!"))
-print(post.get("uid", "Nope!"))
-
 def printKeyValues(post):
     for key in post.keys():
         print("{} = {}\n".format(key, post[key]))
+
+##posts = getPosts("mattgaetz", 20)
+##post = posts[0]
+##print(post.get("action", "Nope!"))
+##print(post.get("uid", "Nope!"))
+
+comments = getComments("mtg4america", 20)
+comment = comments[0]
 
 #post["action"] = shares_pst
 #post["uid"] = mtg4america

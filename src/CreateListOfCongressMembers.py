@@ -361,8 +361,6 @@ class CreateListOfCongressMembers:
         for member in listOfMembers:
             if (len(member.twitter) == 0) or ((len(member.twitter) == 1) and (member.twitter[0] == "")):
                 self.logger.log("Warning: no Twitter handle for " + member.last_name + ", " + member.first_name)
-    
-        # TODO: scrape house.gov and senate.gov?
         
         return
 
