@@ -524,8 +524,15 @@ class AnalyzeTweets:
         phrase = conversation[0].keyword_phrase
         self.highlightKeywordsInConversation(conversation, phrase)
         
-        # Start grouping the text together and formatting the links.
-        if (self.isConvARetweet(conversation) == True):
+        # Start grouping the text together and formatting the links. 
+        # Start with the Gweets to get them out of the way.
+        if (conversation[0].author_id == 0):
+            gweet = conversation[0]
+            text_split = gweet.text.split(",", 1)
+            formattedTweet.type = self.leftRedSpan + text_split[0].replace("Gweet", "GETTR") + self.rightRedSpan
+            gweet.text = text_split[1]
+            formattedTweet.text = self.formatLinksInText(conversation[0])
+        elif (self.isConvARetweet(conversation) == True):
             cleanText = conversation[0].text.replace(self.leftHighlightSpan, "").replace(self.rightHighlightSpan, "")
             allHandles = re.findall(r"(@\w+):", cleanText)
             retweetHandle = allHandles[0]
@@ -548,14 +555,7 @@ class AnalyzeTweets:
             formattedTweet.text = self.formatLinksInText(conversation[0])
         else:
             if (len(conversation) == 1):
-                if (conversation[0].author_id == 0):
-                    # handle the Gweets
-                    gweet = conversation[0]
-                    text_split = gweet.text.split(",", 1)
-                    formattedTweet.type = self.leftRedSpan + text_split[0] + self.rightRedSpan
-                    gweet.text = text_split[1]
-                else:
-                    formattedTweet.type = "Tweet"
+                formattedTweet.type = "Tweet"
             else:
                 formattedTweet.type = "Twitter thread"
             formattedTweet.text = self.formatLinksInText(conversation[0])

@@ -112,9 +112,9 @@ class RetrieveGettr:
 
             action = post.get("action", "")
             if ("share" in action):
-                action = "Re-gweet of @" + post.get("uid", "?")
+                action = "Gweet Repost of @" + post.get("uid", "?")
             else:
-                action = "Gweet"
+                action = "Gweet Post"
             gweet.text = action + "," + post.get("txt", "")
 
             # look for a url in the text
