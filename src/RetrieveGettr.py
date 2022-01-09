@@ -236,4 +236,4 @@ class RetrieveGettr:
 if __name__ == "__main__":
     logger = Utilities.Logger()
     instance = RetrieveGettr(logger)
-    instance.run(60)
+    instance.run(10)
