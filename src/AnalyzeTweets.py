@@ -203,6 +203,8 @@ class AnalyzeTweets:
                             matched = False
                             
                 if (matched == True):
+                    if (phrase[0].lower() == "gettr") and ("gettr.com" in combinedTextLower):
+                        stop = 0
                     conversation[0].keyword_phrase = phrase
                     return category
         
@@ -489,9 +491,9 @@ class AnalyzeTweets:
             elif ("gettr.com" in expanded_url) and ("/post/" in expanded_url or "/comment/" in expanded_url):
                 quotedTweet = self.getQuotedTweet(tweet)
                 if (quotedTweet is None):
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted gweet")
+                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted GETTR post")
                 else:
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted gweet", True, quotedTweet.text)
+                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted GETTR post", True, quotedTweet.text)
             else:
                 text = self.convertLink(text, shortened_url, expanded_url, title)
     
