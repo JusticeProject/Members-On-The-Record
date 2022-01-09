@@ -203,8 +203,6 @@ class AnalyzeTweets:
                             matched = False
                             
                 if (matched == True):
-                    if (phrase[0].lower() == "gettr") and ("gettr.com" in combinedTextLower):
-                        stop = 0
                     conversation[0].keyword_phrase = phrase
                     return category
         
