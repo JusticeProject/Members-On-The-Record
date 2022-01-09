@@ -364,6 +364,3 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
-
-Category=Looking for more Gettr accounts.
-Keywords=Gettr
