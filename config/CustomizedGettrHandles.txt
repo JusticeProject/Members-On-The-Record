@@ -1,10 +1,14 @@
 @Jimbanks=https://banks.house.gov
 @repandybiggsaz=https://biggs.house.gov
 @RepDanBishop=https://bishop.house.gov
+@votemarsha=https://www.blackburn.senate.gov
 @laurenboebert=https://boebert.house.gov
+@RepMoBrooks=https://brooks.house.gov
 
+@buddycarter=https://buddycarter.house.gov
 @repcawthorn=https://cawthorn.house.gov
 @madisoncawthorn=https://cawthorn.house.gov
+@SenKevinCramer=https://www.cramer.senate.gov
 
 @RepDonaldsPress=https://donalds.house.gov
 
@@ -13,7 +17,11 @@
 @RepMattGaetz=https://gaetz.house.gov
 @mattgaetz=https://gaetz.house.gov
 @replouiegohmert=https://gohmert.house.gov
+@realpaulgosar=https://gosar.house.gov
 @MTG4America=https://greene.house.gov
+@RepMTG=https://greene.house.gov
+
+@RepJodyHice=https://hice.house.gov
 
 @SenRonJohnson=https://www.ronjohnson.senate.gov
 @Jim_Jordan=https://jordan.house.gov
@@ -28,8 +36,12 @@
 
 @reppfluger=https://pfluger.house.gov
 
+@johnrosefortn=https://johnrose.house.gov
+
 @SteveScalise=https://scalise.house.gov
 @elisestefanik=https://stefanik.house.gov
+@RepStefanik=https://stefanik.house.gov
+@RepGregSteube=https://steube.house.gov
 
 @RepBethVanDuyne=https://vanduyne.house.gov
 
