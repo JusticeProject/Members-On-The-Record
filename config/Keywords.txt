@@ -137,6 +137,7 @@ haaretz
 @theIMEU
 @AJCGlobal
 @J_Insider
+@AJCongress
 @HananyaNaftali
 
 Category=Apartheid
