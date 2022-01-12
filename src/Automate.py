@@ -16,10 +16,16 @@ import EmailNotifications
 ###############################################################################
 ###############################################################################
 
-def runScanLoop():
-    # Every day it will start the scan at this hour, uses 24-hour clock.
-    SCAN_HOUR = 11
+# Every day it will start the scan at this hour, uses 24-hour clock.
+SCAN_HOUR = 11
 
+# Used by the spawned processes to communicate with the main process
+DONE_MESSAGE = "MOTR Done Message"
+
+###############################################################################
+###############################################################################
+
+def runScanLoop():
     # If True then it will scan right away, then proceed to scan every day at SCAN_HOUR.
     # If False then it will only scan at the SCAN_HOUR.
     config = Utilities.loadConfig()
@@ -71,7 +77,7 @@ def runScanLoop():
                 msg = q.get(block=True, timeout=None)
                 logger.log(msg)
 
-                if (msg == "Done"):
+                if (msg == DONE_MESSAGE):
                     numberProcessesRunning -= 1
                     logger.log("{} processes still running".format(numberProcessesRunning))
             
@@ -143,7 +149,7 @@ def twitterProcess(logger: Utilities.RemoteLogger):
         imager.run()
 
     logger.log("Twitter Process complete.")
-    logger.log("Done")
+    logger.log(DONE_MESSAGE)
 
 ###############################################################################
 ###############################################################################
@@ -156,7 +162,7 @@ def gettrProcess(logger: Utilities.RemoteLogger):
     instance.run(60)
 
     logger.log("  Gettr Process complete.")
-    logger.log("Done")
+    logger.log(DONE_MESSAGE)
 
 ###############################################################################
 ###############################################################################
