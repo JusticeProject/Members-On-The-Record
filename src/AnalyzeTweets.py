@@ -194,7 +194,7 @@ class AnalyzeTweets:
                     elif (word[0] == '~'):
                         if (word[1:] in combinedTextLower):
                             matched = False
-                    elif (word[0] == '_'):
+                    elif (word[0] == '{'):
                         textSplit = regexWordBoundary.findall(combinedTextLower)
                         if (word[1:] not in textSplit):
                             matched = False
@@ -272,7 +272,7 @@ class AnalyzeTweets:
                 instances = re.findall(word[1:], text)
             elif (word[0] == '~'):
                 continue
-            elif (word[0] == '_'):
+            elif (word[0] == '{'):
                 regex = re.compile(r"\b(" + word[1:] + r")\b", flags=re.IGNORECASE)
                 instances = regex.findall(text)
             else:

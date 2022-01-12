@@ -559,9 +559,9 @@ def loadURLs(path, socialMedia = "Twitter"):
 def getKeywords():
     dictOfKeywords = {}
     
-    # each word will start with 0 or 1 special characters [+_^~]
-    # then have 1 or more non-special characters
-    regex = re.compile(r"[+_^~]?[^+_^~]+")
+    # each word will start with 0 or 1 special characters [+{^~]
+    # then have 1 or more non-special characters. We need to escape the { with a \
+    regex = re.compile(r"[+\{^~]?[^+\{^~]+")
     
     fileLines = open(KEYWORDS_FILE_NAME, "r", encoding="utf-8").readlines()
     

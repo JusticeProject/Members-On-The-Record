@@ -3,9 +3,9 @@ Symbols:
 + If a tweet needs to contain more than one keyword. Example: Golan+Heights
 ~ If a word should not be present. Ex: Turkey~Thanksgiving will find Tweets that contain Turkey but do not
         contain the word Thanksgiving
-_ If a word should be matched as a separate word. Ex: _Jew will match Jew but not Jewel
+{ If a word should be matched as a separate word. Ex: {Jew will match Jew but not Jewel
   A space is just a space. Ex: Tel Aviv is treated as one word and will match Tel Aviv but will not match TelAviv
-Currently there is no full support for two symbols side-by-side such as ^_ (however +_ does work). If it is desired to
+Currently there is no full support for two symbols side-by-side such as ^{ however +{ does work. If it is desired to
 use this then it is recommended that you manually test these before adding them.
 
 Tip:
@@ -42,7 +42,7 @@ Palestine
 Palestin
 ^Hamas
 ^HAMAS
-_Hamas
+{Hamas
 Mahmoud+Abbas
 President+Abbas
 Shtayyeh
@@ -54,7 +54,7 @@ Jerusalem
 Aqsa+Mosque
 Ramallah
 ^Hebron
-_Hebron
+{Hebron
 illegal settlement
 Home Demoli
 House Demoli
@@ -73,7 +73,7 @@ two-state+solution
 twostate+solution
 aipac
 UNRWA
-_BDS
+{BDS
 BDS's
 BDSer
 anti-BDS
@@ -122,7 +122,7 @@ ngo monitor
 ngomonitor
 ngo-monitor
 knesset
-_IDF
+{IDF
 shin bet
 Shabak
 mossad
@@ -148,7 +148,7 @@ Aparthied
 Category=Syria
 Keywords=Syria
 ^Assad
-_Assad
+{Assad
 Assad's
 Bashar+Assad
 Aleppo
@@ -171,7 +171,7 @@ Khomeini
 Khamenei
 ^Iran
 ^IRAN
-_Iran
+{Iran
 Iranian
 JCPOA
 joint comprehensive plan of action
@@ -183,7 +183,7 @@ Keywords=Egypt
 Cairo~greenecounty~Greene County~Illinois~Chicago
 el-Sisi
 al-Sisi
-_Sisi
+{Sisi
 President Sisi
 Muslim+Brotherhood
 Tahrir
@@ -192,12 +192,12 @@ Category=Saudi Arabia
 Keywords=Saudi~@MassAuditor
 ^Arabia~@Arabia_Alliance
 ^ARABIA
-_Arabia
+{Arabia
 Arabian
 Riyadh
 Khashoggi
 Khashog
-_MBS
+{MBS
 ^MBS's
 bin Salman
 
@@ -302,8 +302,8 @@ Semitic
 Judaism
 Holocaust
 pogrom
-_Jew
-_Jews
+{Jew
+{Jews
 Jew's
 Jews'
 Jewish
@@ -331,7 +331,7 @@ Drone+strike
 Reaper+drone
 drone+kill
 drone+destroy
-drone+_hit
+drone+{hit
 drone+terror
 drone+bomb
 drone+military
@@ -341,17 +341,17 @@ AlQaeda
 Al-Qaeda
 Islamic State
 IslamicState
-_Sharia
+{Sharia
 mullah
 Kurds
 Kurdish
 Kurdistan
-_Isis
+{Isis
 Isis's
 Yazidi
 Yezidi
 Jihad
-_Fatwa
+{Fatwa
 Arab Spring
 ArabSpring
 Islamic+Republic
