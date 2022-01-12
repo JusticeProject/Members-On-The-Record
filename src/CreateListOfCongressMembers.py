@@ -416,6 +416,7 @@ class CreateListOfCongressMembers:
     def removeStaleTwitterHandles(self, listOfMembers, twitterLookupDict):
         self.logger.log("Checking for stale Twitter handles")
 
+        # first, we will look through the listOfMembers to see if their Twitter handles are valid according to www.twitter.com
         handlesToLookup = []
         for member in listOfMembers:
             for handle in member.twitter:
@@ -440,6 +441,20 @@ class CreateListOfCongressMembers:
                         # remove from twitterLookupDict
                         if (handle in twitterLookupDict.keys()):
                             twitterLookupDict.pop(handle)
+
+        # second, we will look at all handles in the twitterLookupDict to see if any are not in the listOfMembers,
+        # which means they can be removed from the LookupDict
+        handlesFromLookupDict = list(twitterLookupDict.keys())
+        for handle in handlesFromLookupDict:
+            foundHandle = False
+            for member in listOfMembers:
+                if (handle in member.twitter):
+                    foundHandle = True
+                    break
+
+            if (not foundHandle):
+                twitterLookupDict.pop(handle)
+                self.logger.log("warning: handle {} is not connected to a member. Removing it from TwitterLookup.txt".format(handle))
 
     ###########################################################################
     ###########################################################################
