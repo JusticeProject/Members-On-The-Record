@@ -6,6 +6,7 @@ import datetime
 import re
 import jinja2
 import requests
+import brotlicffi
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import time
@@ -649,12 +650,14 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
             custom_header = getCustomHeader(currentPlatformHeaders)
             result = requests.get(url, headers=custom_header, timeout=3, stream=True)
             result.raise_for_status() # if an HTTP error occurred, it will raise an exception
+            encoding = result.headers.get("Content-Encoding", "")
+            content_type = result.headers.get("Content-Type", "")
 
             text_data = ""
             binary_data = bytes()
 
             start = time.time()
-            for chunk in result.iter_content(4096, decode_unicode=True):
+            for chunk in result.iter_content(4096, decode_unicode=False):
                 if isinstance(chunk, str):
                     text_data += chunk
                 elif isinstance(chunk, bytes):
@@ -665,6 +668,19 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
                     raise ValueError("timeout reached")
             
             result.close()
+
+            # Check if we need to decode anything.
+            if ("br" in encoding) and (len(binary_data) > 0):
+                if (b"html" in binary_data):
+                    text_data = binary_data.decode()
+                    binary_data = bytes()
+                else:
+                    text_data = brotlicffi.decompress(binary_data).decode()
+                    binary_data = bytes()
+            elif ("html" in content_type.lower()) and (len(binary_data) > 0):
+                text_data = binary_data.decode()
+                binary_data = bytes()
+
             return text_data, binary_data, result.status_code
         except ValueError:
             return text_data, binary_data, 1001
