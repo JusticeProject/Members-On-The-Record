@@ -213,6 +213,7 @@ USEmbassyJordan
 Hashemite
 Jordan Embassy
 Jordan Ambassador
+Ayman+Safadi
 
 Category=Iraq
 Keywords=Baghdad
