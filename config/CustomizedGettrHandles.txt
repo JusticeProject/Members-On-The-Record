@@ -4,6 +4,7 @@
 @votemarsha=https://www.blackburn.senate.gov
 @laurenboebert=https://boebert.house.gov
 @RepMoBrooks=https://brooks.house.gov
+@michaelcburgess=https://burgess.house.gov
 
 @buddycarter=https://buddycarter.house.gov
 @repcawthorn=https://cawthorn.house.gov
