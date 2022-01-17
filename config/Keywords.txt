@@ -138,7 +138,8 @@ haaretz
 @AJCGlobal
 @J_Insider
 @AJCongress
-@HananyaNaftali
+{JINSA
+^JINSA
 
 Category=Apartheid
 Keywords=Apartheid
@@ -366,3 +367,4 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
+@HananyaNaftali
