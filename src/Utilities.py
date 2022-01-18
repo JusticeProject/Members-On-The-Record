@@ -629,7 +629,10 @@ def getDomainOfURL(url):
     if (url == ""):
         return ""
 
-    domain = urlparse(url).netloc
+    try:
+        domain = urlparse(url).netloc
+    except:
+        return ""
 
     if (domain.startswith("www.")):
         domain = domain[4:]
