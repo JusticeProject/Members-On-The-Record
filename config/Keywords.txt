@@ -140,6 +140,7 @@ haaretz
 @AJCongress
 {JINSA
 ^JINSA
+@jinsadc
 
 Category=Apartheid
 Keywords=Apartheid
