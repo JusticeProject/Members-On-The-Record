@@ -9,6 +9,7 @@
 @buddycarter=https://buddycarter.house.gov
 @repcawthorn=https://cawthorn.house.gov
 @madisoncawthorn=https://cawthorn.house.gov
+@repjamescomer=https://comer.house.gov
 @SenKevinCramer=https://www.cramer.senate.gov
 
 @RepDonaldsPress=https://donalds.house.gov
