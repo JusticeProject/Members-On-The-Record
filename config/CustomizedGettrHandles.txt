@@ -6,6 +6,7 @@
 @RepMoBrooks=https://brooks.house.gov
 @michaelcburgess=https://burgess.house.gov
 
+@repjerrycarl=https://carl.house.gov
 @buddycarter=https://buddycarter.house.gov
 @repcawthorn=https://cawthorn.house.gov
 @madisoncawthorn=https://cawthorn.house.gov
