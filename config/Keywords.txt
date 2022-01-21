@@ -36,6 +36,10 @@ Yair+Lapid
 iron dome
 irondome
 iron-dome
+Arrow 3
+Arrow-3
+Hetz 3
+Hetz-3
 Abraham+accord
 Palestinian
 Palestine
@@ -141,6 +145,8 @@ haaretz
 {JINSA
 ^JINSA
 @jinsadc
+Torah+Caucus
+🇮🇱
 
 Category=Apartheid
 Keywords=Apartheid
