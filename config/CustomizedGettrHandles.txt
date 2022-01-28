@@ -24,7 +24,10 @@
 @MTG4America=https://greene.house.gov
 @RepMTG=https://greene.house.gov
 
+@RepHarshbarger=https://harshbarger.house.gov
 @RepJodyHice=https://hice.house.gov
+
+@repdarrellissa=https://issa.house.gov
 
 @SenRonJohnson=https://www.ronjohnson.senate.gov
 @Jim_Jordan=https://jordan.house.gov
