@@ -366,7 +366,7 @@ Mideast
 Persian+Gulf
 Drone+strike
 Reaper+drone
-drone+kill
+drone+kill~skill
 drone+destroy
 drone+{hit
 drone+terror
@@ -403,3 +403,5 @@ Al Jazeera
 AlJazeera
 Al-Jazeera
 @HananyaNaftali
+Islamophobia
+Islamaphobia
