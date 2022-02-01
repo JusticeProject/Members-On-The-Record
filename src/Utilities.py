@@ -650,14 +650,14 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
 
     for retries in range(0, 3):
         try:
+            text_data = ""
+            binary_data = bytes()
+            
             custom_header = getCustomHeader(currentPlatformHeaders)
             result = requests.get(url, headers=custom_header, timeout=3, stream=True)
             result.raise_for_status() # if an HTTP error occurred, it will raise an exception
             encoding = result.headers.get("Content-Encoding", "")
             content_type = result.headers.get("Content-Type", "")
-
-            text_data = ""
-            binary_data = bytes()
 
             start = time.time()
             for chunk in result.iter_content(4096, decode_unicode=False):
