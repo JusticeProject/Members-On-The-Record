@@ -38,6 +38,7 @@
 
 @RogerMarshallMD=https://www.marshall.senate.gov
 @LeaderMcCarthy=https://kevinmccarthy.house.gov
+@RepLisaMcClain=https://mcclain.house.gov
 
 @RepTroyNehls=https://nehls.house.gov
 

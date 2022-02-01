@@ -33,6 +33,8 @@ Netanyahu
 Naftali+Bennett
 Benny+Gantz
 Yair+Lapid
+@Isaac_Herzog
+Isaac+Herzog
 iron dome
 irondome
 iron-dome
@@ -104,6 +106,7 @@ Candiru+Software
 Cytrox
 Intellexa
 Sheikh+Jarrah
+Sheik+Jarrah
 Silwan
 ^Atarot
 @TomNides
