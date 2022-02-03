@@ -196,7 +196,7 @@ Hormuz
 
 Category=Egypt
 Keywords=Egypt
-Cairo~greenecounty~Greene County~Illinois~Chicago
+Cairo~greenecounty~Greene County~Illinois~Chicago~@CAIROhio
 el-Sisi
 al-Sisi
 {Sisi
@@ -310,6 +310,7 @@ Sana'a
 
 Category=Horn of Africa
 Keywords=Somalia
+^Somali
 Horn of Africa
 HornOfAfrica
 Horn-Of-Africa
