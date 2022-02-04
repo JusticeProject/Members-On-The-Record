@@ -101,6 +101,7 @@ NSOGroup
 NSO-Group
 Pegasus+Spyware
 Pegasus+Software
+QuaDream
 Candiru+Spyware
 Candiru+Software
 Cytrox
@@ -268,6 +269,7 @@ WesternSahara
 
 Category=Algeria
 Keywords=Algeria
+Maghreb
 🇩🇿
 
 Category=Tunisia
