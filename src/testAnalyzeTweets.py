@@ -4,6 +4,7 @@ import distutils.file_util
 
 import Utilities
 
+import ProcessImages
 import AnalyzeTweets
 
 ###############################################################################
@@ -30,17 +31,23 @@ def getAllResultsFolders():
 ###############################################################################
 ###############################################################################
 
-logger = Utilities.Logger()
-folders = getAllResultsFolders()
-instance = AnalyzeTweets.AnalyzeTweets(logger)
+if __name__ == "__main__":
+    logger = Utilities.Logger()
+    folders = getAllResultsFolders()
 
-if (os.path.exists("../output/test/") == False):
-    os.mkdir("../output/test/")
+    if (os.path.exists("../output/test/") == False):
+        os.mkdir("../output/test/")
 
-logger.prepareLogFile("../output/test/")
+    logger.prepareLogFile("../output/test/")
 
-for folder in folders:
-    print("\ntesting folder " + folder)
-    resultsPath = instance.run(folder, False)
-    justTheFileName = resultsPath.rsplit("/", 1)[1]
-    distutils.file_util.copy_file(resultsPath, "../output/test/" + justTheFileName)
+    for folder in folders:
+        print("\ntesting folder " + folder)
+
+        step1 = ProcessImages.ProcessImages(logger)
+        step1.run(folder)
+
+        step2 = AnalyzeTweets.AnalyzeTweets(logger)
+        resultsPath = step2.run(folder, True)
+
+        justTheFileName = resultsPath.rsplit("/", 1)[1]
+        distutils.file_util.copy_file(resultsPath, "../output/test/" + justTheFileName)

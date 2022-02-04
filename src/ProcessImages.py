@@ -172,8 +172,12 @@ class ProcessImages:
     #####################################################################################
     #####################################################################################
 
-    def run(self):
-        self.resultsFolder = Utilities.getMostRecentResultsFolder()
+    def run(self, folder=""):
+        if (folder == ""):
+            self.resultsFolder = Utilities.getMostRecentResultsFolder()
+        else:
+            self.resultsFolder = folder
+
         self.imagesFolder = self.resultsFolder + "images/"
         listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
 
