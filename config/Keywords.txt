@@ -101,6 +101,7 @@ NSOGroup
 NSO-Group
 Pegasus+Spyware
 Pegasus+Software
+NSO+Pegasus
 QuaDream
 Candiru+Spyware
 Candiru+Software
@@ -151,6 +152,7 @@ haaretz
 ^JINSA
 @jinsadc
 Torah+Caucus
+^IHRA
 🇮🇱
 🇵🇸
 
@@ -243,7 +245,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey~turkey trot
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey~turkey trot~Turkey Valley
 Erdogan
 Erdoğan
 Ankara
