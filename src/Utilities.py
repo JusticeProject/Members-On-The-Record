@@ -91,17 +91,17 @@ CUSTOM_HTTP_HEADER_IPHONE = {
 
 CUSTOM_HTTP_HEADER_ANDROID = [
     # the first header (authority) will be customized for each request
-    """-H 'sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"'""",
-    """-H 'sec-ch-ua-mobile: ?1'""",
-    """-H 'sec-ch-ua-platform: "Android"'""",
-    """-H 'upgrade-insecure-requests: 1'""",
-    """-H 'user-agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Mobile Safari/537.36'""",
-    """-H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'""",
-    """-H 'sec-fetch-site: none'""",
-    """-H 'sec-fetch-mode: navigate'""",
-    """-H 'sec-fetch-user: ?1'""",
-    """-H 'sec-fetch-dest: document'""",
-    """-H 'accept-language: en-US,en;q=0.9'"""
+    '-H', 'sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"',
+    '-H', 'sec-ch-ua-mobile: ?1',
+    '-H', 'sec-ch-ua-platform: "Android"',
+    '-H', 'upgrade-insecure-requests: 1',
+    '-H', 'user-agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Mobile Safari/537.36',
+    '-H', 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    '-H', 'sec-fetch-site: none',
+    '-H', 'sec-fetch-mode: navigate',
+    '-H', 'sec-fetch-user: ?1',
+    '-H', 'sec-fetch-dest: document',
+    '-H', 'accept-language: en-US,en;q=0.9'
 
 ]
 
@@ -129,10 +129,9 @@ def getCustomHeaderForCurl(url: str):
         return headerList
 
     # the format is -H 'authority: m.jpost.com'
-    authority = "-H 'authority: " + domain + "'"
-    headerList.insert(0, authority)
+    frontList = ["-H", "authority: " + domain]
 
-    return headerList
+    return frontList + headerList
 
 ###############################################################################
 ###############################################################################
@@ -739,7 +738,8 @@ def getWebsiteFromGoogleCache(url, currentPlatformHeaders = True):
 def runCurlCommand(url) -> Tuple[str,bytes,int]:
     headerList = getCustomHeaderForCurl(url)
 
-    fullCmd = ["~/custom_curl/bin/curl", "'" + url + "'"]
+    # TODO: "~/custom_curl/bin/curl"
+    fullCmd = ["curl", url]
     fullCmd += headerList
     fullCmd.append("--compressed")
     fullCmd.append("--verbose")
@@ -748,7 +748,7 @@ def runCurlCommand(url) -> Tuple[str,bytes,int]:
     if (result.returncode != 0):
         return "", bytes(), 1011
 
-    output = result.stdout.decode() + result.stderr.decode()
+    output = result.stderr.decode() + result.stdout.decode()
     lines = [line for line in output.split("\n") if line.strip() != ""]
 
     text = ""

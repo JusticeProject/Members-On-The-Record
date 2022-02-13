@@ -3,7 +3,7 @@ import Utilities
 #url = "https://www.bloomberg.com/news/articles/2021-11-24/israel-morocco-sign-defense-cooperation-pact-gantz-says"
 #url = "https://www.whatismybrowser.com/detect/what-http-headers-is-my-browser-sending"
 #url = "https://bacon.house.gov/news/documentsingle.aspx?DocumentID=765"
-url = "https://m.jpost.com/opinion/hezbollah-is-a-threat-to-latin-america-opinion-688022"
+url = "https://www.jpost.com/opinion/hezbollah-is-a-threat-to-latin-america-opinion-688022"
 #url = "http://newsradio1620.streamguys.org/wnrp"
 #url = "https://www.google.com"
 #url = "https://www.youtube.com/watch?v=K7HCntVQ02s"
