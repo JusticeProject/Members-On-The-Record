@@ -1,5 +1,6 @@
 import platform
 import os
+import subprocess
 import os.path
 import pathlib
 import datetime
@@ -88,6 +89,22 @@ CUSTOM_HTTP_HEADER_IPHONE = {
     "Referer":"https://www.google.com/"
 }
 
+CUSTOM_HTTP_HEADER_ANDROID = [
+    # the first header (authority) will be customized for each request
+    """-H 'sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"'""",
+    """-H 'sec-ch-ua-mobile: ?1'""",
+    """-H 'sec-ch-ua-platform: "Android"'""",
+    """-H 'upgrade-insecure-requests: 1'""",
+    """-H 'user-agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.82 Mobile Safari/537.36'""",
+    """-H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'""",
+    """-H 'sec-fetch-site: none'""",
+    """-H 'sec-fetch-mode: navigate'""",
+    """-H 'sec-fetch-user: ?1'""",
+    """-H 'sec-fetch-dest: document'""",
+    """-H 'accept-language: en-US,en;q=0.9'"""
+
+]
+
 ###############################################################################
 ###############################################################################
 
@@ -99,6 +116,23 @@ def getCustomHeader(currentPlatform = True):
             return CUSTOM_HTTP_HEADER_WIN7
     else:
         return CUSTOM_HTTP_HEADER_IPHONE
+
+###############################################################################
+###############################################################################
+
+def getCustomHeaderForCurl(url: str):
+    headerList = CUSTOM_HTTP_HEADER_ANDROID.copy()
+    
+    try:
+        domain = urlparse(url).netloc
+    except:
+        return headerList
+
+    # the format is -H 'authority: m.jpost.com'
+    authority = "-H 'authority: " + domain + "'"
+    headerList.insert(0, authority)
+
+    return headerList
 
 ###############################################################################
 ###############################################################################
@@ -698,6 +732,58 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
 
 def getWebsiteFromGoogleCache(url, currentPlatformHeaders = True):
     return getWebsiteData("https://webcache.googleusercontent.com/search?q=cache:" + url, currentPlatformHeaders)
+
+###############################################################################
+###############################################################################
+
+def runCurlCommand(url) -> Tuple[str,bytes,int]:
+    headerList = getCustomHeaderForCurl(url)
+
+    fullCmd = ["~/custom_curl/bin/curl", "'" + url + "'"]
+    fullCmd += headerList
+    fullCmd.append("--compressed")
+    fullCmd.append("--verbose")
+
+    result = subprocess.run(fullCmd, capture_output=True)
+    if (result.returncode != 0):
+        return "", bytes(), 1011
+
+    output = result.stdout.decode() + result.stderr.decode()
+    lines = [line for line in output.split("\n") if line.strip() != ""]
+
+    text = ""
+    status_code = 1010
+    resp_started = False
+
+    # TODO: add try/except
+
+    for line in lines:
+        if ("> accept-language: " in line):
+            resp_started = True
+
+        if resp_started:
+            if ("< HTTP/2 " in line):
+                line_split = line.strip().split(' ')
+                status_code = int(line_split[-1])
+            elif ("< location: " in line) and (status_code // 100 == 3):
+                line_split = line.strip().split(' ')
+                text = line_split[-1]
+                break
+            else:
+                text += line
+
+    return text, bytes(), status_code
+
+###############################################################################
+###############################################################################
+
+def getWebsiteUsingCurl(url: str) -> Tuple[str,bytes,int]:
+    html, binary_data, status_code = runCurlCommand(url)
+
+    if (status_code // 100 == 3) and (len(html) > 0):
+        html, binary_data, status_code = runCurlCommand(html)
+
+    return html, binary_data, status_code
 
 ###############################################################################
 ###############################################################################
