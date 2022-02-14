@@ -153,6 +153,7 @@ haaretz
 @jinsadc
 Torah+Caucus
 ^IHRA
+{IHRA
 🇮🇱
 🇵🇸
 
@@ -380,6 +381,7 @@ drone+terror
 drone+bomb
 drone+military
 drone+attack
+drone program
 Al Qaeda
 AlQaeda
 Al-Qaeda
