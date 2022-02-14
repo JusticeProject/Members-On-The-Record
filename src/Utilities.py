@@ -710,8 +710,12 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
             # Check if we need to decode anything.
             if ("br" in encoding) and (len(binary_data) > 0):
                 if (b"html" in binary_data):
-                    text_data = binary_data.decode()
-                    binary_data = bytes()
+                    try:
+                        text_data = binary_data.decode()
+                        binary_data = bytes()
+                    except ValueError:
+                        text_data = brotlicffi.decompress(binary_data).decode()
+                        binary_data = bytes()
                 else:
                     text_data = brotlicffi.decompress(binary_data).decode()
                     binary_data = bytes()
@@ -763,8 +767,6 @@ def runCurlCommand(url) -> Tuple[str,bytes,int]:
     status_code = 1010
     resp_started = False
 
-    # TODO: add try/except
-
     for line in lines:
         if ("> accept-language: " in line):
             resp_started = True
@@ -786,6 +788,12 @@ def runCurlCommand(url) -> Tuple[str,bytes,int]:
 ###############################################################################
 
 def getWebsiteUsingCurl(url: str) -> Tuple[str,bytes,int]:
+    # sanitize the inputs
+    if (" " in url) or (".." in url):
+        return "", bytes(), 0
+
+    # TODO: add try/except
+
     html, binary_data, status_code = runCurlCommand(url)
 
     if (status_code // 100 == 3) and (len(html) > 0):
