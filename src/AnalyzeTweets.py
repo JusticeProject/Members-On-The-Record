@@ -181,6 +181,14 @@ class AnalyzeTweets:
                 for i in range(0, len(tweet.list_of_attachments), 2):
                     combinedText = combinedText + " " + tweet.list_of_attachments[i+1]
 
+        # Put some spaces around each emoji flag which makes it more reliable to detect a specific flag.
+        # Country flag emojis consist of exactly two unicode codepoints within a certain range. When multiple
+        # flags are grouped together it can look like a different flag when searching. 
+        # Example: If the US flag and Australian flag are side-by-side (USAU) it looks like the Saudi flag 
+        # in the middle (SA). " \1 " means we keep group 1 (the flag) and put a space before and after.
+        flagPattern = re.compile(r"([\U0001F1E6-\U0001F1FF]{2})")
+        combinedText = flagPattern.sub(r" \1 ", combinedText)
+
         combinedTextLower = combinedText.lower()
         
         # Search the combined text of the conversation, use the categories from Keywords.txt

@@ -9,6 +9,7 @@ url = "https://www.jpost.com/opinion/hezbollah-is-a-threat-to-latin-america-opin
 #url = "https://www.youtube.com/watch?v=K7HCntVQ02s"
 
 html, binary_data, respcode = Utilities.getWebsiteUsingCurl(url)
+#html, binary_data, respcode = Utilities.getWebsiteData(url, True)
 title = Utilities.extractTitleFromHTML(html)
 print("{} {} {}".format(len(html), len(binary_data), respcode))
 print("title = {}".format(title))

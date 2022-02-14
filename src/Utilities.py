@@ -685,9 +685,11 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
         try:
             text_data = ""
             binary_data = bytes()
+            status_code = 1001
             
             custom_header = getCustomHeader(currentPlatformHeaders)
             result = requests.get(url, headers=custom_header, timeout=3, stream=True)
+            status_code = result.status_code
             result.raise_for_status() # if an HTTP error occurred, it will raise an exception
             encoding = result.headers.get("Content-Encoding", "")
             content_type = result.headers.get("Content-Type", "")
@@ -717,10 +719,16 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
                 text_data = binary_data.decode()
                 binary_data = bytes()
 
-            return text_data, binary_data, result.status_code
+            return text_data, binary_data, status_code
         except ValueError:
-            return text_data, binary_data, 1001
+            # This occurs on a specific timeout: reading the chunked data.
+            return text_data, binary_data, status_code
         except:
+            # If it's a 403 or 404 then don't keep bugging the server, just move on.
+            if (status_code // 100 == 4):
+                return text_data, binary_data, status_code
+
+            # This could occur if the website took too long to respond to the initial request. Try again.
             if (retries <= 1):
                 time.sleep(1)
 

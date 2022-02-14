@@ -73,7 +73,7 @@ class RetrieveListsFromTwitter():
                 results = self.doMultipleUserLookup(batch)
 
                 if (len(batch) != len(results)):
-                    self.logger.log("Warnng: after user lookup, length of batch: {} does not equal length of results: {}".format(len(batch), len(results)))
+                    self.logger.log("Warning: after user lookup, length of batch: {} does not equal length of results: {}".format(len(batch), len(results)))
 
                 for user in results:
                     dictOfTwitterUsers[user.twitterHandle] = user
