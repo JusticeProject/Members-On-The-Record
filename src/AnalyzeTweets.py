@@ -187,7 +187,9 @@ class AnalyzeTweets:
         # Example: If the US flag and Australian flag are side-by-side (USAU) it looks like the Saudi flag 
         # in the middle (SA). " \1 " means we keep group 1 (the flag) and put a space before and after.
         flagPattern = re.compile(r"([\U0001F1E6-\U0001F1FF]{2})")
-        combinedText = flagPattern.sub(r" \1 ", combinedText)
+        foundFlags = flagPattern.search(combinedText)
+        if foundFlags:
+            combinedText = flagPattern.sub(r" \1 ", combinedText)
 
         combinedTextLower = combinedText.lower()
         
