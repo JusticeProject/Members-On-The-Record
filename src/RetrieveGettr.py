@@ -95,6 +95,11 @@ class RetrieveGettr:
         # ttl is the title
         if ("prevsrc" in post.keys()) and ("ttl" in post.keys()):
             url = post["prevsrc"]
+
+            # a comma in the url will cause problems for our simplified csv format, so skip it for now
+            if ("," in url):
+                return None
+
             if (url.strip() != "") and (url in post.get("txt", "")):
                 url_obj = Classes.URL()
                 url_obj.shortened_url = url
