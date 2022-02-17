@@ -262,7 +262,7 @@ Benghazi
 Category=Morocco
 Keywords=Morocco
 Moroccan
-Rabat
+^Rabat
 ^Casablanca
 Western Sahara
 Western-Sahara
