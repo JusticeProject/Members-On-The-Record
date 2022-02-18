@@ -29,7 +29,6 @@ pip install numpy
 pip install beautifulsoup4
 pip install brotlicffi
 pip install brotli
-pip install gogettr
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
