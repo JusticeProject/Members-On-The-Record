@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../src")
 import Utilities
 
 #url = "https://www.bloomberg.com/news/articles/2021-11-24/israel-morocco-sign-defense-cooperation-pact-gantz-says"

@@ -102,15 +102,20 @@ class GettrUser:
         self.gettrHandle = ""
         self.mostRecentPostIdStr = ""
         self.mostRecentCommentIDStr = ""
+        self.mostRecentPostTime = 0
+        self.mostRecentCommentTime = 0
 
     def setData(self, lineOfData):
         line_split = lineOfData.split(",")
         self.gettrHandle = line_split[0]
         self.mostRecentPostIdStr = line_split[1]
         self.mostRecentCommentIDStr = line_split[2]
+        self.mostRecentPostTime = int(line_split[3])
+        self.mostRecentCommentTime = int(line_split[4])
     
     def __str__(self):
-        return self.gettrHandle + "," + self.mostRecentPostIdStr.strip() + "," + self.mostRecentCommentIDStr.strip()
+        return self.gettrHandle + "," + self.mostRecentPostIdStr.strip() + "," + self.mostRecentCommentIDStr.strip() + \
+            "," + str(self.mostRecentPostTime) + "," + str(self.mostRecentCommentTime)
 
 ###############################################################################
 ###############################################################################

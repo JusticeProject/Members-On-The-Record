@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../src")
+
 import os
 import pathlib
 import distutils.file_util

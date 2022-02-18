@@ -1,9 +1,9 @@
-from gogettr import PublicClient
 import time
 import random
 
 import Utilities
 import Classes
+from GettrAPI import PublicClient
 
 ###############################################################################
 ###############################################################################
@@ -119,14 +119,14 @@ class RetrieveGettr:
         client = PublicClient()
 
         # get posts
-        if (user.mostRecentPostIdStr.strip() == ""):
+        if (user.mostRecentPostTime == 0):
             self.logger.log("  Retrieving Posts for {}, max of {}".format(user.gettrHandle, numberOfPostsForFirstScan))
             posts = client.user_activity(username=user.gettrHandle, max=numberOfPostsForFirstScan, type="posts")
         else:
             # start from most recent post retrieved, but need to add 1 so we don't get the same post as last time
-            self.logger.log("  Retrieving Posts for {}, after id {}".format(user.gettrHandle, user.mostRecentPostIdStr))
-            until = self.incrementByOne(user.mostRecentPostIdStr)
-            posts = client.user_activity(username=user.gettrHandle, until=until, type="posts")
+            self.logger.log("  Retrieving Posts for {}, after time {}".format(user.gettrHandle, user.mostRecentPostTime))
+            until_time = user.mostRecentPostTime + 1
+            posts = client.user_activity(username=user.gettrHandle, until_time=until_time, type="posts")
 
         listOfRawPosts = [post for post in posts]
         listOfRawPosts.reverse()
@@ -134,14 +134,14 @@ class RetrieveGettr:
         time.sleep(3) # slow it down...
 
         # get comments
-        if (user.mostRecentCommentIDStr.strip() == ""):
+        if (user.mostRecentCommentTime == 0):
             self.logger.log("  Retrieving Comments for {}, max of {}".format(user.gettrHandle, numberOfPostsForFirstScan))
             comments = client.user_activity(username=user.gettrHandle, max=numberOfPostsForFirstScan, type="comments")
         else:
             # start from most recent comment retrieved, but need to add 1 so we don't get the same comment as last time
-            self.logger.log("  Retrieving Comments for {}, after id {}".format(user.gettrHandle, user.mostRecentCommentIDStr))
-            until = self.incrementByOne(user.mostRecentCommentIDStr)
-            comments = client.user_activity(username=user.gettrHandle, until=until, type="comments")
+            self.logger.log("  Retrieving Comments for {}, after time {}".format(user.gettrHandle, user.mostRecentCommentTime))
+            until_time = user.mostRecentCommentTime + 1
+            comments = client.user_activity(username=user.gettrHandle, until_time=until_time, type="comments")
 
         listOfRawComments = [comment for comment in comments]
         listOfRawComments.reverse()
@@ -226,11 +226,11 @@ class RetrieveGettr:
 
             listOfGweets.append(gweet)
 
-        # save the most recent post id so we don't retrieve these posts again
+        # save the most recent timestamp so we don't retrieve these posts again
         if (len(listOfRawPosts) > 0):
-            user.mostRecentPostIdStr = listOfRawPosts[-1]["_id"]
+            user.mostRecentPostTime = listOfRawPosts[-1]["udate"]
         if (len(listOfRawComments) > 0):
-            user.mostRecentCommentIDStr = listOfRawComments[-1]["_id"]
+            user.mostRecentCommentTime = listOfRawComments[-1]["udate"]
 
         self.logger.log("  Retrieved {} gweets for user {}".format(len(listOfGweets), user.gettrHandle))
 
