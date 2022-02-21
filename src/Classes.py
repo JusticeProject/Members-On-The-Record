@@ -108,8 +108,8 @@ class GettrUser:
     def setData(self, lineOfData):
         line_split = lineOfData.split(",")
         self.gettrHandle = line_split[0]
-        self.mostRecentPostIdStr = line_split[1]
-        self.mostRecentCommentIDStr = line_split[2]
+        #self.mostRecentPostIdStr = line_split[1]
+        #self.mostRecentCommentIDStr = line_split[2]
         self.mostRecentPostTime = int(line_split[3])
         self.mostRecentCommentTime = int(line_split[4])
     
