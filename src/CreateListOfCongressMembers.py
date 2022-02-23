@@ -405,7 +405,7 @@ class CreateListOfCongressMembers:
                 idStrDict = self.doMultipleUserLookup(batch, True)
 
                 if (len(batch) != len(idStrDict)):
-                    self.logger.log("Warnng: after user lookup, length of batch: {} does not equal length of idStrDict: {}".format(len(batch), len(idStrDict)))
+                    self.logger.log("Warning: after user lookup, length of batch: {} does not equal length of idStrDict: {}".format(len(batch), len(idStrDict)))
 
                 for handle in idStrDict.keys():
                     twitterLookupDict[handle].idStr = idStrDict[handle]
@@ -428,19 +428,25 @@ class CreateListOfCongressMembers:
             batch = handlesToLookup[i:i + 100]
             idStrDict = self.doMultipleUserLookup(batch, False)
 
-            if (len(batch) != len(idStrDict)):
-                for handle in batch:
-                    if handle not in idStrDict.keys():
-                        self.logger.log("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and TwitterLookup.txt".format(handle))
+            for handle in batch:
+                # for each handle that was found, verify the id matches
+                if (handle in idStrDict) and (handle in twitterLookupDict):
+                    user = twitterLookupDict[handle]
+                    if (user.idStr != idStrDict[handle]):
+                        self.logger.log("Warning: id for handle {} changed from {} to {}".format(handle, user.idStr, idStrDict[handle]))
+                        user.idStr = idStrDict[handle]
+                elif (handle not in idStrDict):
+                    # the handle was not found
+                    self.logger.log("Warning: handle {} is stale, removing it from ListOfCongressMembers.txt and TwitterLookup.txt".format(handle))
 
-                        # remove from listOfMembers
-                        for member in listOfMembers:
-                            if (handle in member.twitter):
-                                member.twitter.remove(handle)
+                    # remove from listOfMembers
+                    for member in listOfMembers:
+                        if (handle in member.twitter):
+                            member.twitter.remove(handle)
 
-                        # remove from twitterLookupDict
-                        if (handle in twitterLookupDict.keys()):
-                            twitterLookupDict.pop(handle)
+                    # remove from twitterLookupDict
+                    if (handle in twitterLookupDict.keys()):
+                        twitterLookupDict.pop(handle)
 
         # second, we will look at all handles in the twitterLookupDict to see if any are not in the listOfMembers,
         # which means they can be removed from the LookupDict

@@ -451,6 +451,9 @@ class AnalyzeTweets:
         if (addTooltip and len(tooltipText) > 0):
             html = self.createLinkWithTooltip(newLink, visibleText, tooltipText)
         else:
+            # also decode any commas in the URL that were previously encoded
+            newLink = newLink.replace("%2C", ",")
+            linkToReplace = linkToReplace.replace("%2C", ",")
             html = '<a href="' + newLink + '">' + visibleText + '</a>'
         convertedText = text.replace(linkToReplace, html)
         return convertedText

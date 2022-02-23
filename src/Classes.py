@@ -207,7 +207,7 @@ class Tweet:
             totalString += ","
         else:
             for item in self.list_of_urls:
-                totalString = totalString + item.replace(",", "") + ";" # remove commas from URLs
+                totalString = totalString + item.replace(",", "%2C") + ";" # remove commas from URLs
             totalString = totalString[:-1] + ","  # get rid of last ; and add a ,
         
         self.text = self.text.replace("\n", " ")
@@ -232,7 +232,7 @@ class URL:
         self.title = line_split[2]
 
     def __str__(self):
-        totalString = self.shortened_url.replace(",", "") + "," + self.expanded_url.replace(",", "") + "," + self.title
+        totalString = self.shortened_url.replace(",", "%2C") + "," + self.expanded_url.replace(",", "%2C") + "," + self.title
 
         # make all single quotes standard, sometimes the funny single quotes appear
         if ("’" in totalString) or ("ʻ" in totalString):
