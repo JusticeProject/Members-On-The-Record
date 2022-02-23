@@ -32,6 +32,7 @@ Israel
 Netanyahu
 Naftali+Bennett
 Benny+Gantz
+@gantzbe
 Yair+Lapid
 @Isaac_Herzog
 Isaac+Herzog
@@ -146,6 +147,7 @@ addameer
 haaretz
 @theIMEU
 @AJCGlobal
+@AJPAction
 @J_Insider
 @AJCongress
 {JINSA

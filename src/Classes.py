@@ -232,7 +232,7 @@ class URL:
         self.title = line_split[2]
 
     def __str__(self):
-        totalString = self.shortened_url + "," + self.expanded_url + "," + self.title
+        totalString = self.shortened_url.replace(",", "") + "," + self.expanded_url.replace(",", "") + "," + self.title
 
         # make all single quotes standard, sometimes the funny single quotes appear
         if ("’" in totalString) or ("ʻ" in totalString):
