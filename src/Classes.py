@@ -207,7 +207,7 @@ class Tweet:
             totalString += ","
         else:
             for item in self.list_of_urls:
-                totalString = totalString + item + ";"
+                totalString = totalString + item.replace(",", "") + ";" # remove commas from URLs
             totalString = totalString[:-1] + ","  # get rid of last ; and add a ,
         
         self.text = self.text.replace("\n", " ")
