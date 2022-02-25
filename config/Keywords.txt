@@ -413,6 +413,5 @@ settler+violent~Thanksgiving
 Al Jazeera
 AlJazeera
 Al-Jazeera
-@HananyaNaftali
 Islamophobia
 Islamaphobia
