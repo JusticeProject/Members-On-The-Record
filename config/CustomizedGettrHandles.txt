@@ -33,6 +33,7 @@
 @Jim_Jordan=https://jordan.house.gov
 
 @SenatorLankford=https://www.lankford.senate.gov
+@USRepLong=https://long.house.gov
 @RepLoudermilk=https://loudermilk.house.gov
 @SenLummis=https://www.lummis.senate.gov
 
