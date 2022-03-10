@@ -382,7 +382,7 @@ drone+{hit
 drone+terror
 drone+bomb
 drone+military
-drone+attack
+drone+attack~Ukraine
 drone program
 Al Qaeda
 AlQaeda
