@@ -374,14 +374,14 @@ Keywords=Middle East
 MiddleEast
 Mideast
 Persian+Gulf
-Drone+strike
-Reaper+drone
-drone+kill~skill
-drone+destroy
-drone+{hit
-drone+terror
-drone+bomb
-drone+military
+Drone+strike~Ukraine
+Reaper+drone~Ukraine
+drone+kill~skill~Ukraine
+drone+destroy~Ukraine
+drone+{hit~Ukraine
+drone+terror~Ukraine
+drone+bomb~Ukraine
+drone+military~Ukraine
 drone+attack~Ukraine
 drone program
 Al Qaeda
