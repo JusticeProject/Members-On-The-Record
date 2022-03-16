@@ -41,6 +41,8 @@ irondome
 iron-dome
 Arrow 3
 Arrow-3
+Arrow System~Arrow Systems
+Arrow+missile+defense
 Hetz 3
 Hetz-3
 Abraham+accord
@@ -197,6 +199,7 @@ Iranian
 JCPOA
 joint comprehensive plan of action
 Revolutionary Guard
+Islamic Revolution
 Hormuz
 🇮🇷
 
@@ -248,7 +251,7 @@ Fallujah
 
 Category=Turkey
 Keywords=Turkish
-^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey~turkey trot~Turkey Valley~turkey farm
+^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey~turkey trot~Turkey Valley~turkey farm~Turkey Creek
 Erdogan
 Erdoğan
 Ankara
@@ -318,6 +321,8 @@ Sana'a
 Category=Horn of Africa
 Keywords=Somalia
 ^Somali
+al-Shabaab
+al Shabaab
 Horn of Africa
 HornOfAfrica
 Horn-Of-Africa
