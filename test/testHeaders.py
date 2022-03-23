@@ -6,7 +6,8 @@ import Utilities
 #url = "https://www.whatismybrowser.com/detect/what-http-headers-is-my-browser-sending"
 #url = "https://bacon.house.gov/news/documentsingle.aspx?DocumentID=765"
 #url = "https://www.jpost.com/opinion/hezbollah-is-a-threat-to-latin-america-opinion-688022"
-url = "https://tennesseestar.com/2022/02/10/tennessee-senators-blackburn-and-hagerty-join-texas-senator-ted-cruz-in-sending-letter-to-president-biden-regarding-iran-nuclear-deal/"
+#url = "https://tennesseestar.com/2022/02/10/tennessee-senators-blackburn-and-hagerty-join-texas-senator-ted-cruz-in-sending-letter-to-president-biden-regarding-iran-nuclear-deal/"
+url = "https://www.marshallnews.com/story/2940069.html" # uses a different charset than utf-8
 #url = "http://newsradio1620.streamguys.org/wnrp"
 #url = "https://www.google.com"
 #url = "https://www.youtube.com/watch?v=K7HCntVQ02s"

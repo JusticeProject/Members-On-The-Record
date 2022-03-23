@@ -720,8 +720,17 @@ def getWebsiteData(url, currentPlatformHeaders = True) -> Tuple[str,bytes,int]:
                     text_data = brotlicffi.decompress(binary_data).decode()
                     binary_data = bytes()
             elif ("html" in content_type.lower()) and (len(binary_data) > 0):
-                text_data = binary_data.decode()
-                binary_data = bytes()
+                try:
+                    text_data = binary_data.decode()
+                    binary_data = bytes()
+                except:
+                    # We may have to specify the charset, so let's find it.
+                    # Format is "Content-Type: text/html; charset=iso-8859-1"
+                    if ("charset" in content_type.lower()):
+                        pattern = re.compile(r"charset\s*=\s*(.+)", re.IGNORECASE)
+                        charset = pattern.findall(content_type)[0]
+                        text_data = binary_data.decode(encoding=charset)
+                        binary_data = bytes()
 
             return text_data, binary_data, status_code
         except ValueError:
