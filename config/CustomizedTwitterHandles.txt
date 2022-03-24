@@ -36,7 +36,6 @@ include=@HouseForeign
 include=@MikeCareyOH15
 include=@ShontelMBrown
 include=@Congressman_JVD
-include=@CongresswomanSC
 include=@Sheila4Congress
 
 same_person=@millermeeks,@repmmm
