@@ -178,7 +178,7 @@ Damascus
 🇸🇾
 
 Category=Lebanon
-Keywords=Lebanon~Mt. Lebanon
+Keywords=Lebanon~Mt. Lebanon~Lebanon County
 Lebanese
 Beirut
 Hezbollah
