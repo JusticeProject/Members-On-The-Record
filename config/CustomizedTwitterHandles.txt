@@ -23,6 +23,13 @@ exclude=@repfitzpatrick
 exclude=@MarthaRobyAL
 exclude=@devinnunes
 exclude=@repdevinnunes
+exclude=@rephagedorn
+exclude=@jimhagedornmn
+exclude=@donyoungak
+exclude=@repdonyoung
+exclude=@repfilemonvela
+exclude=@filemonvela
+exclude=@jefffortenberry
 
 include=@TonyGonzales4TX
 include=@VoteBetty
