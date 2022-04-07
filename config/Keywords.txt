@@ -254,7 +254,7 @@ Keywords=Turkish
 ^Turkey~Thanksgiving~Turkey Day~pumpkin~TurkeyTax~Turkey Tax~food drive~Give-A-Way~giveaway~Turkey Pardoning Ceremony~@natlturkeyfed~Turkey prices~wild turkey~cranberr~frozen turkey~raw turkey~turkey trot~Turkey Valley~turkey farm~Turkey Creek
 Erdogan
 Erdoğan
-Ankara
+^Ankara
 Istanbul
 🇹🇷
 
