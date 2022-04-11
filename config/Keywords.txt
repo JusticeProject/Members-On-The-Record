@@ -188,7 +188,8 @@ Hizballah
 
 Category=Iran
 Keywords=Tehran
-Farsi
+^Farsi
+{Farsi
 Ayatollah
 Khomeini
 Khamenei
