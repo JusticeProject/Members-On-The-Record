@@ -49,7 +49,7 @@ Abraham+accord
 Palestinian
 Palestine
 Palestin
-^Hamas
+^Hamas~Hamasaki
 ^HAMAS
 {Hamas
 Mahmoud+Abbas
