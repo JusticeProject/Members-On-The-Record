@@ -38,7 +38,6 @@
 @RepLoudermilk=https://loudermilk.house.gov
 @SenLummis=https://www.lummis.senate.gov
 
-@RogerMarshallMD=https://www.marshall.senate.gov
 @LeaderMcCarthy=https://kevinmccarthy.house.gov
 @RepLisaMcClain=https://mcclain.house.gov
 
