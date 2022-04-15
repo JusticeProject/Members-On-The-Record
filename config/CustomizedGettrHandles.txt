@@ -1,6 +1,7 @@
 @Jimbanks=https://banks.house.gov
 @repandybiggsaz=https://biggs.house.gov
 @RepDanBishop=https://bishop.house.gov
+@jdanbishop=https://bishop.house.gov
 @votemarsha=https://www.blackburn.senate.gov
 @laurenboebert=https://boebert.house.gov
 @RepMoBrooks=https://brooks.house.gov
