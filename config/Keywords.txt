@@ -42,7 +42,7 @@ iron-dome
 Arrow 3
 Arrow-3
 Arrow System
-Arrow+missile+defense
+{Arrow+missile+defense
 Hetz 3
 Hetz-3
 Abraham+accord
