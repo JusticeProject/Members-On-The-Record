@@ -57,3 +57,4 @@ same_person=@CapitoforWV,@sencapito
 same_person=@Higgins4WNY,@repbrianhiggins
 same_person=@langevinforri,@jimlangevin
 same_person=@Vote4Cleaver,@repcleaver
+same_person=@auctnr1,@USRepLong
