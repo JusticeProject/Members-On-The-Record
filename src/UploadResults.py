@@ -131,43 +131,45 @@ class UploadResults:
         repo = git.get_user().get_repo("Members-On-The-Record")
         todaysResultsFileName = None
 
+        tries = 10
+        
         # upload today's results to GitHub, if it fails then no point in continuing
-        for retries in range(0, 3):
+        for retries in range(0, tries):
             try:
                 todaysResultsFileName = self.uploadTodaysResults(repo, todaysResultsPath)
                 break # if we got this far without an exception then break out of the for loop
             except BaseException as e:
                 strError = str(e.args)
                 self.logger.log("Error: failed to upload today's results to GitHub: " + strError)
-                if (retries <= 1):
-                    time.sleep(15)
+                if (retries <= tries - 2):
+                    time.sleep(120)
                 else:
                     return None
         
         # Get all the results that are currently stored on GitHub, if it fails then no point in continuing.
         # This info will be used to create the index in the next step.
-        for retries in range(0, 3):
+        for retries in range(0, tries):
             try:
                 dictOfMonths = self.getAllResultsOnGitHub(repo)
                 break # if we got this far without an exception then break out of the for loop
             except BaseException as e:
                 strError = str(e.args)
                 self.logger.log("Error: failed to retrieve all results on GitHub: " + strError)
-                if (retries <= 1):
-                    time.sleep(15)
+                if (retries <= tries - 2):
+                    time.sleep(120)
                 else:
                     return None
         
         # update the index of results on GitHub
-        for retries in range(0, 3):
+        for retries in range(0, tries):
             try:
                 self.updateResultsIndex(repo, dictOfMonths)
                 break # if we got this far without an exception then break out of the for loop
             except BaseException as e:
                 strError = str(e.args)
                 self.logger.log("Error: failed to upload index of results to GitHub: " + strError)
-                if (retries <= 1):
-                    time.sleep(15)
+                if (retries <= tries - 2):
+                    time.sleep(120)
                 else:
                     return None
 
