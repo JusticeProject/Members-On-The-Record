@@ -114,6 +114,7 @@ Sheikh+Jarrah
 Sheik+Jarrah
 Masafer+Yatta
 Massafer+Yatta
+Masaffer+Yatta
 Silwan
 ^Atarot
 @TomNides
