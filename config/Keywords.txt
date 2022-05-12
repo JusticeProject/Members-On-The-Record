@@ -161,6 +161,8 @@ haaretz
 Torah+Caucus
 ^IHRA
 {IHRA
+Shireen+Akleh
+Shireen+Aqla
 🇮🇱
 🇵🇸
 
