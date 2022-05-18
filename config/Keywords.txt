@@ -81,6 +81,8 @@ two state+solution
 two-state+solution
 twostate+solution
 aipac
+^DMFI
+{DMFI
 UNRWA
 {BDS
 BDS's
