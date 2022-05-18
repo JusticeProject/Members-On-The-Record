@@ -30,6 +30,8 @@ exclude=@repdonyoung
 exclude=@repfilemonvela
 exclude=@filemonvela
 exclude=@jefffortenberry
+exclude=@tomreedny23
+exclude=@tomreedcongress
 
 include=@TonyGonzales4TX
 include=@VoteBetty
