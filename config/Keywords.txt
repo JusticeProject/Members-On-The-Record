@@ -80,6 +80,9 @@ H.R.+2590
 two state+solution
 two-state+solution
 twostate+solution
+2 state+solution
+2-state+solution
+2state+solution
 aipac
 ^DMFI
 {DMFI
