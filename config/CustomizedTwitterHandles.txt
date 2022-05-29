@@ -32,6 +32,8 @@ exclude=@filemonvela
 exclude=@jefffortenberry
 exclude=@tomreedny23
 exclude=@tomreedcongress
+exclude=@repdelgado
+exclude=@delgadoforny
 
 include=@TonyGonzales4TX
 include=@VoteBetty
