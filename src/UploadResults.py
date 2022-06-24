@@ -124,14 +124,24 @@ class UploadResults:
     def run(self, todaysResultsPath):
         # use Google Drive for Desktop to upload the files
         self.uploadToGoogleDrive()
-        
-        # set up the connection to GitHub
-        cred = Utilities.loadCredentials()
-        git = Github(cred.GitHub_Token)
-        repo = git.get_user().get_repo("Members-On-The-Record")
-        todaysResultsFileName = None
 
         tries = 10
+        
+        # set up the connection to GitHub
+        for retries in range(0, tries):
+            try:
+                cred = Utilities.loadCredentials()
+                git = Github(cred.GitHub_Token)
+                repo = git.get_user().get_repo("Members-On-The-Record")
+                todaysResultsFileName = None
+                break # if we got this far without an exception then break out of the for loop
+            except BaseException as e:
+                strError = str(e.args)
+                self.logger.log("Error: failed to initiate connection with GitHub: " + strError)
+                if (retries <= tries - 2):
+                    time.sleep(120)
+                else:
+                    return None
         
         # upload today's results to GitHub, if it fails then no point in continuing
         for retries in range(0, tries):
