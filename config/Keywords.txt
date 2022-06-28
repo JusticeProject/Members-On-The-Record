@@ -327,7 +327,7 @@ Keywords=^Oman
 Category=Yemen
 Keywords=Yemen
 Houthi
-Sanaa
+^Sanaa
 Sana'a
 🇾🇪
 
