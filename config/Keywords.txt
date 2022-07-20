@@ -164,6 +164,7 @@ haaretz
 {JINSA
 ^JINSA
 @jinsadc
+@CUFI
 Torah+Caucus
 ^IHRA
 {IHRA
