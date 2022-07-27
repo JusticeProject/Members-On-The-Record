@@ -109,6 +109,7 @@ NSOGroup
 NSO-Group
 Pegasus+Spyware
 Pegasus+Software
+^NSO+Spyware
 ^NSO+Pegasus
 {NSO+Pegasus
 QuaDream
