@@ -52,6 +52,9 @@ Palestin
 ^Hamas~Hamasaki
 ^HAMAS
 {Hamas
+Islamic Jihad
+Islamic-Jihad
+IslamicJihad
 Mahmoud+Abbas
 President+Abbas
 Shtayyeh
