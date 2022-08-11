@@ -108,6 +108,8 @@ b'tselem
 jstreet
 ^J Street
 ifnotnow
+@JvpAction
+@jvplive
 NSO Group
 NSOGroup
 NSO-Group
