@@ -89,6 +89,7 @@ twostate+solution
 aipac
 ^DMFI
 {DMFI
+NORPAC
 UNRWA
 {BDS
 BDS's
