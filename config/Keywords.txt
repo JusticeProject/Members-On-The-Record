@@ -90,6 +90,8 @@ aipac
 ^DMFI
 {DMFI
 NORPAC
+@USJewishDems
+^JDCA
 UNRWA
 {BDS
 BDS's
