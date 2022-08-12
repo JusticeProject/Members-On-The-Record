@@ -92,6 +92,7 @@ aipac
 NORPAC
 @USJewishDems
 ^JDCA
+{JDCA
 UNRWA
 {BDS
 BDS's
