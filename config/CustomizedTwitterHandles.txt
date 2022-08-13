@@ -34,6 +34,8 @@ exclude=@tomreedny23
 exclude=@tomreedcongress
 exclude=@repdelgado
 exclude=@delgadoforny
+exclude=@repwalorski
+exclude=@jackiewalorski
 
 include=@TonyGonzales4TX
 include=@VoteBetty
@@ -54,6 +56,7 @@ include=@RonnyJacksonTX
 include=@MayraFlores2022
 include=@Flood4Nebraska
 include=@RepConnieConway
+include=@BradFinstad
 
 same_person=@millermeeks,@repmmm
 same_person=@Call_Me_Dutch,@GoDutchForMD
