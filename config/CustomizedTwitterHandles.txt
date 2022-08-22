@@ -3,10 +3,6 @@ exclude=@senategop
 exclude=@lamaralexander
 exclude=@senalexander
 exclude=@senatorloeffler
-exclude=@kloeffler
-exclude=@sendavidperdue
-exclude=@davidperduega
-exclude=@marthamcsallyaz
 exclude=@kamalaharris
 exclude=@teammeadows
 
