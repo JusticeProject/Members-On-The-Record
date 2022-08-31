@@ -409,8 +409,6 @@ Mideast
 Persian+Gulf
 Drone+strike~Ukraine
 Reaper+drone~Ukraine
-drone+kill~skill~Ukraine
-drone+destroy~Ukraine
 drone+{hit~Ukraine
 drone+terror~Ukraine
 drone+bomb~Ukraine
