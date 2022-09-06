@@ -407,13 +407,13 @@ Keywords=Middle East
 MiddleEast
 Mideast
 Persian+Gulf
-Drone+strike~Ukraine
-Reaper+drone~Ukraine
-drone+{hit~Ukraine
-drone+terror~Ukraine
-drone+bomb~Ukraine
-drone+military~Ukraine
-drone+attack~Ukraine
+Drone+strike~Ukraine~China~Taiwan~Mexico
+Reaper+drone~Ukraine~China~Taiwan
+drone+{hit~Ukraine~China~Taiwan~Mexico
+drone+terror~Ukraine~China~Taiwan~Mexico
+drone+bomb~Ukraine~China~Taiwan~Mexico
+drone+military~Ukraine~China~Taiwan~Mexico
+drone+attack~Ukraine~China~Taiwan~Mexico
 drone program
 Al Qaeda
 AlQaeda
