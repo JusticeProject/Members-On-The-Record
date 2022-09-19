@@ -32,6 +32,7 @@ exclude=@repdelgado
 exclude=@delgadoforny
 exclude=@repwalorski
 exclude=@jackiewalorski
+exclude=@charliecrist
 
 include=@TonyGonzales4TX
 include=@VoteBetty
@@ -53,6 +54,10 @@ include=@MayraFlores2022
 include=@Flood4Nebraska
 include=@RepConnieConway
 include=@BradFinstad
+include=@MaryPeltola
+include=@JoeSempo
+include=@RepSempolinski
+include=@RepPatRyanNY
 
 same_person=@millermeeks,@repmmm
 same_person=@Call_Me_Dutch,@GoDutchForMD
