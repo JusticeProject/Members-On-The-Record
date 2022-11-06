@@ -399,8 +399,7 @@ Taliban
 Kabul
 Bagram
 ISIS-K
-ISISK
-IS–KP
+^ISISK
 Daesh–Khorasan
 
 Category=Other - Middle East
