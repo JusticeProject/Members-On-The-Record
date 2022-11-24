@@ -269,6 +269,7 @@ Hashemite
 Jordan Embassy
 Jordan Ambassador
 Ayman+Safadi
+@asg_jordan
 🇯🇴
 
 Category=Iraq
