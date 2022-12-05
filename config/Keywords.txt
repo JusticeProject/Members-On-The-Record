@@ -69,8 +69,6 @@ Ramallah
 ^Hebron
 {Hebron
 illegal settlement
-Home Demoli
-House Demoli
 West Bank
 WestBank
 West-Bank
