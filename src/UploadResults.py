@@ -155,6 +155,10 @@ class UploadResults:
                     time.sleep(120)
                 else:
                     return None
+                
+        # Wait a couple minutes for GitHub's build server to process the previous upload. If we interrupt it before
+        # it's done deploying the new web page then it causes an error.
+        time.sleep(240)
         
         # Get all the results that are currently stored on GitHub, if it fails then no point in continuing.
         # This info will be used to create the index in the next step.
