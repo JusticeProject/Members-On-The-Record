@@ -405,6 +405,7 @@ Category=Other - Middle East
 Keywords=Middle East
 MiddleEast
 Mideast
+mid east
 Persian+Gulf
 drone program
 Al Qaeda
