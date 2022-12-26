@@ -13,7 +13,6 @@ class CongressMember:
         self.url = ""
         self.url_press = ""
         self.twitter = []
-        self.gettr = []
         
     def setData(self, lineOfData):
         line_split = lineOfData.split(",")
@@ -32,9 +31,6 @@ class CongressMember:
         self.twitter = []
         for handle in line_split[12].split(";"):
             self.twitter.append(handle.lower().strip())
-        self.gettr = []
-        for handle in line_split[13].split(";"):
-            self.gettr.append(handle.lower().strip())
     
     def __str__(self):
         totalString = self.last_name + "," + self.first_name + "," + self.middle_name + "," + \
@@ -42,9 +38,6 @@ class CongressMember:
             self.state + "," + self.district + "," + self.party + "," + self.url + "," + self.url_press + ","
 
         joinedHandles = ";".join(self.twitter)
-        totalString += joinedHandles + ","
-
-        joinedHandles = ";".join(self.gettr)
         totalString += joinedHandles + ","
 
         totalString = totalString.replace("\n", "")
@@ -93,29 +86,6 @@ class TwitterUser:
     def __str__(self):
         return self.twitterHandle + "," + self.idStr + "," + str(self.mostRecentTweetId) + "," + \
             self.website + "," + self.name + "," + self.description
-        
-###############################################################################
-###############################################################################
-
-class GettrUser:
-    def __init__(self):
-        self.gettrHandle = ""
-        self.mostRecentPostIdStr = ""
-        self.mostRecentCommentIDStr = ""
-        self.mostRecentPostTime = 0
-        self.mostRecentCommentTime = 0
-
-    def setData(self, lineOfData):
-        line_split = lineOfData.split(",")
-        self.gettrHandle = line_split[0]
-        #self.mostRecentPostIdStr = line_split[1]
-        #self.mostRecentCommentIDStr = line_split[2]
-        self.mostRecentPostTime = int(line_split[3])
-        self.mostRecentCommentTime = int(line_split[4])
-    
-    def __str__(self):
-        return self.gettrHandle + "," + self.mostRecentPostIdStr.strip() + "," + self.mostRecentCommentIDStr.strip() + \
-            "," + str(self.mostRecentPostTime) + "," + str(self.mostRecentCommentTime)
 
 ###############################################################################
 ###############################################################################

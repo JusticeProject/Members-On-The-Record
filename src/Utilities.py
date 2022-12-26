@@ -19,11 +19,9 @@ import Classes
 CONFIG_FILE_NAME = "../config/Config.txt"
 CREDENTIALS_FILE_NAME = "../config/Credentials.txt"
 CUSTOMIZED_TWITTER_HANDLES_FILE_NAME = "../config/CustomizedTwitterHandles.txt"
-CUSTOMIZED_GETTR_HANDLES_FILE_NAME = "../config/CustomizedGettrHandles.txt"
 LIST_OF_CONGRESS_MEMBERS_FILENAME = "../output/ListOfCongressMembers.txt"
 TWITTER_USERS_FROM_LISTS_FILENAME = "../output/TwitterUsersFromTwitterLists.txt"
 TWITTER_LOOKUP_FILENAME = "../output/TwitterLookup.txt"
-GETTR_LOOKUP_FILENAME = "../output/GettrLookup.txt"
 DEFAULT_LOG_FOLDER = "../output/logs/"
 KEYWORDS_FILE_NAME = "../config/Keywords.txt"
 TEMPLATE_HTML_FILE_NAME = "template.html"
@@ -184,24 +182,6 @@ def getCustomizedTwitterHandles():
 ###############################################################################
 ###############################################################################
 
-def getCustomizedGettrHandles():
-    listOfIncludes = []
-    
-    lines = open(CUSTOMIZED_GETTR_HANDLES_FILE_NAME, "r").readlines()
-    for line in lines:
-        line = line.strip()
-        if (line != ""):
-            pattern = re.compile(r"@(.*)=(.*)")
-            result = pattern.findall(line)[0]
-            handle = result[0].lower()
-            url = result[1].strip()
-            listOfIncludes.append((handle, url))
-    
-    return listOfIncludes
-
-###############################################################################
-###############################################################################
-
 # write the given list of data to a file
 
 def saveCongressMembers(listOfMembers):
@@ -314,42 +294,6 @@ def loadTwitterLookup(listOfMembers, dictOfTwitterUsers):
 ###############################################################################
 ###############################################################################
 
-# The GettrLookup.txt file is used to remember the most recent post id for each Gettr @handle.
-
-def loadGettrLookup(listOfMembers):
-    userLookupDict = {}
-    
-    if (os.path.exists(GETTR_LOOKUP_FILENAME)):
-        file = open(GETTR_LOOKUP_FILENAME, "r", encoding="utf-8")
-        lines = file.readlines()
-        file.close()
-    
-        for line in lines:
-            user = Classes.GettrUser()
-            user.setData(line.strip())
-            userLookupDict[user.gettrHandle] = user
-        
-        # check if there are any new handles that need to be added
-        for member in listOfMembers:
-            for handle in member.gettr:
-                if (handle != "") and (handle not in userLookupDict.keys()):
-                    user = Classes.GettrUser()
-                    user.gettrHandle = handle
-                    userLookupDict[handle] = user
-    else:
-        # file does not exist, so we need to gather the data
-        for member in listOfMembers:
-            for handle in member.gettr:
-                if (handle != ""):
-                    user = Classes.GettrUser()
-                    user.gettrHandle = handle
-                    userLookupDict[handle] = user
-            
-    return userLookupDict
-
-###############################################################################
-###############################################################################
-
 def saveTwitterLookup(userLookupDict):
     file = open(TWITTER_LOOKUP_FILENAME, "w", encoding="utf-8")
     for handle in userLookupDict.keys():
@@ -357,18 +301,6 @@ def saveTwitterLookup(userLookupDict):
     file.close()
     
     logMessage = "data written to file " + TWITTER_LOOKUP_FILENAME
-    return logMessage
-
-###############################################################################
-###############################################################################
-
-def saveGettrLookup(userLookupDict):
-    file = open(GETTR_LOOKUP_FILENAME, "w", encoding="utf-8")
-    for handle in userLookupDict.keys():
-        file.write(str(userLookupDict[handle]) + "\n")
-    file.close()
-    
-    logMessage = "data written to file " + GETTR_LOOKUP_FILENAME
     return logMessage
 
 ###############################################################################
@@ -417,7 +349,7 @@ def convertYearMonthToReadable(yearMonth):
 ###############################################################################
 ###############################################################################
 
-# udate from gettr is the number of milliseconds since the epoch in utc timezone
+# udate is the number of milliseconds since the epoch in utc timezone
 def convertUdateToReadable(udate: int):
     result = datetime.datetime.fromtimestamp(udate / 1000, datetime.timezone.utc)
     result = result.astimezone()
@@ -504,38 +436,6 @@ def loadTweets(path):
             listOfAllTweets.append(line.strip())
 
     return listOfAllTweets
-
-###############################################################################
-###############################################################################
-
-def saveGweets(listOfGweets, scanDate):
-    RESULTS_FOLDER = "../output/" + scanDate
-    if (os.path.exists(RESULTS_FOLDER) == False):
-        os.mkdir(RESULTS_FOLDER)
-    
-    GWEETS_FILENAME = RESULTS_FOLDER + "/Gweets1.txt"
-    
-    # append in case we are testing and we download more gweets
-    file = open(GWEETS_FILENAME, "a", encoding="utf-8")
-    for gweet in listOfGweets:
-        file.write(str(gweet) + "\n")
-    file.close()
-    
-    logMessage = "data written to file " + GWEETS_FILENAME
-    return logMessage
-
-###############################################################################
-###############################################################################
-
-def loadGweets(path):
-    listOfAllGweets = []
-    fileName = path + "/Gweets1.txt"
-
-    fileLines = open(fileName, "r", encoding="utf-8").readlines()
-    for line in fileLines:
-        listOfAllGweets.append(line.strip())
-
-    return listOfAllGweets
 
 ###############################################################################
 ###############################################################################

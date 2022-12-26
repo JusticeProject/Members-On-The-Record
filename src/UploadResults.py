@@ -104,11 +104,9 @@ class UploadResults:
         distutils.dir_util.copy_tree(recentResultsFolder, destinationPath)
         self.logger.log("copied " + justTheFolderName + " to " + destinationPath)
 
-        # make a backup of the Lookup files which tell us the most recent tweet/gweet id for each handle
+        # make a backup of the Lookup files which tell us the most recent tweet id for each handle
         distutils.file_util.copy_file(Utilities.TWITTER_LOOKUP_FILENAME, destinationPath)
         self.logger.log("copied " + Utilities.TWITTER_LOOKUP_FILENAME + " to " + destinationPath)
-        distutils.file_util.copy_file(Utilities.GETTR_LOOKUP_FILENAME, destinationPath)
-        self.logger.log("copied " + Utilities.GETTR_LOOKUP_FILENAME + " to " + destinationPath)
 
         # make a backup of the list of Congress members that was used
         distutils.file_util.copy_file(Utilities.LIST_OF_CONGRESS_MEMBERS_FILENAME, destinationPath)

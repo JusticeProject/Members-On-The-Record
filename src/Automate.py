@@ -7,7 +7,6 @@ import Utilities
 import RetrieveListsFromTwitter
 import CreateListOfCongressMembers
 import RetrieveTweets
-import RetrieveGettr
 import ProcessImages
 import AnalyzeTweets
 import UploadResults
@@ -138,7 +137,7 @@ def twitterProcess(logger: Utilities.RemoteLogger):
     # We won't miss any Tweets because we keep track of the most recent Tweet received for each user.
     if (errorOccurred):
         logger.log("Problem detected in previous retrieval, will try to retrieve Tweets again")
-        time.sleep(30 * 60)
+        time.sleep(10 * 60)
         instance.run(3, numberOfDaysForFirstScan) # slow it down a tad just in case
 
     # Download the photos that Congress members posted because there could be statements or Congressional letters.
@@ -157,9 +156,11 @@ def twitterProcess(logger: Utilities.RemoteLogger):
 def gettrProcess(logger: Utilities.RemoteLogger):
     logger.log("  Gettr Process started")
     
-    # Retrieve Gweets
-    instance = RetrieveGettr.RetrieveGettr(logger)
-    instance.run(60)
+    # Going to stop the Gettr retrieval for now. It doesn't seem to be as popular as before.
+    # I'm going to keep this process here in case we decide to use Truth Social or some other
+    # platform in the future.
+    #instance = RetrieveGettr.RetrieveGettr(logger)
+    #instance.run(60)
 
     logger.log("  Gettr Process complete.")
     logger.log(DONE_MESSAGE)

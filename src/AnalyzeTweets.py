@@ -14,7 +14,6 @@ class AnalyzeTweets:
         self.resultsFolder = ""
         self.dictOfKeywords = {}
         self.dictOfTwitterURLs = {}
-        self.dictOfGettrURLs = {}
         self.twitterLookupDict = {}
         self.dictCategorizedConvs = {}
         self.scanImages = False
@@ -79,10 +78,7 @@ class AnalyzeTweets:
             if (shortened_url in tweet.dictLinks):
                 continue
 
-            if (tweet.author_id == 0):
-                url_obj = copy.deepcopy(self.dictOfGettrURLs[shortened_url])
-            else:
-                url_obj = copy.deepcopy(self.dictOfTwitterURLs[shortened_url])
+            url_obj = copy.deepcopy(self.dictOfTwitterURLs[shortened_url])
             tweet.dictLinks[shortened_url] = url_obj
 
     ###########################################################################
@@ -223,10 +219,6 @@ class AnalyzeTweets:
             self.logger.log("Warning: conversation id {} contains Jordan".format(conversation[0].conversation_id))
             self.logger.log("combinedTextLower = " + combinedTextLower)
 
-        # Look for more gettr accounts. Look in the Tweets, don't look in the Gweets.
-        if (conversation[0].author_id > 0) and ("gettr" in combinedTextLower):
-            self.logger.log("Warning: gettr alert for conversation id {}".format(conversation[0].conversation_id))
-            self.logger.log("combinedTextLower = " + combinedTextLower)
 
         # no category was found
         return None
@@ -327,23 +319,6 @@ class AnalyzeTweets:
         for member in listOfMembers:
             for handle in member.twitter:
                 if (foundUser.twitterHandle == handle):
-                    name = member.last_name
-                    party = member.party
-                    state = member.state
-                    if (member.district.strip() != ""):
-                        state += "-" + member.district
-                    url = member.url
-        
-        return name,party,state,url
-
-    ###########################################################################
-    ###########################################################################
-
-    def getInfoOfGweeter(self, author_id_str, listOfMembers):        
-        # get member
-        for member in listOfMembers:
-            for handle in member.gettr:
-                if (author_id_str == handle):
                     name = member.last_name
                     party = member.party
                     state = member.state
@@ -504,12 +479,6 @@ class AnalyzeTweets:
                     text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet")
                 else:
                     text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
-            elif ("gettr.com" in expanded_url) and ("/post/" in expanded_url or "/comment/" in expanded_url):
-                quotedTweet = self.getQuotedTweet(tweet)
-                if (quotedTweet is None):
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted GETTR post")
-                else:
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted GETTR post", True, quotedTweet.text)
             else:
                 text = self.convertLink(text, shortened_url, expanded_url, title)
     
@@ -521,17 +490,9 @@ class AnalyzeTweets:
     def formatConversation(self, conversation, listOfMembers):
         formattedTweet = Classes.FormattedTweet()
     
-        # put twitter or gettr link in the formatted tweet, which gets placed in the template.html
-        if (conversation[0].author_id == 0):
-            firstChar = conversation[0].id_str[0]
-            if (firstChar == "c"):
-                formattedTweet.link = "https://www.gettr.com/comment/{}".format(conversation[0].id_str)
-            else:
-                formattedTweet.link = "https://www.gettr.com/post/{}".format(conversation[0].id_str)
-            name,party,state,url = self.getInfoOfGweeter(conversation[0].author_id_str, listOfMembers)
-        else:
-            formattedTweet.link = "https://twitter.com/i/web/status/{}".format(conversation[0].id)
-            name,party,state,url = self.getInfoOfTweeter(conversation[0].author_id, listOfMembers)
+        # put twitter link in the formatted tweet, which gets placed in the template.html
+        formattedTweet.link = "https://twitter.com/i/web/status/{}".format(conversation[0].id)
+        name,party,state,url = self.getInfoOfTweeter(conversation[0].author_id, listOfMembers)
 
         formattedTweet.namePartyState = name
         if (party != "") and (state != ""):
@@ -543,14 +504,7 @@ class AnalyzeTweets:
         self.highlightKeywordsInConversation(conversation, phrase)
         
         # Start grouping the text together and formatting the links. 
-        # Start with the Gweets to get them out of the way.
-        if (conversation[0].author_id == 0):
-            gweet = conversation[0]
-            text_split = gweet.text.split(",", 1)
-            formattedTweet.type = self.leftRedSpan + text_split[0].replace("Gweet", "GETTR") + self.rightRedSpan
-            gweet.text = text_split[1]
-            formattedTweet.text = self.formatLinksInText(conversation[0])
-        elif (self.isConvARetweet(conversation) == True):
+        if (self.isConvARetweet(conversation) == True):
             cleanText = conversation[0].text.replace(self.leftHighlightSpan, "").replace(self.rightHighlightSpan, "")
             allHandles = re.findall(r"(@\w+):", cleanText)
             retweetHandle = allHandles[0]
@@ -717,20 +671,13 @@ class AnalyzeTweets:
             self.resultsFolder = path
         self.logger.log("Analyzing results for " + self.resultsFolder)
         listOfAllTweets = Utilities.loadTweets(self.resultsFolder)
-        listOfAllGweets = Utilities.loadGweets(self.resultsFolder)
         self.dictOfTwitterURLs = Utilities.loadURLs(self.resultsFolder, "Twitter")
-        self.dictOfGettrURLs = Utilities.loadURLs(self.resultsFolder, "Gettr")
         
         for member in listOfMembers:
             for handle in member.twitter:
                 if (handle == ""):
                     continue
                 self.processTweets(listOfAllTweets, handle)
-            
-            for handle in member.gettr:
-                if (handle == ""):
-                    continue
-                self.processTweets(listOfAllGweets, handle)
 
 
         self.logger.log("Finished categorizing conversations")

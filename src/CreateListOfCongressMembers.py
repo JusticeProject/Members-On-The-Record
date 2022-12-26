@@ -465,25 +465,6 @@ class CreateListOfCongressMembers:
     ###########################################################################
     ###########################################################################
 
-    def addGettrHandles(self, listOfMembers):
-        listOfIncludes = Utilities.getCustomizedGettrHandles()
-        self.logger.log("Looking for matches for Gettr handles")
-
-        numberMatched = 0
-        for handle,url in listOfIncludes:
-            for member in listOfMembers:
-                if (member.url == url):
-                    member.gettr.append(handle)
-                    numberMatched += 1
-                    self.logger.log("Gettr handle {} matched".format(handle))
-                    break
-
-        if (numberMatched != len(listOfIncludes)):
-            self.logger.log("Warning: have {} Gettr handles but only {} were matched".format(len(listOfIncludes), numberMatched))
-
-    ###########################################################################
-    ###########################################################################
-
     def run(self):
         
         # Download a .csv file that has a lot of info for each member of Congress.
@@ -521,9 +502,6 @@ class CreateListOfCongressMembers:
             self.findMissingUserIds(twitterLookupDict)
         except BaseException as e:
             self.logger.log("Warning: failed to find missing user ids: " + str(e.args))
-
-        # add the gettr handles
-        self.addGettrHandles(listOfMembers)
 
         logMessage = Utilities.saveTwitterLookup(twitterLookupDict)
         self.logger.log(logMessage)
