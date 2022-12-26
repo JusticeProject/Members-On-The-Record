@@ -458,20 +458,10 @@ def saveTweets(listOfTweets, scanDate):
     RESULTS_FOLDER = "../output/" + scanDate
     if (os.path.exists(RESULTS_FOLDER) == False):
         os.mkdir(RESULTS_FOLDER)
-
-    nextNumber = 0
-    files = os.listdir(RESULTS_FOLDER)
-    for fileName in files:
-        if ("Tweets" in fileName):
-            number = fileName.split("Tweets")[1].split(".")[0]
-            number = int(number)
-            if (number > nextNumber):
-                nextNumber = number
-    nextNumber += 1
     
-    TWEETS_FILENAME = RESULTS_FOLDER + "/Tweets" + str(nextNumber) + ".txt"
+    TWEETS_FILENAME = RESULTS_FOLDER + "/Tweets.txt"
     
-    file = open(TWEETS_FILENAME, "w", encoding="utf-8")
+    file = open(TWEETS_FILENAME, "a", encoding="utf-8")
     for tweet in listOfTweets:
         file.write(str(tweet) + "\n")
     file.close()

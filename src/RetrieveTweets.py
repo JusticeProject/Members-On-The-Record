@@ -4,7 +4,7 @@ import Classes
 
 import time
 
-TWEETS_PER_FILE = 1000
+TWEETS_PER_SAVE = 1000
 
 ###############################################################################
 ###############################################################################
@@ -296,7 +296,7 @@ class RetrieveTweets:
                         time.sleep(2)
                 
 
-                if (len(tweetsToSave) > TWEETS_PER_FILE):
+                if (len(tweetsToSave) > TWEETS_PER_SAVE):
                     self.logger.log("saving " + str(len(tweetsToSave)) + " tweets")
                     logMessage = Utilities.saveTweets(tweetsToSave, currentDate)
                     self.logger.log(logMessage)
