@@ -372,7 +372,8 @@ class AnalyzeTweets:
                 if (refTweet.text == ""):
                     return "" # the tweet was probably deleted, so don't link to it
                 else:
-                    link = "https://twitter.com/i/web/status/" + str(refTweet.id)
+                    # use canonical url
+                    link = "https://twitter.com/twitter/status/" + str(refTweet.id)
                     result = self.createLinkWithTooltip(link, visibleText, refTweet.text)
                     return result
 
@@ -490,8 +491,10 @@ class AnalyzeTweets:
     def formatConversation(self, conversation, listOfMembers):
         formattedTweet = Classes.FormattedTweet()
     
-        # put twitter link in the formatted tweet, which gets placed in the template.html
-        formattedTweet.link = "https://twitter.com/i/web/status/{}".format(conversation[0].id)
+        # Put twitter link in the formatted tweet, which gets placed in the template.html.
+        # Use canonical URL as discussed in this blog post:
+        # https://developer.twitter.com/en/blog/community/2020/getting-to-the-canonical-url-for-a-tweet
+        formattedTweet.link = "https://twitter.com/twitter/status/{}".format(conversation[0].id)
         name,party,state,url = self.getInfoOfTweeter(conversation[0].author_id, listOfMembers)
 
         formattedTweet.namePartyState = name
