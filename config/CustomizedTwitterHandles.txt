@@ -58,6 +58,7 @@ include=@BradFinstad
 include=@MaryPeltola
 include=@JoeSempo
 include=@RepPatRyanNY
+include=@RudyYakym
 
 same_person=@millermeeks,@repmmm
 same_person=@Call_Me_Dutch,@GoDutchForMD
