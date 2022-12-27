@@ -1,6 +1,7 @@
 import distutils.file_util
 import distutils.dir_util
 import time
+import os
 
 from github import Github
 
@@ -41,34 +42,33 @@ class UploadResults:
     ###########################################################################
     ###########################################################################
 
-    def getAllResultsOnGitHub(self, repo):
+    def getAllResultsOnGitHub(self):
         # Grab all the folders of results that are currently on GitHub.
         folderNames = []
-        contents = repo.get_contents("docs") # contents of the docs folder
+        contents = os.listdir("../docs") # contents of the docs folder
         for item in contents:
-            if (item.type == "dir"):
-                folderNames.append(item.path.strip("/")) # ex: docs/2021-10
+            if (os.path.isdir("../docs/" + item)):
+                folderNames.append(item) # ex: 2021-10
 
         folderNames.sort(reverse=True)
 
         # Now get all the file names from each folder
         dictOfMonths = {}
         for folder in folderNames:
-            subfolder = folder.split("/")[1] # ex: convert docs/2021-10 to 2021-10
-            month = Utilities.convertYearMonthToReadable(subfolder) # ex: convert 2021-10 to October 2021
+            month = Utilities.convertYearMonthToReadable(folder) # ex: convert 2021-10 to October 2021
             dictOfMonths[month] = []
 
             listOfFiles = []
-            contents = repo.get_contents(folder) # get contents of this month's folder
+            contents = os.listdir("../docs/" + folder) # get contents of this month's folder
             for file in contents:
-                listOfFiles.append(file.name) # ex: 2021-10-29-Fri.html
+                listOfFiles.append(file) # ex: 2021-10-29-Fri.html
 
             listOfFiles.sort(reverse=True)
 
             # Use a data structure to store all the relevant info for each webpage of results
             for fileName in listOfFiles:
                 page = Classes.Page()
-                page.subfolder = subfolder # ex: 2021-10
+                page.subfolder = folder # ex: 2021-10
                 page.filename = fileName # ex: 2021-10-29-Fri.html
                 dateSortable = fileName.split(".html")[0]
                 page.visibleText = Utilities.convertDateToReadable(dateSortable) # ex: convert to Fri October 29, 2021
@@ -156,13 +156,16 @@ class UploadResults:
                 
         # Wait a couple minutes for GitHub's build server to process the previous upload. If we interrupt it before
         # it's done deploying the new web page then it causes an error.
-        time.sleep(240)
+        time.sleep(300)
         
         # Get all the results that are currently stored on GitHub, if it fails then no point in continuing.
         # This info will be used to create the index in the next step.
         for retries in range(0, tries):
             try:
-                dictOfMonths = self.getAllResultsOnGitHub(repo)
+                gitSuccess = Utilities.gitPull(self.logger)
+                if (gitSuccess == False):
+                    raise Exception("Git Pull Failed")
+                dictOfMonths = self.getAllResultsOnGitHub()
                 break # if we got this far without an exception then break out of the for loop
             except BaseException as e:
                 strError = str(e.args)

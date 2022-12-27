@@ -1,5 +1,4 @@
 import time
-import subprocess
 from multiprocessing import Process, Queue
 
 import Utilities
@@ -43,16 +42,7 @@ def runScanLoop():
             startSecs = time.time()
 
             # use git to make sure we have the most recent version of some important files that might change often
-            logger.log("Retrieving latest Keywords...")
-            result = subprocess.run(["git", "pull"], capture_output=True)
-            output = result.stdout.decode() + result.stderr.decode()
-            lines = [line for line in output.split("\n") if line.strip() != ""]
-            for line in lines:
-                logger.log(line)
-            if (result.returncode == 0):
-                logger.log("Successfully pulled latest Keywords")
-            else:
-                logger.log("Warning: failed to get latest Keywords")
+            Utilities.gitPull(logger)
 
             # retrieve the Twitter handles
             step1 = RetrieveListsFromTwitter.RetrieveListsFromTwitter(logger)

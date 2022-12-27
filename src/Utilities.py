@@ -798,3 +798,20 @@ class RemoteLogger:
 
     def log(self, text):
         self.msgq.put(text)
+
+###############################################################################
+###############################################################################
+
+def gitPull(logger):
+    logger.log("Updating local git repository...")
+    result = subprocess.run(["git", "pull"], capture_output=True)
+    output = result.stdout.decode() + result.stderr.decode()
+    lines = [line for line in output.split("\n") if line.strip() != ""]
+    for line in lines:
+        logger.log(line)
+    if (result.returncode == 0):
+        logger.log("Successfully pulled latest git repo")
+        return True
+    else:
+        logger.log("Warning: failed to pull latest git repo")
+        return False
