@@ -2,3 +2,6 @@ output/
 src/__pycache__/
 config/credentials.json
 config/token.json
+handleFinder/*.exe
+handleFinder/*.zip
+handleFinder/*.html
