@@ -21,25 +21,30 @@ def initialize_selenium():
 
 ###################################################################################################
 
-def get_campaign_site(driver, rep_name):
+def get_campaign_site(rep_name):
     print("Looking for campaign site for " + rep_name)
+    driver = initialize_selenium()
     driver.get("https://www.google.com/")
 
     elem = driver.find_element(By.NAME, "q")
     elem.clear()
 
     search_query = rep_name + " campaign website"
-    for letter in search_query:
-        elem.send_keys(letter)
-        time.sleep(1)
+    # for letter in search_query:
+    #     elem.send_keys(letter)
+    #     time.sleep(1)
+    elem.send_keys(search_query)
+    time.sleep(1)
     elem.send_keys(Keys.RETURN)
     time.sleep(3)
 
     # look for the first h3 tag and click it
     elem = driver.find_element(By.TAG_NAME, "h3")
     elem.click()
+    time.sleep(5)
 
     html = driver.page_source
+    driver.close()
     return html
 
 ###################################################################################################
@@ -121,19 +126,22 @@ if __name__ == "__main__":
     save_file(all_names, "all_rep_names.txt")
 
     # now look for the campaign site for each rep, and extract a Twitter handle from the html
-    driver = initialize_selenium()
     all_handles = []
     for name in all_names:
-        html = get_campaign_site(driver, name)
+        try:
+            html = get_campaign_site(name)
+        except BaseException as e:
+            strError = str(e.args)
+            print("Failed to get campaign site: " + strError)
+            time.sleep(300)
+            html = ""
+
         handles = extract_twitter_handles(html)
         for handle in handles:
             all_handles.append(handle)
-        
         # append to file after each handle found, just in case...
         save_name_handles("all_rep_names_handles.txt", name, handles)
-        
-        time.sleep(20)
+
+        time.sleep(45)
 
     save_file(all_handles, "all_handles.txt")
-
-    driver.close()
