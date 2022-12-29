@@ -85,10 +85,13 @@ def extract_twitter_handles(html):
     links = bs.find_all("a")
     for a in links:
         if "href" in a.attrs.keys():
-            href = a.attrs["href"]
-            if "twitter.com" in href:
-                if "twitter.com/intent/" in href:
+            href = a.attrs["href"].lower()
+            if ("www.twitter.com/" in href) or ("http://twitter.com/" in href) or ("https://twitter.com/" in href):
+                if ("twitter.com/search?" in href):
                     continue
+                
+                if ("twitter.com/intent/" in href):
+                    href = href.replace("intent/follow?screen_name=", "")
 
                 handles.append(href)
 
@@ -134,7 +137,7 @@ if __name__ == "__main__":
             strError = str(e.args)
             print("Failed to get campaign site: " + strError)
             time.sleep(300)
-            html = ""
+            html = '<a href="www.twitter.com/Error">Blah</a>'
 
         handles = extract_twitter_handles(html)
         for handle in handles:
