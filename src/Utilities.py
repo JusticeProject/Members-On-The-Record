@@ -157,27 +157,22 @@ def loadConfig():
 ###############################################################################
 
 def getCustomizedTwitterHandles():
-    listOfExcludes = []
     listOfIncludes = []
     listOfSamePersons = []
     
     lines = open(CUSTOMIZED_TWITTER_HANDLES_FILE_NAME, "r").readlines()
     for line in lines:
-        if ("exclude=@" in line):
-            handle = line.split("@")[1]
-            handle = handle.strip().lower()
-            listOfExcludes.append(handle)
-        elif ("include=@" in line):
-            handle = line.split("@")[1]
-            handle = handle.strip().lower()
-            listOfIncludes.append(handle)
-        elif ("same_person=" in line):
+        if ("same_person=" in line):
             line_split = line.split("@")
             handle1 = line_split[1].replace(",", "").strip().lower()
             handle2 = line_split[2].strip().lower()
             listOfSamePersons.append((handle1, handle2))
+        else:
+            handle = line.strip().lower()
+            if len(handle) > 0:
+                listOfIncludes.append(handle)
     
-    return listOfExcludes,listOfIncludes,listOfSamePersons
+    return listOfIncludes,listOfSamePersons
 
 ###############################################################################
 ###############################################################################

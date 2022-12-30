@@ -330,8 +330,8 @@ class CreateListOfCongressMembers:
                     unmatchedTwitterUsers.append(user)
                     
         
-        # Some Twitter handles are manually set because our algorithm isn't smart enough to match them all.
-        listOfExcludes,listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
+        # Some Twitter handles are manually matched because our algorithm isn't smart enough to match them all.
+        listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
     
         # for every unmatched Twitter handle, check if we need to manually add it to an existing person, 
         # otherwise add it as a new member at the end of the list

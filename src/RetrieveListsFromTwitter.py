@@ -29,8 +29,6 @@ class RetrieveListsFromTwitter():
         
         listOfUsers = []
         for item in response.data:
-            self.logger.log("received username=" + item.username + ", id=" + str(item.id))
-            
             handle = item.username
             idStr = str(item.id)
             website = item.url
@@ -41,42 +39,34 @@ class RetrieveListsFromTwitter():
             listOfUsers.append(user)
         
         return listOfUsers
-    
-    ###########################################################################
-    ###########################################################################
-
-    def excludeCustomizedHandles(self, dictOfTwitterUsers, listOfExcludes):
-        for handle in listOfExcludes:
-            if (handle in dictOfTwitterUsers.keys()):
-                dictOfTwitterUsers.pop(handle)
-                self.logger.log("removing handle @" + handle)
-            else:
-                self.logger.log("Warning: could not manually exclude handle @" + handle)
 
     ###########################################################################
     ###########################################################################
 
-    def includeCustomizedHandles(self, dictOfTwitterUsers, listOfIncludes):
-        handlesToLookup = []
-        
-        for handle in listOfIncludes:
-            if (handle in dictOfTwitterUsers.keys()):
-                self.logger.log("Warning: handle @" + handle + " already in the list")
-            else:
-                handlesToLookup.append(handle)
-                self.logger.log("adding handle @" + handle)
-        
-        if (len(handlesToLookup) > 0):
-            for i in range(0, len(handlesToLookup), 100):
-                # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
-                batch = handlesToLookup[i:i+100]
-                results = self.doMultipleUserLookup(batch)
+    def isHandleInResults(self, handle, listOfResults):
+        for user in listOfResults:
+            if (handle.lower() == user.twitterHandle.lower()):
+                return True
 
-                if (len(batch) != len(results)):
-                    self.logger.log("Warning: after user lookup, length of batch: {} does not equal length of results: {}".format(len(batch), len(results)))
+        return False
 
-                for user in results:
-                    dictOfTwitterUsers[user.twitterHandle] = user
+    ###########################################################################
+    ###########################################################################
+
+    def includeCustomizedHandles(self, dictOfTwitterUsers, handlesToLookup):
+        for i in range(0, len(handlesToLookup), 100):
+            # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
+            batch = handlesToLookup[i:i+100]
+            results = self.doMultipleUserLookup(batch)
+
+            if (len(batch) != len(results)):
+                for handle in batch:
+                    found = self.isHandleInResults(handle, results)
+                    if (found == False):
+                        self.logger.log(f"Warning: {handle} does not seem to be a valid Twitter handle")
+
+            for user in results:
+                dictOfTwitterUsers[user.twitterHandle] = user
 
     ###########################################################################
     ###########################################################################
@@ -128,12 +118,14 @@ class RetrieveListsFromTwitter():
         # US Senate from @TwitterGov
         # House Members from @HouseDailyPress
         # Senators from @cspan
-        listIDNumbers = (63915247, 63915645, 225745413, 4244910)
+        #listIDNumbers = (63915247, 63915645, 225745413, 4244910)
+        # Note: not using this method anymore, but keeping some of the code here since
+        # it might be useful in the future.
+        #dictOfTwitterUsers = self.getTwitterUsersFromTwitterLists(listIDNumbers)
         
         try:
-            dictOfTwitterUsers = self.getTwitterUsersFromTwitterLists(listIDNumbers)
-            listOfExcludes,listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
-            self.excludeCustomizedHandles(dictOfTwitterUsers, listOfExcludes)
+            dictOfTwitterUsers = {}
+            listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
             self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
             logMessage = Utilities.saveTwitterUsers(dictOfTwitterUsers)
             self.logger.log(logMessage)
