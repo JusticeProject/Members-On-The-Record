@@ -5,3 +5,4 @@ config/token.json
 handleFinder/*.exe
 handleFinder/*.zip
 handleFinder/*.html
+handleFinder/*.txt
