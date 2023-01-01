@@ -29,16 +29,19 @@ def getLinksInTable(parsed_html):
 ###############################################################################
 ###############################################################################
 
-def getHandlesFromLinks(links):
+def getHandlesFromLinks(urls):
     handles = []
     
-    for link in links:
-        print("Looking for Twitter handles at " + link)
-        html, binary, code = Utilities.getWebsiteData(link)
+    for url in urls:
+        #print("Looking for Twitter handles at " + url)
+        html, binary, code = Utilities.getWebsiteData(url, False)
+        if (len(html) == 0):
+            print("Warning: could not get html from " + url)
+            print(code)
         parsed_html = BeautifulSoup(html, "html.parser")
 
-        links = parsed_html.find_all("a")
-        for a in links:
+        tags = parsed_html.find_all("a")
+        for a in tags:
             if "href" in a.attrs.keys():
                 href = a.attrs["href"].lower()
                 if ("www.twitter.com/" in href) or ("http://twitter.com/" in href) or ("https://twitter.com/" in href):
@@ -52,6 +55,8 @@ def getHandlesFromLinks(links):
                     href = href.split("?")[0]
                     href = href.replace("#!/", "")
                     href = href.replace("@", "")
+                    href = href.replace("'", "")
+                    href = href.replace(")", "")
 
                     href_split = href.split("twitter.com/")
                     if len(href_split) <= 1:
@@ -87,12 +92,9 @@ if __name__ == "__main__":
 
     # if a handle is not already in our list from CustomizedTwitterHandles.txt then log it as new
     currentHandles, samePersons = Utilities.getCustomizedTwitterHandles()
-    print("Begin list of new handles:")
     fh = open("scraped_handles.txt", "w", encoding="utf-8")
     for handle in found_handles:
         if (handle not in currentHandles):
-            print(handle)
             fh.write(handle + "\n")
-    print("End list of new handles.")
     fh.close()
 
