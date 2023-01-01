@@ -51,12 +51,14 @@ def getHandlesFromLinks(links):
                     # get rid of some symbols that might screw us up
                     href = href.split("?")[0]
                     href = href.replace("#!/", "")
+                    href = href.replace("@", "")
 
                     href_split = href.split("twitter.com/")
                     if len(href_split) <= 1:
                         continue
 
                     handle = href_split[1].split("/")[0]
+                    handle = handle.strip()
                     if (handle not in handles) and (len(handle) > 0) and (handle != "intent") and (handle != "i"):
                         handles.append(handle)
         
@@ -93,4 +95,4 @@ if __name__ == "__main__":
             fh.write(handle + "\n")
     print("End list of new handles.")
     fh.close()
-    
+
