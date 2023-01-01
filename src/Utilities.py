@@ -218,7 +218,9 @@ def isCongressListAvailable():
 
 def loadTwitterUsers():
     dictOfTwitterUsers = {}
-    twitterHandlesLines = open(TWITTER_USERS_FROM_LISTS_FILENAME, "r", encoding="utf-8").readlines()
+    fh = open(TWITTER_USERS_FROM_LISTS_FILENAME, "r", encoding="utf-8")
+    twitterHandlesLines = fh.readlines()
+    fh.close()
     for line in twitterHandlesLines:
         user = Classes.TwitterUser()
         user.setData(line)

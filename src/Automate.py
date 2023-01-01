@@ -44,9 +44,9 @@ def runScanLoop():
             # use git to make sure we have the most recent version of some important files that might change often
             Utilities.gitPull(logger)
 
-            # retrieve the Twitter handles
+            # retrieve the Twitter handles, take note of any bad Twitter handles
             step1 = RetrieveListsFromTwitter.RetrieveListsFromTwitter(logger)
-            step1.run()
+            listBadTwitterHandleMsgs = step1.run()
 
             # use the lists we retrieved from Twitter to build our list of Congress members
             step2 = CreateListOfCongressMembers.CreateListOfCongressMembers(logger)
@@ -88,7 +88,7 @@ def runScanLoop():
             if (todaysResultsFileName is not None):
                 time.sleep(5 * 60)
                 step5 = EmailNotifications.EmailNotifications(logger)
-                step5.run(todaysResultsFileName)
+                step5.run(todaysResultsFileName, listBadTwitterHandleMsgs)
             else:
                 logger.log("Upload was not successful, not sending email notification")
 

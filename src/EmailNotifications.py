@@ -16,6 +16,25 @@ class EmailNotifications:
     ###########################################################################
     ###########################################################################
 
+    def createDeveloperMessage(self, listDeveloperMsgs):
+        body = "\n".join(listDeveloperMsgs)
+
+        message = MIMEText(body)
+        message['Subject'] = "New developer message for Members on the Record"
+
+        with open("../config/Email.txt") as file:
+            lines = file.readlines()
+            for line in lines:
+                if ("To=" in line):
+                    message["To"] = line.split("To=")[1].strip()
+                elif ("From=" in line):
+                    message["From"] = line.split("From=")[1].strip()
+
+        return message
+
+    ###########################################################################
+    ###########################################################################
+
     def createMessage(self, date):
         body = "For security reasons these emails will never contain a link to the results - you probably already have that page bookmarked.\n\n" + \
             "If the new results don't appear then try refreshing the page in your web browser.\n\n" + \
@@ -92,7 +111,17 @@ class EmailNotifications:
     ###########################################################################
     ###########################################################################
 
-    def run(self, todaysResultsFileName):
+    def run(self, todaysResultsFileName, listDeveloperMsgs=[]):
+        # send developer messages to ourself
+        if (len(listDeveloperMsgs) > 0):
+            try:
+                self.logger.log(f"Sending {len(listDeveloperMsgs)} lines for developer message")
+                devMsg = self.createDeveloperMessage(listDeveloperMsgs)
+                self.sendEmail(devMsg)
+            except BaseException as e:
+                self.logger.log("Warning: exception when trying to send developer email: {}".format(e.args))
+
+        # send results to all subscribers
         MAX_TRIES = 5
         for i in range(1, MAX_TRIES + 1):
             uploaded = self.areNewResultsAvailable(todaysResultsFileName)

@@ -43,6 +43,31 @@ class RetrieveListsFromTwitter():
     ###########################################################################
     ###########################################################################
 
+    def lookupUserById(self, idStr):
+        cred = Utilities.loadCredentials()
+        client = tweepy.Client(cred.Bearer_Token)
+    
+        user_fields_list = ["username",
+                            "id",
+                            "url",
+                            "name",
+                            "description"]
+        
+        response = client.get_user(id=idStr, user_fields=user_fields_list)
+        self.logger.log("received response for user lookup by id")
+
+        handle = response.data.username
+        idStr = str(response.data.id)
+        website = response.data.url
+        fullName = response.data.name
+        bio = response.data.description    
+        user = Classes.TwitterUser(handle, idStr, 0, website, fullName, bio)
+
+        return user
+
+    ###########################################################################
+    ###########################################################################
+
     def isHandleInResults(self, handle, listOfResults):
         for user in listOfResults:
             if (handle.lower() == user.twitterHandle.lower()):
@@ -53,20 +78,53 @@ class RetrieveListsFromTwitter():
     ###########################################################################
     ###########################################################################
 
+    def getUpdatedUser(self, handle):
+        newUser = None
+
+        # Load yesterday's TwitterUsersFromTwitterLists.txt which hasn't been updated yet for today.
+        # Grab the id for the handle so we can look up the id and see if it has a new handle.
+        dictOfTwitterUsers = Utilities.loadTwitterUsers()
+        if (handle in dictOfTwitterUsers.keys()):
+            oldUser = dictOfTwitterUsers[handle]
+            try:
+                newUser = self.lookupUserById(oldUser.idStr)
+            except BaseException as e:
+                self.logger.log("Warning: could not lookup up user by id: " + str(e.args))
+
+        return newUser
+
+    ###########################################################################
+    ###########################################################################
+
     def includeCustomizedHandles(self, dictOfTwitterUsers, handlesToLookup):
+        listBadTwitterHandleMsgs = []
+
         for i in range(0, len(handlesToLookup), 100):
             # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
             batch = handlesToLookup[i:i+100]
             results = self.doMultipleUserLookup(batch)
+            time.sleep(5)
 
             if (len(batch) != len(results)):
                 for handle in batch:
                     found = self.isHandleInResults(handle, results)
                     if (found == False):
-                        self.logger.log(f"Warning: {handle} does not seem to be a valid Twitter handle")
+                        time.sleep(5)
+                        newUser = self.getUpdatedUser(handle)
+                        if (newUser is None):
+                            msg = f"Warning: {handle} does not seem to be a valid Twitter handle"
+                            self.logger.log(msg)
+                            listBadTwitterHandleMsgs.append(msg)
+                        else:
+                            msg = f"Warning: handle {handle} has changed to {newUser.twitterHandle}"
+                            self.logger.log(msg)
+                            listBadTwitterHandleMsgs.append(msg)
+                            dictOfTwitterUsers[newUser.twitterHandle] = newUser
 
             for user in results:
                 dictOfTwitterUsers[user.twitterHandle] = user
+        
+        return listBadTwitterHandleMsgs
 
     ###########################################################################
     ###########################################################################
@@ -123,14 +181,20 @@ class RetrieveListsFromTwitter():
         # it might be useful in the future.
         #dictOfTwitterUsers = self.getTwitterUsersFromTwitterLists(listIDNumbers)
         
+        # If any Twitter handles no longer exist or changed to a new handle, store those messages here.
+        # We will email this list to ourselves later on.
+        listBadTwitterHandleMsgs = []
+
         try:
             dictOfTwitterUsers = {}
             listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
-            self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
+            listBadTwitterHandleMsgs = self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
             logMessage = Utilities.saveTwitterUsers(dictOfTwitterUsers)
             self.logger.log(logMessage)
         except BaseException as e:
             self.logger.log("Warning: failed to retrieve Twitter lists: " + str(e.args))
+        
+        return listBadTwitterHandleMsgs
 
 ###############################################################################
 ###############################################################################
