@@ -217,6 +217,10 @@ def isCongressListAvailable():
 ###############################################################################
 
 def loadTwitterUsers():
+    # if file does not exist yet then return empty dictionary
+    if (os.path.exists(TWITTER_USERS_FROM_LISTS_FILENAME) == False):
+        return {}
+
     dictOfTwitterUsers = {}
     fh = open(TWITTER_USERS_FROM_LISTS_FILENAME, "r", encoding="utf-8")
     twitterHandlesLines = fh.readlines()
