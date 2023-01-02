@@ -41,9 +41,6 @@ def runScanLoop():
             # we will time how long everything takes
             startSecs = time.time()
 
-            # use git to make sure we have the most recent version of some important files that might change often
-            Utilities.gitPull(logger)
-
             # retrieve the Twitter handles, take note of any bad Twitter handles
             step1 = RetrieveListsFromTwitter.RetrieveListsFromTwitter(logger)
             listBadTwitterHandleMsgs = step1.run()
@@ -90,7 +87,7 @@ def runScanLoop():
                 step5 = EmailNotifications.EmailNotifications(logger)
                 step5.run(todaysResultsFileName, listBadTwitterHandleMsgs)
             else:
-                logger.log("Upload was not successful, not sending email notification")
+                logger.log("Warning: Upload was not successful, not sending email notification")
 
             stopSecs = time.time()
             diffMins = (stopSecs - startSecs) // 60.0

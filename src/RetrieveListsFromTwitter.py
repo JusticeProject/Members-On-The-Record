@@ -180,21 +180,32 @@ class RetrieveListsFromTwitter():
         # Note: not using this method anymore, but keeping some of the code here since
         # it might be useful in the future.
         #dictOfTwitterUsers = self.getTwitterUsersFromTwitterLists(listIDNumbers)
-        
-        # If any Twitter handles no longer exist or changed to a new handle, store those messages here.
-        # We will email this list to ourselves later on.
-        listBadTwitterHandleMsgs = []
 
-        try:
-            dictOfTwitterUsers = {}
-            listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
-            listBadTwitterHandleMsgs = self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
-            logMessage = Utilities.saveTwitterUsers(dictOfTwitterUsers)
-            self.logger.log(logMessage)
-        except BaseException as e:
-            self.logger.log("Warning: failed to retrieve Twitter lists: " + str(e.args))
-        
-        return listBadTwitterHandleMsgs
+        tries = 10
+        for retries in range(0, tries):
+            try:
+                # make sure we have the latest version of the Twitter handle list
+                gitSuccess = Utilities.gitPull(self.logger)
+                if (gitSuccess == False):
+                    raise Exception("Git Pull Failed")
+
+                listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
+
+                # If any Twitter handles no longer exist or changed to a new handle, store those messages in
+                # listBadTwitterHandleMsgs. We will email this list to ourselves later on.
+                dictOfTwitterUsers = {}
+                listBadTwitterHandleMsgs = self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
+
+                logMessage = Utilities.saveTwitterUsers(dictOfTwitterUsers)
+                self.logger.log(logMessage)
+
+                return listBadTwitterHandleMsgs
+            except BaseException as e:
+                self.logger.log("Warning: failed to retrieve Twitter lists: " + str(e.args))
+                if (retries <= tries - 2):
+                    time.sleep(120)
+                else:
+                    return []
 
 ###############################################################################
 ###############################################################################
