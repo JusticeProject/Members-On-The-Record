@@ -3,12 +3,16 @@ This software will perform an automated search for U.S. Congress members' social
 
 ## Directory structure
 #### config folder
-* Config.txt - Access tokens for Twitter and GitHub are placed here. These allow Python to connect to those websites' APIs.
-* CustomizedTwitterHandles.txt - The list of Twitter handles is automatically retrieved, but you can manually include/exclude certain Twitter handles using this file.
+* Config.txt - Various config parameters.
+* Credentials.txt - Access tokens for Twitter and GitHub are placed here. These allow Python to connect to those websites' APIs.
+* CustomizedTwitterHandles.txt - The master list of Twitter handles. Add or remove from this list as Congress members come and go.
+* Email.txt - Email addresses for sending the daily results.
 * Keywords.txt - These are the words that are searched for in the social media posts.
 * HTML templates - Python will use these templates and fill in the data before publishing them to the web.
 #### docs folder
 * Includes this readme file and also the HTML results for all the scans done so far.
+#### handleFinder folder
+* Various helper scripts to scrape data and look for more Twitter handles. Not part of the daily scan.
 #### src folder
 * Automate.py - The main entry point of the program which will load all the other scripts and use them as necessary.
 * Most of the other scripts can be run stand-alone which is useful when debugging.
@@ -16,7 +20,8 @@ This software will perform an automated search for U.S. Congress members' social
 ## Instructions for installing/running
 * Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be placed in the file config/config.txt.
 * Install [Python](https://www.python.org/downloads/)
-* If uploading results to GitHub or Google Drive then config/config.txt and src/UploadResults.py should be updated.
+* If uploading results to GitHub or Google Drive then config/Credentials.txt and src/UploadResults.py should be updated.
+* Install [Git](https://git-scm.com/downloads) command line utility.
 * If Congress members' images are to be scanned for any text, then install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html).
 * Run the following commands at a command prompt to finish the installation:
 ```bash
