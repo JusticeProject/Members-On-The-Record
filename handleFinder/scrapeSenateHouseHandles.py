@@ -30,7 +30,7 @@ def getLinksInTable(parsed_html):
 ###############################################################################
 
 def getHandlesFromLinks(urls):
-    handles = []
+    dictHandles = {}
     
     for url in urls:
         #print("Looking for Twitter handles at " + url)
@@ -64,12 +64,12 @@ def getHandlesFromLinks(urls):
 
                     handle = href_split[1].split("/")[0]
                     handle = handle.strip()
-                    if (handle not in handles) and (len(handle) > 0) and (handle != "intent") and (handle != "i"):
-                        handles.append(handle)
+                    if (handle not in dictHandles.keys()) and (len(handle) > 0) and (handle != "intent") and (handle != "i"):
+                        dictHandles[handle] = url
         
         time.sleep(15)
 
-    return handles
+    return dictHandles
 
 ###############################################################################
 ###############################################################################
@@ -87,14 +87,14 @@ if __name__ == "__main__":
 
     all_links = senate_links + house_links
     
-    found_handles = getHandlesFromLinks(all_links)
-    print(f"Found {len(found_handles)} handles")
+    dictHandles = getHandlesFromLinks(all_links)
+    print(f"Found {len(dictHandles.keys())} handles")
 
     # if a handle is not already in our list from CustomizedTwitterHandles.txt then log it as new
     currentHandles, samePersons = Utilities.getCustomizedTwitterHandles()
     fh = open("scraped_handles.txt", "w", encoding="utf-8")
-    for handle in found_handles:
+    for handle, url in dictHandles.items():
         if (handle not in currentHandles):
-            fh.write(handle + "\n")
+            fh.write(handle + " found at " + url + "\n")
     fh.close()
 
