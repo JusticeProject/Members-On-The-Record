@@ -162,11 +162,11 @@ def getCustomizedTwitterHandles():
     
     lines = open(CUSTOMIZED_TWITTER_HANDLES_FILE_NAME, "r").readlines()
     for line in lines:
-        if ("same_person=" in line):
-            line_split = line.split("@")
-            handle1 = line_split[1].replace(",", "").strip().lower()
-            handle2 = line_split[2].strip().lower()
-            listOfSamePersons.append((handle1, handle2))
+        if ("same_person," in line):
+            line_split = line.split(",")
+            handle = line_split[1].replace("@", "").strip().lower()
+            url = line_split[2].strip().lower()
+            listOfSamePersons.append((handle, url))
         else:
             handle = line.strip().lower()
             if len(handle) > 0:

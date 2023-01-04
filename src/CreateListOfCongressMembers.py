@@ -283,21 +283,18 @@ class CreateListOfCongressMembers:
     ###########################################################################
     
     # The CustomizedTwitterHandles.txt file can be used to manually tell the 
-    # software which official Twitter account and which personal Twitter account
-    # actually represent the same person.
+    # software which Twitter account belongs to which member of Congress.
     def tryToManuallyAdd(self, unmatchedUser, listOfSamePersons, listOfMembers):
         unknownHandle = unmatchedUser.twitterHandle
 
         for person in listOfSamePersons:
-            knownHandle = ""
+            knownURL = ""
             if (unknownHandle == person[0]):
-                knownHandle = person[1]
-            elif (unknownHandle == person[1]):
-                knownHandle = person[0]
+                knownURL = person[1]
             
-            if (knownHandle != ""):
+            if (knownURL != ""):
                 for member in listOfMembers:
-                    if (knownHandle in member.twitter) and (unknownHandle not in member.twitter):
+                    if (knownURL == member.url) and (unknownHandle not in member.twitter):
                         member.twitter.append(unknownHandle)
                         return True
                 return False

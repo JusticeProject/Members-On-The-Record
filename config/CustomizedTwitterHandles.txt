@@ -956,14 +956,15 @@ senkaineteam
 tomkean
 repmolinarony19
 
-same_person=@millermeeks,@repmmm
-same_person=@Call_Me_Dutch,@GoDutchForMD
-same_person=@Mike_CA05,@repthompson
-same_person=@repcardenas,@Tcardenas
-same_person=@McCaulforTexas,@repmccaul
-same_person=@AnnMcLaneKuster,@RepAnnieKuster
-same_person=@McHenryCampaign,@patrickmchenry
-same_person=@repmrvan,@mrvan4congress
-same_person=@CapitoforWV,@sencapito
-same_person=@Higgins4WNY,@repbrianhiggins
-same_person=@Vote4Cleaver,@repcleaver
+same_person,@millermeeks,https://millermeeks.house.gov
+same_person,@GoDutchForMD,https://ruppersberger.house.gov
+same_person,@Mike_CA05,https://mikethompson.house.gov
+same_person,@Tcardenas,https://cardenas.house.gov
+same_person,@McCaulforTexas,https://mccaul.house.gov
+same_person,@AnnMcLaneKuster,https://kuster.house.gov
+same_person,@McHenryCampaign,https://mchenry.house.gov
+same_person,@mrvan4congress,https://mrvan.house.gov
+same_person,@CapitoforWV,https://www.capito.senate.gov
+same_person,@Higgins4WNY,https://higgins.house.gov
+same_person,@Vote4Cleaver,https://cleaver.house.gov
+same_person,@bobmenendeznj,https://www.menendez.senate.gov
