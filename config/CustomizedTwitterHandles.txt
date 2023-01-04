@@ -127,7 +127,7 @@ repbencline
 cline4virginia
 repcloudtx
 michaeljcloud
-whipclyburn
+repjamesclyburn
 clyburnsc06
 rep_clyde
 repcohen
@@ -311,7 +311,7 @@ rephorsford
 stevenhorsford
 rephoulahan
 houlahanforpa
-leaderhoyer
+repstenyhoyer
 stenyhoyer
 reprichhudson
 rephuffman
@@ -345,7 +345,6 @@ repdavejoyce
 repjohnjoyce
 johnjoyceforpa
 repkahele
-kaikahele
 repmarcykaptur
 marcy_kaptur
 repjohnkatko
@@ -415,8 +414,6 @@ reptedlieu
 tedlieu
 repzoelofgren
 zoelofgren
-usreplong
-auctnr1
 reploudermilk
 standwithbarry
 replowenthal
@@ -491,7 +488,7 @@ repjoemorelle
 votemorelle
 sethmoulton
 repmrvan
-repmullin
+senmullin
 markwaynemullin
 repstephmurphy
 repgregmurphy
@@ -742,7 +739,6 @@ robwittman
 reelectwittman
 rep_stevewomack
 womack4congress
-repjohnyarmuth
 repleezeldin
 leezeldin
 senatorbaldwin
@@ -985,7 +981,7 @@ bobbylrush
 KatieBrittforAL
 Eric_Schmitt
 JDVance1
-JDVancePress
+senvancepress
 JohnFetterman
 USRepMikeFlood
 RepFinstad
@@ -1055,7 +1051,7 @@ GregLandsman
 MaxMillerOH
 EmiliaSykesOH
 Brecheen4OK
-Josh_Brecheen_
+repbrecheen
 ValHoyle
 LChavezDeRemer
 AndreaRSalinas
@@ -1095,4 +1091,3 @@ same_person=@CapitoforWV,@sencapito
 same_person=@Higgins4WNY,@repbrianhiggins
 same_person=@langevinforri,@jimlangevin
 same_person=@Vote4Cleaver,@repcleaver
-same_person=@auctnr1,@USRepLong
