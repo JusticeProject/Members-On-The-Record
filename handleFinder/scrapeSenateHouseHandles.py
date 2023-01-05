@@ -4,6 +4,7 @@ import Utilities
 
 from bs4 import BeautifulSoup
 import time
+import os
 
 ###############################################################################
 ###############################################################################
@@ -74,6 +75,22 @@ def getHandlesFromLinks(urls):
 ###############################################################################
 ###############################################################################
 
+def getIgnoredHandles():
+    ignoredHandles = []
+    if (os.path.exists("./ignore_handles.txt") == True):
+        fh = open("./ignore_handles.txt", "r", encoding="utf-8")
+        lines = fh.readlines()
+        for line in lines:
+            handle = line.strip().lower()
+            if (len(handle) > 0):
+                ignoredHandles.append(handle)
+        fh.close()
+
+    return ignoredHandles
+
+###############################################################################
+###############################################################################
+
 if __name__ == "__main__":
     html, binary, code = Utilities.getWebsiteData("https://www.house.gov/representatives")
     parsed_html = BeautifulSoup(html, "html.parser")
@@ -92,9 +109,10 @@ if __name__ == "__main__":
 
     # if a handle is not already in our list from CustomizedTwitterHandles.txt then log it as new
     currentHandles, samePersons = Utilities.getCustomizedTwitterHandles()
+    ignoredHandles = getIgnoredHandles()
     fh = open("scraped_handles.txt", "w", encoding="utf-8")
     for handle, url in dictHandles.items():
-        if (handle not in currentHandles):
+        if (handle not in currentHandles) and (handle not in ignoredHandles):
             fh.write(handle + " found at " + url + "\n")
     fh.close()
 
