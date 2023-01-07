@@ -377,7 +377,7 @@ dorismatsui
 matsui4congress
 replucymcbath
 lucymcbath
-gopleader
+speakermccarthy
 kevinomccarthy
 repmccaul
 replisamcclain
@@ -981,6 +981,26 @@ RepWesleyHunt
 RepBeccaB
 RepMGP
 RepVanOrden
+repmccormick
+RepDaleStrong
+RepCiscomani
+RepMullinCA
+RepRobertGarcia
+RepAaronBean
+RepMoskowitz
+RepMcGarvey
+RepScholten
+RepShriThanedar
+RepDesposito
+RepMikeLawler
+RepDonDavis
+rep_edwards
+repluna
+RepSummerLee
+RepRussellFry
+RepMonicaDLC
+RepCasar
+RepHageman
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
