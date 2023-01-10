@@ -976,7 +976,7 @@ RepMaxMiller
 RepLCD
 RepDeluzio
 RepNateMoran
-RepJasmineTX
+RepJasmine
 RepWesleyHunt
 RepBeccaB
 RepMGP
@@ -1020,3 +1020,8 @@ same_person,@CapitoforWV,https://www.capito.senate.gov
 same_person,@Higgins4WNY,https://higgins.house.gov
 same_person,@Vote4Cleaver,https://cleaver.house.gov
 same_person,@bobmenendeznj,https://www.menendez.senate.gov
+same_person,@robmenendez4nj,https://menendez.house.gov/
+same_person,@repmenendez,https://menendez.house.gov/
+same_person,@andyogles,https://ogles.house.gov/
+same_person,@valhoyle,https://hoyle.house.gov/
+same_person,@repdesposito,https://desposito.house.gov/
