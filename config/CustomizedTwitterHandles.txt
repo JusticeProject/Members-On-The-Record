@@ -864,7 +864,6 @@ USRepMikeFlood
 RepFinstad
 Rep_Peltola
 PatRyanUC
-strongalabama
 EliCraneAZ
 JuanCiscomani
 KevinKileyCA
@@ -995,13 +994,19 @@ RepShriThanedar
 RepDesposito
 RepMikeLawler
 RepDonDavis
-rep_edwards
+repedwards
 repluna
 RepSummerLee
 RepRussellFry
 RepMonicaDLC
 RepCasar
 RepHageman
+RepDanGoldman
+SenKatieBritt
+CoryMil93282979
+RepLaurelLee
+RepEricSorensen
+RepLangworthy
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
