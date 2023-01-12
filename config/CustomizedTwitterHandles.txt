@@ -984,7 +984,7 @@ RepVanOrden
 repmccormick
 RepDaleStrong
 RepCiscomani
-RepMullinCA
+repkevinmullin
 RepRobertGarcia
 RepAaronBean
 RepMoskowitz
@@ -1003,7 +1003,7 @@ RepCasar
 RepHageman
 RepDanGoldman
 SenKatieBritt
-CoryMil93282979
+repmillspress
 RepLaurelLee
 RepEricSorensen
 RepLangworthy
