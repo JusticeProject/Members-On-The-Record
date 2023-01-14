@@ -765,8 +765,6 @@ senrubiopress
 marcorubio
 sensanders
 berniesanders
-sensasse
-bensasse
 senbrianschatz
 brianschatz
 senschumer
@@ -1008,6 +1006,8 @@ RepLaurelLee
 RepEricSorensen
 RepLangworthy
 congressmankean
+senfettermanpa
+repjilltokuda
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
