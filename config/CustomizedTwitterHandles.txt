@@ -1008,6 +1008,11 @@ RepLangworthy
 congressmankean
 senfettermanpa
 repjilltokuda
+RepDuarteCA13
+RepKamlagerDove
+repdeliaramirez
+repvalhoyle
+RepOgles
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
