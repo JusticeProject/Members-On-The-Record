@@ -26,7 +26,7 @@ commonNicknameDict = {"Tom":"Thomas", "Chris":"Christopher", "Dick":"Richard",
                       "Rob":"Robert", "Bob":"Robert", "Ben":"Benjamin", "Dan":"Daniel",
                       "Don":"Donald", "Greg":"Gregory", "Mike":"Michael", "Jerry":"Jerrold",
                       "Jim":"James", "Dave":"David", "Matt":"Matthew", "Lou":"Luis", "Jeff":"Jefferson",
-                      "Marc":"Marcus", "Jen":"Jennifer", "Zach":"Zachary"}
+                      "Marc":"Marcus", "Jen":"Jennifer", "Zach":"Zachary", "Val":"Valerie"}
 
 ###############################################################################
 ###############################################################################
