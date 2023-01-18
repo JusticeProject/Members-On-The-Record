@@ -938,14 +938,14 @@ AndyOgles
 moran4congress
 SelfForCongress
 MLuttrellTX
-RepLuttrell_TX8
+repluttrell
 monica4congress
 JasmineForUS
 GregCasar
 WesleyHuntTX
 BeccaBalintVT
 JenKiggans
-Rep_Jen_Kiggans
+repkiggans
 MGPforCongress
 derrickvanorden
 HagemanforWY
@@ -1030,5 +1030,6 @@ same_person,@bobmenendeznj,https://www.menendez.senate.gov
 same_person,@robmenendez4nj,https://menendez.house.gov/
 same_person,@repmenendez,https://menendez.house.gov/
 same_person,@andyogles,https://ogles.house.gov/
-same_person,@valhoyle,https://hoyle.house.gov/
 same_person,@repdesposito,https://desposito.house.gov/
+same_person,@jmoylanforguam,https://moylan.house.gov/
+same_person,@repmikelawler,https://lawler.house.gov/
