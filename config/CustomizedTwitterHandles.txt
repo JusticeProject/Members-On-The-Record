@@ -1014,6 +1014,8 @@ repdeliaramirez
 repvalhoyle
 RepOgles
 valeriefoushee
+repcaraveomd
+repemiliasykes
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
@@ -1033,3 +1035,4 @@ same_person,@andyogles,https://ogles.house.gov/
 same_person,@repdesposito,https://desposito.house.gov/
 same_person,@jmoylanforguam,https://moylan.house.gov/
 same_person,@repmikelawler,https://lawler.house.gov/
+same_person,@repmillspress,https://mills.house.gov/
