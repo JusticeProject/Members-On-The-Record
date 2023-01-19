@@ -227,6 +227,8 @@ Iranian
 JCPOA
 joint comprehensive plan of action
 Revolutionary Guard
+^IRGC
+{IRGC
 Islamic Revolution
 Hormuz
 🇮🇷
