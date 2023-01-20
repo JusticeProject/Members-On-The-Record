@@ -1016,6 +1016,10 @@ RepOgles
 valeriefoushee
 repcaraveomd
 repemiliasykes
+rep_jackson
+RepSalinas
+RepSantosNY03
+Rep_Magaziner
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
