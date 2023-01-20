@@ -187,6 +187,10 @@ intifada
 Negev
 yadvashem
 yad vashem
+jnfusa
+{jnf
+jewish national fund
+jewishnationalfund
 🇮🇱
 🇵🇸
 
