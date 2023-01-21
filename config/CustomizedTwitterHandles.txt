@@ -165,7 +165,7 @@ duncan4congress
 drnealdunnfl2
 dunncampaign
 repellzey
-reptomemmer
+gopmajoritywhip
 tomemmer
 repescobar
 vgescobar
@@ -1006,7 +1006,6 @@ RepLaurelLee
 RepEricSorensen
 RepLangworthy
 congressmankean
-senfettermanpa
 repjilltokuda
 RepDuarteCA13
 RepKamlagerDove
@@ -1034,9 +1033,6 @@ same_person,@Higgins4WNY,https://higgins.house.gov
 same_person,@Vote4Cleaver,https://cleaver.house.gov
 same_person,@bobmenendeznj,https://www.menendez.senate.gov
 same_person,@robmenendez4nj,https://menendez.house.gov/
-same_person,@repmenendez,https://menendez.house.gov/
 same_person,@andyogles,https://ogles.house.gov/
-same_person,@repdesposito,https://desposito.house.gov/
 same_person,@jmoylanforguam,https://moylan.house.gov/
-same_person,@repmikelawler,https://lawler.house.gov/
 same_person,@repmillspress,https://mills.house.gov/
