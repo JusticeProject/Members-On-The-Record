@@ -1036,3 +1036,4 @@ same_person,@robmenendez4nj,https://menendez.house.gov/
 same_person,@andyogles,https://ogles.house.gov/
 same_person,@jmoylanforguam,https://moylan.house.gov/
 same_person,@repmillspress,https://mills.house.gov/
+same_person,@repnatemoran,https://moran.house.gov/
