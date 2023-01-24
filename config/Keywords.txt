@@ -177,6 +177,7 @@ haaretz
 Torah+Caucus
 ^IHRA
 {IHRA
+TheIHRA
 Shireen+Akleh
 Shireen+Aqla
 Shireen+Aqleh
