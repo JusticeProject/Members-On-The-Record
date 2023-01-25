@@ -93,6 +93,9 @@ NORPAC
 ^JDCA~NJDCA
 {JDCA
 UNRWA
+Rapporteur+Albanese
+Rapporteur+Francesca
+Francesca+Albanese
 {BDS
 BDS's
 BDSer
@@ -154,6 +157,7 @@ ngo-monitor
 knesset
 {IDF
 shin bet
+shinbet
 Shabak
 mossad
 Blue Wolf~Blue Wolf Capital
