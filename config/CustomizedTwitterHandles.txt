@@ -1022,6 +1022,8 @@ Rep_Magaziner
 repmarkalford
 senfettermanpa
 RepGregLandsman
+RepJeffJackson
+repkeithself
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
