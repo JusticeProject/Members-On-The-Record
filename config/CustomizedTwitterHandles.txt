@@ -889,7 +889,6 @@ NikkiBudzinski
 ERICSORENSEN
 Erin_Houchin
 NunnForCongress
-ZachNunn_ia
 zachnunn
 MorganMcGarvey
 glenniveymd
@@ -1024,6 +1023,7 @@ senfettermanpa
 RepGregLandsman
 RepJeffJackson
 repkeithself
+Ricketts4Senate
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
