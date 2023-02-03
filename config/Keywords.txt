@@ -272,6 +272,7 @@ bin Salman
 Category=Jordan
 Keywords=Jordanian
 ^King+Abdullah
+Queen+Rania
 Prince+Hussein
 Dina+Kawar
 ^Amman~@PhilAmmann
