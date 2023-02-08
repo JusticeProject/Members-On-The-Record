@@ -1024,6 +1024,8 @@ RepGregLandsman
 RepJeffJackson
 repkeithself
 Ricketts4Senate
+SenatorRicketts
+RepJames
 
 same_person,@millermeeks,https://millermeeks.house.gov
 same_person,@GoDutchForMD,https://ruppersberger.house.gov
@@ -1042,3 +1044,4 @@ same_person,@andyogles,https://ogles.house.gov/
 same_person,@jmoylanforguam,https://moylan.house.gov/
 same_person,@repmillspress,https://mills.house.gov/
 same_person,@repnatemoran,https://moran.house.gov/
+same_person,@repogles,https://ogles.house.gov/
