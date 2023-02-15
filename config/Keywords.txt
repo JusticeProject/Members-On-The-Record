@@ -48,8 +48,7 @@ Hetz 3
 Hetz-3
 Abraham+accord
 Palestinian
-Palestine
-Palestin
+Palestine~East Palestine~EastPalestine
 ^Hamas~Hamasaki
 ^HAMAS
 {Hamas
