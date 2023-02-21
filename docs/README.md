@@ -22,7 +22,6 @@ This software will perform an automated search for U.S. Congress members' social
 * Install [Python](https://www.python.org/downloads/)
 * If uploading results to GitHub or Google Drive then config/Credentials.txt and src/UploadResults.py should be updated.
 * Install [Git](https://git-scm.com/downloads) command line utility.
-* If Congress members' images are to be scanned for any text, then install [Tesseract](https://tesseract-ocr.github.io/tessdoc/Installation.html).
 * Run the following commands at a command prompt to finish the installation:
 ```bash
 pip install tweepy
@@ -38,10 +37,6 @@ pip install brotli
 ```bash
 python .\Automate.py
 ```
-
-## TODO list
-* Continuously improve the search algorithm and the list of keyword search terms to ensure only relevant posts are in the results and are categorized properly. Example: Posts about the country Jordan may not be accurately found because Jordan is such a common name.
-* Automate the search of Congress Members' floor speeches and press releases by scraping the data from senate.gov, house.gov, and congress.gov while obeying the sites' robots.txt files.
 
 ## Thanks
 Huge thank you to the contributors at the [congress-legislators project](https://github.com/unitedstates/congress-legislators) for making so much data available about each member of Congress.
