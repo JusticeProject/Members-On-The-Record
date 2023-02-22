@@ -31,6 +31,8 @@ pip install beautifulsoup4
 pip install brotlicffi
 pip install brotli
 ```
+* Download the source code from the green button above: Code -> Download ZIP
+* Unzip the source code and navigate to the src directory.
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
 python ./Automate.py
