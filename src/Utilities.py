@@ -761,7 +761,7 @@ class Logger:
         yearMonth = getCurrentDate()[:7]
         logFolder = logFolder + yearMonth + "/"
         if (os.path.exists(logFolder) == False):
-            os.mkdir(logFolder)
+            os.makedirs(logFolder)
 
         self.filename = logFolder + getCurrentDate() + "-log.txt"
         
