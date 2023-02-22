@@ -5,12 +5,12 @@ import tweepy
 import Utilities
 import Classes
 
-TWITTER_HANDLE = "johncornyn"
+TWITTER_HANDLE = "RepMattGaetz"
 
 listOfMembers = Utilities.loadCongressMembers()
 dictOfTwitterUsers = Utilities.loadTwitterUsers()
-userLookupDict = Utilities.loadUserLookup(listOfMembers, dictOfTwitterUsers)
-user = userLookupDict[TWITTER_HANDLE]
+userLookupDict = Utilities.loadTwitterLookup(listOfMembers, dictOfTwitterUsers)
+user = userLookupDict[TWITTER_HANDLE.lower()]
 
 tweet_fields_list = ["id",
                      "text",
