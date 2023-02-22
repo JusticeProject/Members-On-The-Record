@@ -1,2 +1,5 @@
 Scan_On_Startup=1
 Scan_Images=0
+Scan_Hour=11
+Days_For_First_Scan=2
+Use_GitHub_GDrive_Email=0

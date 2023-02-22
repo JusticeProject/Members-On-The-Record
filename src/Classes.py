@@ -258,6 +258,9 @@ class Config:
     def __init__(self):
         self.Scan_On_Startup = ""
         self.Scan_Images = ""
+        self.Scan_Hour = ""
+        self.Days_For_First_Scan = ""
+        self.Use_GitHub_GDrive_Email = ""
     
     def setData(self, lineOfData):
         if ("Scan_On_Startup=" in lineOfData):
@@ -266,3 +269,12 @@ class Config:
         elif ("Scan_Images=" in lineOfData):
             text = lineOfData.split("Scan_Images=")[1].strip()
             self.Scan_Images = bool(int(text))
+        elif ("Scan_Hour=" in lineOfData):
+            text = lineOfData.split("Scan_Hour=")[1].strip()
+            self.Scan_Hour = int(text)
+        elif ("Days_For_First_Scan=" in lineOfData):
+            text = lineOfData.split("Days_For_First_Scan=")[1].strip()
+            self.Days_For_First_Scan = int(text)
+        elif ("Use_GitHub_GDrive_Email=" in lineOfData):
+            text = lineOfData.split("Use_GitHub_GDrive_Email=")[1].strip()
+            self.Use_GitHub_GDrive_Email = bool(int(text))
