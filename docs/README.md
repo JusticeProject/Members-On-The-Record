@@ -18,10 +18,8 @@ This software will perform an automated search for U.S. Congress members' social
 * Most of the other scripts can be run stand-alone which is useful when debugging.
 
 ## Instructions for installing/running
-* Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive some access tokens which can be placed in the file config/config.txt.
+* Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive a Bearer Token which can be placed in the file config/Credentials.txt.
 * Install [Python](https://www.python.org/downloads/)
-* If uploading results to GitHub or Google Drive then config/Credentials.txt and src/UploadResults.py should be updated.
-* Install [Git](https://git-scm.com/downloads) command line utility.
 * Run the following commands at a command prompt to finish the installation:
 ```bash
 pip install tweepy
@@ -35,7 +33,7 @@ pip install brotli
 ```
 * Run this command at a command prompt while in the src directory to start the daily automated scan:
 ```bash
-python .\Automate.py
+python ./Automate.py
 ```
 
 ## Thanks
