@@ -48,7 +48,7 @@ Hetz 3
 Hetz-3
 Abraham+accord
 Palestinian
-Palestine~East Palestine~EastPalestine
+Palestine~East Palestine~EastPalestine~Palestine, Ohio
 ^Hamas~Hamasaki
 ^HAMAS
 {Hamas
