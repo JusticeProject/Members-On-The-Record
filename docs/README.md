@@ -20,7 +20,7 @@ This software will perform an automated search for U.S. Congress members' social
 ## Instructions for installing/running
 * Create a [Twitter Developer account](https://developer.twitter.com/en/apply-for-access). You will receive a Bearer Token which can be placed in the file config/Credentials.txt.
 * Install [Python](https://www.python.org/downloads/)
-* Run the following commands at a command prompt to finish the installation:
+* Run the following commands at a command prompt to add the needed Python modules:
 ```bash
 pip install tweepy
 pip install jinja2
