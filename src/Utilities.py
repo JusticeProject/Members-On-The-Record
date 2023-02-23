@@ -157,7 +157,7 @@ def loadConfig():
 ###############################################################################
 
 def getCustomizedTwitterHandles():
-    listOfIncludes = []
+    listOfHandles = []
     listOfSamePersons = []
     
     lines = open(CUSTOMIZED_TWITTER_HANDLES_FILE_NAME, "r").readlines()
@@ -170,9 +170,33 @@ def getCustomizedTwitterHandles():
         else:
             handle = line.strip().lower()
             if len(handle) > 0:
-                listOfIncludes.append(handle)
+                listOfHandles.append(handle)
     
-    return listOfIncludes,listOfSamePersons
+    return listOfHandles,listOfSamePersons
+
+###############################################################################
+###############################################################################
+
+def saveCustomizedTwitterHandles(listOfHandles, listOfSamePersons):
+    try:
+        fh = open(CUSTOMIZED_TWITTER_HANDLES_FILE_NAME, "w")
+
+        for handle in listOfHandles:
+            fh.write(handle + "\n")
+        
+        fh.write("\n")
+
+        for handle,url in listOfSamePersons:
+            fh.write("same_person,@" + handle + "," + url + "\n")
+        
+        fh.write("\n")
+
+        fh.close()
+
+        logMessage = "data written to file " + CUSTOMIZED_TWITTER_HANDLES_FILE_NAME
+        return logMessage
+    except:
+        return "Warning: could not save to " + CUSTOMIZED_TWITTER_HANDLES_FILE_NAME
 
 ###############################################################################
 ###############################################################################

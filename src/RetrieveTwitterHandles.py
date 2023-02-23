@@ -97,7 +97,10 @@ class RetrieveTwitterHandles():
     ###########################################################################
 
     def includeCustomizedHandles(self, dictOfTwitterUsers, handlesToLookup):
-        listBadTwitterHandleMsgs = []
+        # Keep tuples of all the Twitter handle changes.
+        # (handle1, handle2) means it changed from handle1 -> handle2
+        # (handle1, "?") means handle1 is no longer valid, it probably got deleted or temporarily banned.
+        listTwitterHandleChanges = []
 
         for i in range(0, len(handlesToLookup), 100):
             # grab 0-99, 100-199, etc. because the api can only handle 100 at a time
@@ -114,17 +117,31 @@ class RetrieveTwitterHandles():
                         if (newUser is None):
                             msg = f"Warning: {handle} does not seem to be a valid Twitter handle"
                             self.logger.log(msg)
-                            listBadTwitterHandleMsgs.append(msg)
+                            listTwitterHandleChanges.append((handle, "?"))
                         else:
                             msg = f"Warning: handle {handle} has changed to {newUser.twitterHandle}"
                             self.logger.log(msg)
-                            listBadTwitterHandleMsgs.append(msg)
+                            listTwitterHandleChanges.append((handle, newUser.twitterHandle))
                             dictOfTwitterUsers[newUser.twitterHandle] = newUser
 
             for user in results:
                 dictOfTwitterUsers[user.twitterHandle] = user
         
-        return listBadTwitterHandleMsgs
+        return listTwitterHandleChanges
+
+    ###########################################################################
+    ###########################################################################
+
+    def updateListOfHandles(self, listOfHandles, listTwitterHandleChanges):
+        for handle1,handle2 in listTwitterHandleChanges:
+            if (len(handle2) <= 1):
+                continue
+
+            for i in range(0, len(listOfHandles)):
+                if (listOfHandles[i].lower() == handle1.lower()):
+                    listOfHandles[i] = handle2.lower()
+            
+        return listOfHandles
 
     ###########################################################################
     ###########################################################################
@@ -191,12 +208,22 @@ class RetrieveTwitterHandles():
                     if (gitSuccess == False):
                         raise Exception("Git Pull Failed")
 
-                listOfIncludes,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
+                listOfHandles,listOfSamePersons = Utilities.getCustomizedTwitterHandles()
 
                 # If any Twitter handles no longer exist or changed to a new handle, store those messages in
                 # listBadTwitterHandleMsgs. We will email this list to ourselves later on.
                 dictOfTwitterUsers = {}
-                listBadTwitterHandleMsgs = self.includeCustomizedHandles(dictOfTwitterUsers, listOfIncludes)
+                listTwitterHandleChanges = self.includeCustomizedHandles(dictOfTwitterUsers, listOfHandles)
+                listBadTwitterHandleMsgs = []
+                if len(listTwitterHandleChanges) > 0:
+                    if (useGitHub):
+                        for handle1, handle2 in listTwitterHandleChanges:
+                            msg = f"Twitter handle changed: {handle1} -> {handle2}"
+                            listBadTwitterHandleMsgs.append(msg)
+                    else:
+                        updatedListOfHandles = self.updateListOfHandles(listOfHandles, listTwitterHandleChanges)
+                        logMessage = Utilities.saveCustomizedTwitterHandles(updatedListOfHandles, listOfSamePersons)
+                        self.logger.log(logMessage)
 
                 logMessage = Utilities.saveTwitterUsers(dictOfTwitterUsers)
                 self.logger.log(logMessage)
