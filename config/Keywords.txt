@@ -186,7 +186,7 @@ Shireen+Aqla
 Shireen+Aqleh
 Shireen Abu
 Justice+Shireen
-Nakba
+Nakba~SenAkbari 
 intifada
 Negev
 yadvashem
