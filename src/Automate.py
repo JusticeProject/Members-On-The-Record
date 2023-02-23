@@ -18,14 +18,17 @@ def runScanLoop():
     # If False then it will only scan at the Scan_Hour.
     config = Utilities.loadConfig()
     scanOnStartup = config.Scan_On_Startup
+    lastScanDate = ""
 
     logger = Utilities.Logger()
 
     while True:
         hour = Utilities.getCurrentHour()
+        date = Utilities.getCurrentDate()
 
-        if (hour == config.Scan_Hour) or (scanOnStartup == True):
+        if (hour == config.Scan_Hour and date != lastScanDate) or (scanOnStartup == True):
             scanOnStartup = False
+            lastScanDate = date
 
             # start a new log file for the current date
             if (config.Use_GitHub_GDrive_Email == True):
@@ -101,5 +104,10 @@ def runScanLoop():
 ###############################################################################
         
 if __name__ == "__main__":
-    runScanLoop()
+    try:
+        runScanLoop()
+    except BaseException as e:
+        strError = str(e.args)
+        print("Run failed:" + strError)
+        input("Hit Enter to exit")
     
