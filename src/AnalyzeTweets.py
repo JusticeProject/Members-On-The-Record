@@ -475,11 +475,19 @@ class AnalyzeTweets:
             elif ("twitter.com" in expanded_url) and ("/video/" in expanded_url):
                 text = self.convertLink(text, shortened_url, expanded_url, "Link to video")
             elif ("twitter.com" in expanded_url) and ("/status/" in expanded_url):
-                quotedTweet = self.getQuotedTweet(tweet)
-                if (quotedTweet is None):
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet")
+
+                # Check if the url in the Tweet is pointing to the Tweet itself. This indicates a "Show more" link where
+                # we have surpassed the usual 280 character limit. Some people can tweet up to 4000 characters.
+                expanded_url_id = expanded_url.split("/status/")[1]
+                if (str(tweet.id) == expanded_url_id):
+                    text = self.convertLink(text, shortened_url, expanded_url, "Show more")
                 else:
-                    text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
+                    # It's not a "Show more" link, it's just a normal quoted tweet.
+                    quotedTweet = self.getQuotedTweet(tweet)
+                    if (quotedTweet is None):
+                        text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet")
+                    else:
+                        text = self.convertLink(text, shortened_url, expanded_url, "Link to quoted tweet", True, quotedTweet.text)
             else:
                 text = self.convertLink(text, shortened_url, expanded_url, title)
     
