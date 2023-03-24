@@ -278,6 +278,7 @@ Keywords=Jordanian
 Queen+Abdullah
 Prince+Hussein
 Dina+Kawar
+@AmbKawar
 ^Amman~@PhilAmmann
 Jordan River
 JoEmbassyUS
