@@ -67,6 +67,8 @@ Tel Aviv
 Jerusalem
 ^Haifa
 Aqsa+Mosque
+Al Aqsa
+Al-Aqsa
 Ramallah
 ^Hebron
 {Hebron
