@@ -1048,3 +1048,5 @@ same_person,@jmoylanforguam,https://moylan.house.gov/
 same_person,@repmillspress,https://mills.house.gov/
 same_person,@repnatemoran,https://moran.house.gov/
 same_person,@repogles,https://ogles.house.gov/
+same_person,@sydneykamlager,https://kamlager-dove.house.gov/
+same_person,@repkamlagerdove,https://kamlager-dove.house.gov/
